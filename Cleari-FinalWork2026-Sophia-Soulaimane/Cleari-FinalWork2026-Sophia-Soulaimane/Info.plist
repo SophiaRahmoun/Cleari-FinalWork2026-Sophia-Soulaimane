@@ -6,5 +6,21 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
+    
+    <key>UIAppFonts</key>
+    <array>
+        <string>Corporate-ACon-Med-.otf</string>
+        <string>CorporateACondPro-Regular.ttf</string>
+        <string>CorporateAPro-Light.ttf</string>
+        <string>CorporateAPro-Medium.ttf</string>
+        <string>CorporateAPro-Regular.ttf</string>
+
+        <string>Gill Sans.otf</string>
+        <string>Gill Sans Bold.otf</string>
+        <string>Gill Sans Medium.otf</string>
+        <string>Gill Sans Light.otf</string>
+        <string>Gill Sans Italic.otf</string>
+        <string>Gill Sans Bold Italic.otf</string>
+    </array>
 </dict>
 </plist>

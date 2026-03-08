@@ -6,15 +6,29 @@
 //
 
 import SwiftUI
+import UIKit
 
 @main
 struct Cleari_FinalWork2026_Sophia_SoulaimaneApp: App {
     let persistenceController = PersistenceController.shared
 
+    init() {
+        printFonts()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            FeedView()
+                .environment(.managedObjectContext, persistenceController.container.viewContext)
+        }
+    }
+
+    private func printFonts() {
+        for family in UIFont.familyNames.sorted() {
+            print("Family: (family)")
+            for name in UIFont.fontNames(forFamilyName: family) {
+                print("   (name)")
+            }
         }
     }
 }
