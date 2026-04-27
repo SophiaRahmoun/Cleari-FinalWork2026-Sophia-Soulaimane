@@ -12,16 +12,16 @@ struct AuthBottomLink: View {
     let linkText: String
 
     var body: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 3) {
             TypographyLabel(
                 text: text,
-                style: .caption,
+                style: .button,
                 color: .black
             )
 
             TypographyLabel(
                 text: linkText,
-                style: .caption,
+                style: .button,
                 color: .black
             )
         }
@@ -33,4 +33,7 @@ struct AuthBottomLink: View {
         text: "already have an account?",
         linkText: "Login"
     )
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, 32)
+    .padding(.top, 80)
 }
