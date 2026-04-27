@@ -44,7 +44,7 @@ struct FeedPostCard: View {
         .shadow(radius: 4)
         .padding(.vertical, 24)
         .padding(.horizontal, 20)
-        .border(Color.red)}
+      }
 }
 
 #Preview {

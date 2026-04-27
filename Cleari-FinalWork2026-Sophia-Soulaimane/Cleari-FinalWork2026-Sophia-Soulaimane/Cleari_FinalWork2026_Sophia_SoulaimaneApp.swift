@@ -19,15 +19,15 @@ struct Cleari_FinalWork2026_Sophia_SoulaimaneApp: App {
     var body: some Scene {
         WindowGroup {
             FeedView()
-                .environment(.managedObjectContext, persistenceController.container.viewContext)
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 
     private func printFonts() {
         for family in UIFont.familyNames.sorted() {
-            print("Family: (family)")
+            print("Family: \(family)")
             for name in UIFont.fontNames(forFamilyName: family) {
-                print("   (name)")
+                print("   \(name)")
             }
         }
     }

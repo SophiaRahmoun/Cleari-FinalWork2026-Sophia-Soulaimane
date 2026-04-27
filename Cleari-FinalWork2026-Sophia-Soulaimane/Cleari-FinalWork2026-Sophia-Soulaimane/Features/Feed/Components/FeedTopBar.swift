@@ -10,36 +10,43 @@ import SwiftUI
 struct FeedTopBar: View {
     var body: some View {
         VStack(spacing: 16) {
-            
-            // Top row
             HStack {
-                
                 Spacer()
                 
-                Text("cleari")
-                    .font(.system(size: 28, weight: .semibold))
+                TypographyLabel(
+                    text: "cleari",
+                    style: .h2,
+                    color: .white,
+                    alignment: .center
+                )
                 
                 Spacer()
                 
                 Image(systemName: "person")
                     .font(.system(size: 20))
+                    .foregroundColor(.black)
             }
             .padding(.horizontal, 20)
             
-            
-            // Tabs
             HStack {
+                Spacer()
+                
+                TypographyLabel(
+                    text: "explore",
+                    style: .button,
+                    color: .black,
+                    alignment: .center
+                )
+                .underline()
                 
                 Spacer()
                 
-                Text("explore")
-                    .font(.system(size: 16, weight: .semibold))
-                    .underline()
-                
-                Spacer()
-                
-                Text("fake trends")
-                    .font(.system(size: 16))
+                TypographyLabel(
+                    text: "fake trends",
+                    style: .button,
+                    color: .black,
+                    alignment: .center
+                )
                 
                 Spacer()
             }
