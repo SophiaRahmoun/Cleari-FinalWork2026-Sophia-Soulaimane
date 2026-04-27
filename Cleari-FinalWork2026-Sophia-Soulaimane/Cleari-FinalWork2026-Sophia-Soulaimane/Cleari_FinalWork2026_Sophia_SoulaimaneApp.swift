@@ -18,7 +18,7 @@ struct Cleari_FinalWork2026_Sophia_SoulaimaneApp: App {
 
     var body: some Scene {
         WindowGroup {
-            FeedView()
+            AuthBackground()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
