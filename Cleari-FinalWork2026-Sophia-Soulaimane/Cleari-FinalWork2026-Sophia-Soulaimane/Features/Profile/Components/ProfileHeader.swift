@@ -14,32 +14,32 @@ struct ProfileHeader: View {
     let memberSince: String
 
     var body: some View {
-        VStack(spacing: 16) {
-
-            // Avatar
+        VStack(spacing: 14) {
             AvatarView(size: 110)
-            // Name
+
             Text(fullName)
                 .font(AppFont.gillSwiftUI(.bold, size: 32))
                 .foregroundColor(.white)
 
-            // Username
             Text(username)
                 .font(AppFont.gillSwiftUI(.bold, size: 20))
                 .foregroundColor(.white.opacity(0.9))
 
-            // Member since
             Text("Member since \(memberSince)")
                 .font(AppFont.gillSwiftUI(.regular, size: 14))
                 .foregroundColor(.white.opacity(0.7))
 
-            // Stats
-            HStack(spacing: 40) {
+            HStack {
                 ProfileStat(number: "24", label: "Appointments")
+                Spacer()
                 ProfileStat(number: "3", label: "Appointments")
+                Spacer()
                 ProfileStat(number: "1", label: "Dermatologist")
             }
             .padding(.top, 10)
+            .padding(.horizontal, 40) 
+            .padding(.top, 8)
+            .padding(.horizontal, 28)
         }
     }
 }

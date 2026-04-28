@@ -18,8 +18,11 @@ struct ProfileStat: View {
                 .foregroundColor(.white)
 
             Text(label)
-                .font(AppFont.gillSwiftUI(.bold, size: 16))
+                .font(AppFont.gillSwiftUI(.bold, size: 15))
                 .foregroundColor(.white)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
         }
+        .frame(maxWidth: .infinity)
     }
 }

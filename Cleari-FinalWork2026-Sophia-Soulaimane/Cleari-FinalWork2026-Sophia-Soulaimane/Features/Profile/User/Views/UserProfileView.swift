@@ -14,7 +14,7 @@ struct UserProfileView: View {
 
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 34) {
+                    VStack(spacing: 32) {
                         ProfileHeader(
                             imageName: "ProfileSample",
                             fullName: "Anne Dupont",
@@ -22,19 +22,16 @@ struct UserProfileView: View {
                             memberSince: "2026"
                         )
 
-                        VStack(spacing: 18) {
+                        VStack(spacing: 10) {
                             ProfileMenuSection(title: "Account")
-
                             ProfileMenuRow(title: "Edit profile")
                             ProfileMenuRow(title: "Subscription")
 
                             ProfileMenuSection(title: "My skin")
-
                             ProfileMenuRow(title: "Skin goals")
                             ProfileMenuRow(title: "My skin scans")
 
                             ProfileMenuSection(title: "Settings")
-
                             ProfileMenuRow(title: "Appointments")
                             ProfileMenuRow(title: "Privacy  & security")
                             ProfileMenuRow(title: "Help & support")
@@ -42,9 +39,9 @@ struct UserProfileView: View {
                             ProfileMenuRow(title: "Notifications")
                             ProfileMenuRow(title: "Log out", isDestructive: true)
                         }
-                        .padding(.horizontal, 34)
+                        .padding(.horizontal, 32)
                     }
-                    .padding(.top, 70)
+                    .padding(.top, 45)
                     .padding(.bottom, 35)
                 }
 
