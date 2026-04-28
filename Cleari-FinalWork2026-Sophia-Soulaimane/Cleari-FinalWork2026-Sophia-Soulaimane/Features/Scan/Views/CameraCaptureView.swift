@@ -39,5 +39,8 @@ struct CameraCaptureView: View {
         .onDisappear {
             viewModel.stopCamera()
         }
+        .fullScreenCover(item: $viewModel.scanImage) { image in
+            ScanResultView(scanImage: image)
+        }
     }
 }
