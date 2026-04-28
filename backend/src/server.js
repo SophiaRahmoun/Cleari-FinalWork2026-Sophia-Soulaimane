@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-
+const skinScanRoutes = require("./routes/skinScanRoutes");
 const { sequelize } = require("./models");
 
 const authRoutes = require("./routes/authRoutes");
@@ -18,6 +18,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/skin-scan", skinScanRoutes);
+
 
 const PORT = process.env.PORT || 4000;
 

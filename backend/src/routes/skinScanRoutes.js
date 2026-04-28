@@ -1,16 +1,23 @@
 const express = require("express");
 const multer = require("multer");
+
+const authMiddleware = require("../middleware/authMiddleware");
 const { createSkinScan } = require("../controllers/skinScanController");
 
 const router = express.Router();
 
 const upload = multer({
-  storage: multer.memoryStorage(),
+  dest: "uploads/",
   limits: {
-    fileSize: 10 * 1024 * 1024
-  }
+    fileSize: 5 * 1024 * 1024,
+  },
 });
 
-router.post("/", upload.single("image"), createSkinScan);
+router.post(
+  "/analyze",
+  authMiddleware,
+  upload.single("image"),
+  createSkinScan
+);
 
 module.exports = router;

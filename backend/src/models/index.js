@@ -2,6 +2,7 @@ const sequelize = require("../config/database");
 
 const User = require("./User");
 const DermatologistProfile = require("./DermatologistProfile");
+const SkinAnalysis = require("./SkinAnalysis");
 
 User.hasOne(DermatologistProfile, {
   foreignKey: "user_id",
@@ -14,8 +15,20 @@ DermatologistProfile.belongsTo(User, {
   as: "user",
 });
 
+User.hasMany(SkinAnalysis, {
+  foreignKey: "user_id",
+  as: "skinAnalyses",
+  onDelete: "CASCADE",
+});
+
+SkinAnalysis.belongsTo(User, {
+    foreignKey: "user_id",
+    as: "user",
+});
+
 module.exports = {
   sequelize,
   User,
   DermatologistProfile,
+  SkinAnalysis
 };
