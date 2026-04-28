@@ -19,7 +19,7 @@ struct Cleari_FinalWork2026_Sophia_SoulaimaneApp: App {
     var body: some Scene {
         WindowGroup {
             CameraCaptureView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 

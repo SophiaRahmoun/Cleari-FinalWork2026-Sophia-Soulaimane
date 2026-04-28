@@ -2,25 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIBackgroundModes</key>
+	<key>UIAppFonts</key>
 	<array>
-		<string>remote-notification</string>
+		<string>Corporate-ACon-Med-.otf</string>
+		<string>CorporateACondPro-Regular.ttf</string>
+		<string>CorporateAPro-Light.ttf</string>
+		<string>CorporateAPro-Medium.ttf</string>
+		<string>CorporateAPro-Regular.ttf</string>
+		<string>Gill Sans.otf</string>
+		<string>Gill Sans Bold.otf</string>
+		<string>Gill Sans Medium.otf</string>
+		<string>Gill Sans Light.otf</string>
+		<string>Gill Sans Italic.otf</string>
+		<string>Gill Sans Bold Italic.otf</string>
 	</array>
-    
-    <key>UIAppFonts</key>
-    <array>
-        <string>Corporate-ACon-Med-.otf</string>
-        <string>CorporateACondPro-Regular.ttf</string>
-        <string>CorporateAPro-Light.ttf</string>
-        <string>CorporateAPro-Medium.ttf</string>
-        <string>CorporateAPro-Regular.ttf</string>
-
-        <string>Gill Sans.otf</string>
-        <string>Gill Sans Bold.otf</string>
-        <string>Gill Sans Medium.otf</string>
-        <string>Gill Sans Light.otf</string>
-        <string>Gill Sans Italic.otf</string>
-        <string>Gill Sans Bold Italic.otf</string>
-    </array>
 </dict>
 </plist>
