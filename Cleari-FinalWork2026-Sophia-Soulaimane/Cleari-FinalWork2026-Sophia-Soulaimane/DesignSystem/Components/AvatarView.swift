@@ -8,14 +8,23 @@
 import SwiftUI
 
 struct AvatarView: View {
-    let imageName: String
+    var imageName: String? = nil
     var size: CGFloat = 110
 
     var body: some View {
-        Image(imageName)
-            .resizable()
-            .scaledToFill()
-            .frame(width: size, height: size)
-            .clipShape(Circle())
+        Group {
+            if let imageName {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.gray)
+            }
+        }
+        .frame(width: size, height: size)
+        .clipShape(Circle())
     }
 }
