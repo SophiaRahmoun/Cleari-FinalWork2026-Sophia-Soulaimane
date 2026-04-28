@@ -3,3 +3,7 @@ dist
 .env
 *.sqlite.DS_Store
 .DS_Store
+uploads/
+
+.DS_Store
+dt5.ehb.be
