@@ -5,6 +5,7 @@
 //  Created by Soulaimane Saadi on 15/02/2026.
 //
 
+
 import SwiftUI
 import AVFoundation
 
@@ -13,12 +14,13 @@ final class ScanViewModel: NSObject, ObservableObject {
     let cameraSession = AVCaptureSession()
     let photoOutput = AVCapturePhotoOutput()
 
+    @Published var scanImage: UIImage?
+
     func checkCameraPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
 
         case .authorized:
             setupCamera()
-            print("setupCamera started")
 
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
@@ -52,7 +54,6 @@ final class ScanViewModel: NSObject, ObservableObject {
 
         DispatchQueue.global(qos: .userInitiated).async {
             self.cameraSession.startRunning()
-            print("camera starting")
         }
     }
 
@@ -68,6 +69,7 @@ final class ScanViewModel: NSObject, ObservableObject {
     }
 }
 
+// Important
 extension ScanViewModel: AVCapturePhotoCaptureDelegate {
 
     func photoOutput(
@@ -85,6 +87,8 @@ extension ScanViewModel: AVCapturePhotoCaptureDelegate {
             return
         }
 
-        print("Photo taken:", image)
+        DispatchQueue.main.async {
+            self.scanImage = image
+        }
     }
 }
