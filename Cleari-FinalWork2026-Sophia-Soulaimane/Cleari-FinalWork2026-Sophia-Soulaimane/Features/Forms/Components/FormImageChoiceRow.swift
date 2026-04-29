@@ -13,27 +13,19 @@ struct FormImageChoiceRow: View {
     var isSelected: Bool = false
 
     var body: some View {
-        HStack(spacing: 14) {
+        VStack(spacing: 10) {
             Image(imageName)
                 .resizable()
-                .scaledToFill()
-                .frame(width: 56, height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .scaledToFit()
+                .frame(width: 46, height: 46)
+                .foregroundColor(Color("AccentColor"))
 
             Text(title)
-                .font(AppFont.gillSwiftUI(.regular, size: 16))
+                .font(AppFont.gillSwiftUI(.regular, size: 13))
                 .foregroundColor(Color(hex: "1A1018"))
-
-            Spacer()
-
-            if isSelected {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(Color("AccentColor"))
-            }
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(Color.white.opacity(0.6))
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .frame(maxWidth: .infinity)
     }
 }
