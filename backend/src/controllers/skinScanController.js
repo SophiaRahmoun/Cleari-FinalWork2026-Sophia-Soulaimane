@@ -41,6 +41,48 @@ async function createSkinScan(req, res) {
 	}
 }
 
+exports.getLatestScan = async (req, res) => {
+
+	try {
+		const latest = await SkinAnalysis.findOne({
+			where: { user_id: req.user.id },
+			order: [["createdAt", "DESC"]],
+		});
+		if (!latest) {
+			return res.status(404).json({
+				message: "No scan found",
+			});
+		}
+		return res.status(200).json({
+			scan: latest,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error fetching latest scan",
+			error: error.message,
+		});
+	}
+
+};
+
+exports.getScanHistory = async (req, res) => {
+  try {
+    const scans = await SkinAnalysis.findAll({
+      where: { user_id: req.user.id },
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({
+      scans,
+    });
+  }catch (error) {
+    return res.status(500).json({
+      message: "Error fetching scan history",
+      error: error.message,
+    });
+  }
+}
+
 module.exports = {
 	createSkinScan,
 };

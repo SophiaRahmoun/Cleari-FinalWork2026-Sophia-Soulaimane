@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 
 const authMiddleware = require("../middleware/authMiddleware");
-const { createSkinScan } = require("../controllers/skinScanController");
+const { createSkinScan, getLatestScan, getScanHistory } = require("../controllers/skinScanController");
 
 const router = express.Router();
 
@@ -19,5 +19,8 @@ router.post(
   upload.single("image"),
   createSkinScan
 );
+
+router.get("/latest", authMiddleware, getLatestScan);
+router.get("/history", authMiddleware, getScanHistory);
 
 module.exports = router;
