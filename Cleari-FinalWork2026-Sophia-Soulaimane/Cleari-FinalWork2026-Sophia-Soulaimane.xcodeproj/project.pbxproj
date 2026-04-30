@@ -33,29 +33,17 @@
 		847B5D3A2F40C40D00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Cleari-FinalWork2026-Sophia-Soulaimane" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Features/Debunk/Views/DebunkDetailView.swift,
 				Info.plist,
 			);
 			target = 847B5D102F40C40A00224093 /* Cleari-FinalWork2026-Sophia-Soulaimane */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		847B5DC02F42077B00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Copy Bundle Resources" phase from "Cleari-FinalWork2026-Sophia-Soulaimane" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 847B5D0F2F40C40A00224093 /* Resources */;
-			membershipExceptions = (
-				Features/Debunk/Views/DebunkDetailView.swift,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		847B5D132F40C40A00224093 /* Cleari-FinalWork2026-Sophia-Soulaimane */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				847B5D3A2F40C40D00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Cleari-FinalWork2026-Sophia-Soulaimane" target */,
-				847B5DC02F42077B00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Copy Bundle Resources" phase from "Cleari-FinalWork2026-Sophia-Soulaimane" target */,
 			);
 			path = "Cleari-FinalWork2026-Sophia-Soulaimane";
 			sourceTree = "<group>";
