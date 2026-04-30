@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct UserRegisterView: View {
+    @StateObject private var viewModel = AuthViewModel()
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var email = ""
@@ -61,8 +62,15 @@ struct UserRegisterView: View {
                     selectedYear: $selectedYear
                 )
 
-                PrimaryButton(title: "NEXT STEP") {
-                    print("User register tapped")
+                PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
+                    Task {
+                        await viewModel.registerUser(
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            password: password
+                        )
+                    }
                 }
                 .padding(.horizontal, 60)
                 .padding(.top, 10)
