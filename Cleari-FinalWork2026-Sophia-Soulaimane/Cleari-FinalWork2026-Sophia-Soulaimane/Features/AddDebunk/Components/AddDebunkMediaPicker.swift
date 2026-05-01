@@ -17,7 +17,7 @@ struct AddDebunkMediaPicker: View {
                 .foregroundColor(Color("AccentColor"))
                 .frame(maxWidth: .infinity)
                 .frame(height: 74)
-                .background(Color.white.opacity(0.75))
+                .background(Color("AccentColor"))
                 .clipShape(RoundedRectangle(cornerRadius: 18))
                 .shadow(color: .black.opacity(0.14), radius: 9, x: 0, y: 6)
         }

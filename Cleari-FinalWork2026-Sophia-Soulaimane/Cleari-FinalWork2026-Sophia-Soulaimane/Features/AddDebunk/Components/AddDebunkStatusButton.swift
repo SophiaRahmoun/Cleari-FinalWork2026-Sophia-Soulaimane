@@ -25,7 +25,7 @@ struct AddDebunkStatusButton: View {
             .foregroundColor(Color(hex: "1A1018"))
             .frame(height: 46)
             .padding(.horizontal, 20)
-            .background(isSelected ? Color(hex: "F4D4D7") : Color.white.opacity(0.75))
+            .background(Color("AccentColor"))
             .overlay(
                 Capsule()
                     .stroke(Color(hex: "1A1018"), lineWidth: 1.5)
