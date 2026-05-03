@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct LoginView: View {
+    var onSuccess: () -> Void = {}
+    var onRegister: () -> Void = {}
+    
     @StateObject private var viewModel = AuthViewModel()
     @State private var email = ""
     @State private var password = ""
@@ -45,9 +48,10 @@ struct LoginView: View {
                     Task {
 
                         await viewModel.login(email: email, password: password)
-
                     }
-
+                    if viewModel.isLoggedIn {
+                        onSuccess()
+                    }
                 }
 
                 .padding(.top, 20)

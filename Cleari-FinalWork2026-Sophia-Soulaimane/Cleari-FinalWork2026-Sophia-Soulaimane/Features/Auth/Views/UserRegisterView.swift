@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct UserRegisterView: View {
+    var onSuccess: () -> Void = {}
     @StateObject private var viewModel = AuthViewModel()
     @State private var firstName = ""
     @State private var lastName = ""
@@ -64,6 +65,11 @@ struct UserRegisterView: View {
 
                 PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
                     Task {
+                        if viewModel.isLoggedIn {
+
+                            onSuccess()
+
+                        }
                         await viewModel.registerUser(
                             firstName: firstName,
                             lastName: lastName,
