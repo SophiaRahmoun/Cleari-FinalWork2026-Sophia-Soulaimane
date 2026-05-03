@@ -42,6 +42,7 @@ final class ConsultationFormViewModel: ObservableObject {
         formData.mainConcern != nil &&
         formData.wantsPhotoUpload != nil &&
         formData.consentShared
+        
     }
 
     func submitForm() async {

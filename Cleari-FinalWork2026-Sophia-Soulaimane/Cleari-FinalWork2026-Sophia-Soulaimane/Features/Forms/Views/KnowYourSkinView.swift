@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct KnowYourSkinView: View {
-    @State private var selectedFeeling: String?
-    @State private var selectedReaction: String?
-    @State private var selectedFlakiness: String?
+    @ObservedObject var viewModel: ConsultationFormViewModel
 
     var body: some View {
         ZStack {
@@ -69,6 +67,8 @@ struct KnowYourSkinView: View {
         }
         .padding(.top, 55)
     }
+    
+    // question 1
 
     private var questionOne: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -78,73 +78,76 @@ struct KnowYourSkinView: View {
 
             HStack(spacing: 12) {
                 Button {
-                    selectedFeeling = "Dry / Tight"
+                    viewModel.formData.skinFeeling = "Dry / Tight"
                 } label: {
                     FormImageChoiceRow(
                         imageName: "skin_dry",
                         title: "Dry/ Tight",
-                        isSelected: selectedFeeling == "Dry / Tight"
+                        isSelected: viewModel.formData.skinFeeling == "Dry / Tight"
                     )
                 }
 
                 Button {
-                    selectedFeeling = "Comfortable"
+                    viewModel.formData.skinFeeling = "Comfortable"
                 } label: {
                     FormImageChoiceRow(
                         imageName: "skin_comfortable",
                         title: "Comfortable",
-                        isSelected: selectedFeeling == "Comfortable"
+                        isSelected: viewModel.formData.skinFeeling == "Comfortable"
                     )
                 }
 
                 Button {
-                    selectedFeeling = "Shiny on T-zone"
+                    viewModel.formData.skinFeeling = "Shiny on T-zone"
                 } label: {
                     FormImageChoiceRow(
                         imageName: "skin_shiny_tzone",
                         title: "Shiny\non T-zone",
-                        isSelected: selectedFeeling == "Shiny on T-zone"
+                        isSelected: viewModel.formData.skinFeeling == "Shiny on T-zone"
                     )
                 }
 
                 Button {
-                    selectedFeeling = "Shiny all over"
+                    viewModel.formData.skinFeeling = "Shiny all over"
                 } label: {
                     FormImageChoiceRow(
                         imageName: "skin_shiny_all",
                         title: "Shiny\nall over",
-                        isSelected: selectedFeeling == "Shiny all over"
+                        isSelected: viewModel.formData.skinFeeling == "Shiny all over"
                     )
                 }
             }
             .buttonStyle(.plain)
         }
     }
-
+    
+// question 2
     private var questionTwo: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("2)   How does your skin react to new products?")
                 .font(AppFont.gillSwiftUI(.regular, size: 15))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            Button { selectedReaction = "Often reacts" } label: {
-                FormCheckbox(title: "Often reacts (redness, burning, itching)", isSelected: selectedReaction == "Often reacts")
+            Button { viewModel.formData.productReaction = "Often reacts" } label: {
+                FormCheckbox(title: "Often reacts (redness, burning, itching)", isSelected: viewModel.formData.productReaction == "Often reacts")
             }
 
-            Button { selectedReaction = "Sometimes reacts" } label: {
-                FormCheckbox(title: "Sometimes reacts", isSelected: selectedReaction == "Sometimes reacts")
+            Button { viewModel.formData.productReaction = "Sometimes reacts" } label: {
+                FormCheckbox(title: "Sometimes reacts", isSelected: viewModel.formData.productReaction == "Sometimes reacts")
             }
 
-            Button { selectedReaction = "Rarely reacts" } label: {
-                FormCheckbox(title: "Rarely reacts", isSelected: selectedReaction == "Rarely reacts")
+            Button { viewModel.formData.productReaction = "Rarely reacts" } label: {
+                FormCheckbox(title: "Rarely reacts", isSelected: viewModel.formData.productReaction == "Rarely reacts")
             }
 
-            Button { selectedReaction = "I’m not sure" } label: {
-                FormCheckbox(title: "I’m not sure", isSelected: selectedReaction == "I’m not sure")
+            Button { viewModel.formData.productReaction = "I’m not sure" } label: {
+                FormCheckbox(title: "I’m not sure", isSelected: viewModel.formData.productReaction == "I’m not sure")
             }
         }
         .buttonStyle(.plain)
     }
+    
+    // question 3
 
     private var questionThree: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -152,16 +155,16 @@ struct KnowYourSkinView: View {
                 .font(AppFont.gillSwiftUI(.regular, size: 15))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            Button { selectedFlakiness = "Yes" } label: {
-                FormCheckbox(title: "Yes", isSelected: selectedFlakiness == "Yes")
+            Button { viewModel.formData.flakiness = "Yes" } label: {
+                FormCheckbox(title: "Yes", isSelected: viewModel.formData.flakiness == "Yes")
             }
 
-            Button { selectedFlakiness = "No" } label: {
-                FormCheckbox(title: "No", isSelected: selectedFlakiness == "No")
+            Button { viewModel.formData.flakiness = "No" } label: {
+                FormCheckbox(title: "No", isSelected: viewModel.formData.flakiness == "No")
             }
 
-            Button { selectedFlakiness = "Sometimes" } label: {
-                FormCheckbox(title: "Sometimes", isSelected: selectedFlakiness == "Sometimes")
+            Button { viewModel.formData.flakiness = "Sometimes" } label: {
+                FormCheckbox(title: "Sometimes", isSelected: viewModel.formData.flakiness == "Sometimes")
             }
         }
         .buttonStyle(.plain)

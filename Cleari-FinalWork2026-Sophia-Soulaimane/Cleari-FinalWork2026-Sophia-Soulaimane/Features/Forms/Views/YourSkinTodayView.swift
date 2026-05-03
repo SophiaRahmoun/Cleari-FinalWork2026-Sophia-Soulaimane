@@ -8,18 +8,12 @@
 import SwiftUI
 
 struct YourSkinTodayView: View {
-    @State private var selectedConcern: String?
-    @State private var uploadPhotosAnswer: String?
-    @State private var optionalPhotosChecked = false
-    @State private var consentChecked = false
+    @ObservedObject var viewModel: ConsultationFormViewModel
 
     var body: some View {
         ZStack {
-            LinearGradientBackground(
-                startHex: "C66F8C",
-                endHex: "F9BDB9"
-            )
-            .ignoresSafeArea()
+            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header
@@ -35,7 +29,9 @@ struct YourSkinTodayView: View {
                 Spacer()
 
                 SecondaryButton(title: "CONFIRM") {
-                    print("Confirm tapped")
+                    Task {
+                        await viewModel.submitForm()
+                    }
                 }
                 .padding(.horizontal, 100)
                 .padding(.bottom, 42)
@@ -43,7 +39,6 @@ struct YourSkinTodayView: View {
         }
     }
 }
-
 
 extension YourSkinTodayView {
     private var header: some View {
@@ -53,17 +48,9 @@ extension YourSkinTodayView {
                 .foregroundColor(Color(hex: "1A1018"))
 
             HStack(spacing: 6) {
-                Capsule()
-                    .fill(Color(hex: "1A1018"))
-                    .frame(width: 78, height: 6)
-
-                Capsule()
-                    .fill(Color(hex: "1A1018"))
-                    .frame(width: 78, height: 6)
-
-                Capsule()
-                    .fill(Color(hex: "1A1018"))
-                    .frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
             }
 
             Text("Help us understand your current situation better.")
@@ -84,46 +71,27 @@ extension YourSkinTodayView {
 
             VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 10) {
-                    Button {
-                        selectedConcern = "Pimple / Acne"
-                    } label: {
-                        FormChoicePill(
-                            title: "Pimple / Acne",
-                            isSelected: selectedConcern == "Pimple / Acne"
-                        )
-                    }
-
-                    Button {
-                        selectedConcern = "Redness/Sensitivity"
-                    } label: {
-                        FormChoicePill(
-                            title: "Redness/Sensitivity",
-                            isSelected: selectedConcern == "Redness/Sensitivity"
-                        )
-                    }
+                    concernButton("Pimple / Acne")
+                    concernButton("Redness/Sensitivity")
                 }
 
                 HStack(spacing: 10) {
-                    Button {
-                        selectedConcern = "Dryness / Tightness"
-                    } label: {
-                        FormChoicePill(
-                            title: "Dryness / Tightness",
-                            isSelected: selectedConcern == "Dryness / Tightness"
-                        )
-                    }
-
-                    Button {
-                        selectedConcern = "Uneven tone / Dark spots"
-                    } label: {
-                        FormChoicePill(
-                            title: "Uneven tone / Dark spots",
-                            isSelected: selectedConcern == "Uneven tone / Dark spots"
-                        )
-                    }
+                    concernButton("Dryness / Tightness")
+                    concernButton("Uneven tone / Dark spots")
                 }
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    private func concernButton(_ title: String) -> some View {
+        Button {
+            viewModel.formData.mainConcern = title
+        } label: {
+            FormChoicePill(
+                title: title,
+                isSelected: viewModel.formData.mainConcern == title
+            )
         }
     }
 }
@@ -136,15 +104,21 @@ extension YourSkinTodayView {
                 .foregroundColor(Color(hex: "1A1018"))
 
             Button {
-                uploadPhotosAnswer = "Yes"
+                viewModel.formData.wantsPhotoUpload = "Yes"
             } label: {
-                FormCheckbox(title: "Yes", isSelected: uploadPhotosAnswer == "Yes")
+                FormCheckbox(
+                    title: "Yes",
+                    isSelected: viewModel.formData.wantsPhotoUpload == "Yes"
+                )
             }
 
             Button {
-                uploadPhotosAnswer = "Not sure"
+                viewModel.formData.wantsPhotoUpload = "Not sure"
             } label: {
-                FormCheckbox(title: "Not sure", isSelected: uploadPhotosAnswer == "Not sure")
+                FormCheckbox(
+                    title: "Not sure",
+                    isSelected: viewModel.formData.wantsPhotoUpload == "Not sure"
+                )
             }
         }
         .buttonStyle(.plain)
@@ -155,20 +129,20 @@ extension YourSkinTodayView {
     private var privacyChecks: some View {
         VStack(alignment: .leading, spacing: 22) {
             Button {
-                optionalPhotosChecked.toggle()
+                viewModel.formData.optionalPhotosAccepted.toggle()
             } label: {
                 FormCheckbox(
                     title: "Photos are optional and only shared with\ncertified dermatologists",
-                    isSelected: optionalPhotosChecked
+                    isSelected: viewModel.formData.optionalPhotosAccepted
                 )
             }
 
             Button {
-                consentChecked.toggle()
+                viewModel.formData.consentShared.toggle()
             } label: {
                 FormCheckbox(
                     title: "I agree to share this information only with\ncertified dermatologists for consultation\npurposes",
-                    isSelected: consentChecked
+                    isSelected: viewModel.formData.consentShared
                 )
             }
         }

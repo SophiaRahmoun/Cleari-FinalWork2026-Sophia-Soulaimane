@@ -21,6 +21,7 @@ struct ConsultationFormData: Codable {
 
     var mainConcern: String?
     var wantsPhotoUpload: String?
+    var optionalPhotosAccepted: Bool
     var consentShared: Bool
 
     init(
@@ -33,6 +34,7 @@ struct ConsultationFormData: Codable {
         hasSkinIssues: String? = nil,
         mainConcern: String? = nil,
         wantsPhotoUpload: String? = nil,
+        optionalPhotosAccepted: Bool = false,
         consentShared: Bool = false
     ) {
         self.skinFeeling = skinFeeling
@@ -44,6 +46,7 @@ struct ConsultationFormData: Codable {
         self.hasSkinIssues = hasSkinIssues
         self.mainConcern = mainConcern
         self.wantsPhotoUpload = wantsPhotoUpload
+        self.optionalPhotosAccepted = optionalPhotosAccepted
         self.consentShared = consentShared
     }
 }
