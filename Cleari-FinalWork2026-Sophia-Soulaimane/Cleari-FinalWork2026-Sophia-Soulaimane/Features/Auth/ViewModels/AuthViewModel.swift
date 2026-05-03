@@ -39,19 +39,22 @@ final class AuthViewModel: ObservableObject {
         errorMessage = nil
                 
         do {
-                  let response: AuthResponse = try await post(
-                      endpoint: "/auth/register-user",
-                      body: RegisterUserRequest(
-                        username: "\(firstName) \(lastName)",
-                        email: email,
-                        password: password
-                      )
-                  )
+            print("REGISTER REQUEST SENT")
+            let response: AuthResponse = try await post(
+                endpoint: "/auth/register-user",
+                body: RegisterUserRequest(
+                    username: "\(firstName) \(lastName)",
+                    email: email,
+                    password: password
+                )
+            )
+            print("REGISTER RESPONSE RECEIVED:", response)
             
-                  TokenStorage.shared.token = response.token
-                  currentUser = response.user
-                  isLoggedIn = true
-              } catch {
+            TokenStorage.shared.token = response.token
+            currentUser = response.user
+            isLoggedIn = true
+            print("IS LOGGED IN SET TO TRUE")
+        } catch {
                   errorMessage = error.localizedDescription
               }
               isLoading = false

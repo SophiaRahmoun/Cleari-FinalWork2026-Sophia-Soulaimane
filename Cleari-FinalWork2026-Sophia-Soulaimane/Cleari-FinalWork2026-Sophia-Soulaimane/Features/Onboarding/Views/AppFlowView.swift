@@ -55,6 +55,7 @@ struct AppFlowView: View {
 
                 case .userRegister:
                     UserRegisterView {
+                        path.removeLast(path.count)
                         path.append(AppRoute.scan)
                     }
 

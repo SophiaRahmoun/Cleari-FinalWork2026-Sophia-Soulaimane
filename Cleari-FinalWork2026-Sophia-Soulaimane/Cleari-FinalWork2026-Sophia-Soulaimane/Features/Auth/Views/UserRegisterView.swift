@@ -9,91 +9,127 @@ import SwiftUI
 
 struct UserRegisterView: View {
     var onSuccess: () -> Void = {}
+    var onBack: () -> Void = {}
+    
+    
     @StateObject private var viewModel = AuthViewModel()
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var email = ""
     @State private var password = ""
-
-    @State private var selectedMonth = ""
-    @State private var selectedDay = ""
-    @State private var selectedYear = ""
-
+    
+    @State private var birthdate = Date()
+    
     var body: some View {
         ZStack {
             RadialGradientBackground(
                 startHex: "C66F8C",
                 endHex: "F9BDB9"
             )
-            VStack(spacing: 24) {
-                TypographyLabel(
-                    text: "Create your account",
-                    style: .h1Italic,
-                    color: .black
-                )
-                .padding(.top, 85)
+            .ignoresSafeArea()
+            ScrollView(showsIndicators: false) {
 
-                AuthRegisterInput(
-                    label: "Voornaam",
-                    text: $firstName,
-                    maxLength: 50
-                )
+                          VStack(spacing: 18) {
 
-                AuthRegisterInput(
-                    label: "Achternaam",
-                    text: $lastName,
-                    maxLength: 50
-                )
+                              HStack {
 
-                AuthRegisterInput(
-                    label: "Email",
-                    text: $email,
-                    maxLength: 50
-                )
+                                  Button {
 
-                AuthRegisterInput(
-                    label: "Password",
-                    text: $password,
-                    maxLength: 50
-                )
+                                      onBack()
 
-                AuthBirthdatePicker(
-                    selectedMonth: $selectedMonth,
-                    selectedDay: $selectedDay,
-                    selectedYear: $selectedYear
-                )
+                                  } label: {
 
-                PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
-                    Task {
-                        if viewModel.isLoggedIn {
+                                      Image(systemName: "chevron.left")
 
-                            onSuccess()
+                                          .font(.system(size: 22, weight: .bold))
 
-                        }
-                        await viewModel.registerUser(
-                            firstName: firstName,
-                            lastName: lastName,
-                            email: email,
-                            password: password
-                        )
-                    }
+                                          .foregroundColor(.white)
+
+                                          .padding(12)
+
+                                  }
+
+                                  Spacer()
+
+                              }
+
+                              .padding(.top, 20)
+
+                              TypographyLabel(
+
+                                  text: "Create your account",
+
+                                  style: .h1Italic,
+
+                                  color: .black
+
+                              )
+
+                              .padding(.top, 5)
+
+                              VStack(spacing: 16) {
+
+                                  AuthRegisterInput(label: "First Name", text: $firstName, maxLength: 20)
+
+                                  AuthRegisterInput(label: "Surname", text: $lastName, maxLength: 20)
+
+                                  AuthRegisterInput(label: "Email", text: $email, maxLength: 20)
+
+                                  AuthRegisterInput(label: "Password", text: $password, maxLength: 25, isSecure: true)
+
+                                  AuthBirthdatePicker(birthdate: $birthdate)
+
+                              }
+
+                              .padding(.horizontal, 8)
+
+                              PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
+                                  Task {
+                                      await viewModel.registerUser(
+                                          firstName: firstName,
+                                          lastName: lastName,
+                                          email: email,
+                                          password: password
+                                      )
+                                  }
+                              }
+
+                              .padding(.horizontal, 60)
+
+                              .padding(.top, 8)
+
+                             
+                             
+
+                              AuthBottomLink(
+                                  text: "Already have an account?",
+
+                                  linkText: "Sign in"
+
+                              )
+
+                              .frame(maxWidth: .infinity, alignment: .leading)
+
+                              .padding(.top, 8)
+
+                              Spacer(minLength: 30)
+
+                          }
+
+                          .padding(.horizontal, 32)
+
+                      }
+            .onChange(of: viewModel.isLoggedIn) { _, isLoggedIn in
+                if isLoggedIn {
+                    print("REGISTER SUCCESS → GO TO SCAN")
+                    onSuccess()
                 }
-                .padding(.horizontal, 60)
-                .padding(.top, 10)
-
-                AuthBottomLink(
-                    text: "Already have an account?",
-                    linkText: "Sign in"
-                )
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 18)
-
-                Spacer()
             }
-            .padding(.horizontal, 32)
-        }
-    }
-}
+
+                  }
+
+              }
+          }
 
 #Preview {
     UserRegisterView()

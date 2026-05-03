@@ -8,5 +8,5 @@
 import Foundation
 
 enum APIConfig {
-    static let baseURL = "https://localhost:4000/api"
+    static let baseURL = "http://localhost:4000/api"
 }

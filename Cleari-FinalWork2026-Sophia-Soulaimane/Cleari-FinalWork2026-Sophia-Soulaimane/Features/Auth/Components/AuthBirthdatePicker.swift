@@ -1,56 +1,30 @@
-//
-//  AuthBirthdatePicker.swift
-//  Cleari-FinalWork2026-Sophia-Soulaimane
-//
-//  Created by Soulaimane Saadi on 27/04/2026.
-//
-
 import SwiftUI
 
 struct AuthBirthdatePicker: View {
-    @Binding var selectedMonth: String
-    @Binding var selectedDay: String
-    @Binding var selectedYear: String
+    @Binding var birthdate: Date
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            TypographyLabel(
-                text: "Birthdate",
-                style: .button,
-                color: .black
-            )
-
-            HStack(spacing: 18) {
-                dateBox(title: selectedMonth.isEmpty ? "Month" : selectedMonth)
-                    .frame(width: 140)
-
-                dateBox(title: selectedDay.isEmpty ? "Day" : selectedDay)
-                    .frame(width: 90)
-
-                dateBox(title: selectedYear.isEmpty ? "Year" : selectedYear)
-                    .frame(width: 95)
-            }
-        }
-    }
-
-    private func dateBox(title: String) -> some View {
-        HStack {
-            TypographyLabel(
-                text: title,
-                style: .button,
-                color: .black
-            )
-
-            Spacer()
-
-            Image(systemName: "chevron.down")
-                .font(.system(size: 24, weight: .semibold))
+            Text("Birthdate")
+                .font(AppFont.gillSwiftUI(.regular, size: 18))
                 .foregroundColor(.black)
+
+            DatePicker(
+                "",
+                selection: $birthdate,
+                displayedComponents: .date
+            )
+            .datePickerStyle(.compact)
+            .labelsHidden()
+            .padding(.horizontal, 20)
+            .frame(maxWidth: .infinity)
+            .frame(height: 65)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color(hex: "E6DED6"))
+                    .shadow(color: .black.opacity(0.08), radius: 6, y: 4)
+            )
         }
-        .padding(.horizontal, 14)
-        .frame(height: 65)
-        .background(Color(hex: "#E6DED6"))
-        .cornerRadius(8)
     }
 }
 
@@ -58,11 +32,7 @@ struct AuthBirthdatePicker: View {
     ZStack {
         AuthBackground()
 
-        AuthBirthdatePicker(
-            selectedMonth: .constant(""),
-            selectedDay: .constant(""),
-            selectedYear: .constant("")
-        )
-        .padding(.horizontal, 32)
+        AuthBirthdatePicker(birthdate: .constant(Date()))
+            .padding(.horizontal, 32)
     }
 }

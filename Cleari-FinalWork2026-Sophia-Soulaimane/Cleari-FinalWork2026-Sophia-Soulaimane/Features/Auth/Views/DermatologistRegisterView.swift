@@ -66,11 +66,7 @@ struct DermatologistRegisterView: View {
                         maxLength: 50
                     )
 
-                    AuthBirthdatePicker(
-                        selectedMonth: $selectedMonth,
-                        selectedDay: $selectedDay,
-                        selectedYear: $selectedYear
-                    )
+                  
 
                     AuthDocumentUploadBox {
                         print("Upload attest tapped")

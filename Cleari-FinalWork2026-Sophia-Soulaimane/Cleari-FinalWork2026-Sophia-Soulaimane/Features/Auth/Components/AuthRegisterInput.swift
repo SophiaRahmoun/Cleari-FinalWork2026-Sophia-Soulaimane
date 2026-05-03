@@ -11,34 +11,29 @@ struct AuthRegisterInput: View {
     let label: String
     @Binding var text: String
     let maxLength: Int
+    var isSecure: Bool = false
     
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(hex: "#E6DED6")) // beige
-                .shadow(color: .black.opacity(0.1), radius: 6, y: 4)
+        Group {
+                   if isSecure {
+                       SecureField(label, text: $text)
+                   } else {
+                       TextField(label, text: $text)
+                           .textInputAutocapitalization(.never)
+                           .autocorrectionDisabled()
+                   }
+               }
 
-            HStack {
-                // Label
-                TypographyLabel(
-                    text: label,
-                    style: .button,
-                    color: .black
-                )
-
-                Spacer()
-
-                // Counter
-                TypographyLabel(
-                    text: "\(text.count) / \(maxLength)",
-                    style: .button,
-                    color: .black
-                )
-            }
-            .padding(.horizontal, 20)
-        }
-        .frame(height: 65)
-    }
+               .font(AppFont.gillSwiftUI(.regular, size: 18))
+               .foregroundColor(.black)
+               .padding(.horizontal, 20)
+               .frame(height: 65)
+               .background(
+                   RoundedRectangle(cornerRadius: 20)
+                       .fill(Color(hex: "E6DED6"))
+                       .shadow(color: .black.opacity(0.08), radius: 6, y: 4)
+               )
+           }
 }
 
 #Preview {
