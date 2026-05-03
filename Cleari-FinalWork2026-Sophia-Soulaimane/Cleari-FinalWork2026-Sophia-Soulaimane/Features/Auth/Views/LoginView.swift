@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct LoginView: View {
+    var onSuccess: () -> Void = {}
+    var onRegister: () -> Void = {}
+    
+    @StateObject private var viewModel = AuthViewModel()
     @State private var email = ""
     @State private var password = ""
 
@@ -37,10 +41,38 @@ struct LoginView: View {
                     isSecure: true
                 )
 
-                PrimaryButton(title: "NEXT STEP") {
-                    print("login tapped")
+               
+                
+                PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
+
+                    Task {
+
+                        await viewModel.login(email: email, password: password)
+                    }
+                    if viewModel.isLoggedIn {
+                        onSuccess()
+                    }
                 }
+
                 .padding(.top, 20)
+
+                if let error = viewModel.errorMessage {
+
+                    Text(error)
+
+                        .font(.caption)
+
+                        .foregroundColor(.red)
+
+                }
+
+                if viewModel.isLoggedIn {
+
+                    Text("Login successful")
+
+                        .foregroundColor(.green)
+
+                }
 
                 HStack(spacing: 4) {
                     TypographyLabel(

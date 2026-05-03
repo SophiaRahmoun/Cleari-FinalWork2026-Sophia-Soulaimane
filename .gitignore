@@ -2,3 +2,7 @@
 *.sqlite
 node_modules/
 .env
+*.xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+xcuserdata/

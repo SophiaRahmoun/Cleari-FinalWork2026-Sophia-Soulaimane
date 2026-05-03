@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    var onLogin: () -> Void = {}
+        var onRegister: () -> Void = {}
     private let textColor = Color(hex: "1E141D")
     
     var body: some View {
@@ -38,12 +40,17 @@ struct WelcomeView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 50)
                 
-                PrimaryButton(title: "NEXT STEP") {
-                    print("Next step tapped")
+                PrimaryButton(title: "Login") {
+                    onLogin()
                 }
                 .padding(.horizontal, 32)
                 .padding(.top, 40)
                 
+                PrimaryButton(title: "REGISTER") {
+                    onRegister()
+                }
+                .padding(.horizontal, 32)
+                .padding(.top, 16)
                 Spacer()
             }
         }

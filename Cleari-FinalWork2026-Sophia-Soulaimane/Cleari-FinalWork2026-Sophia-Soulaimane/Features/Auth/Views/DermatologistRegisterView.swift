@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct DermatologistRegisterView: View {
-
+    @StateObject private var viewModel = AuthViewModel()
+    var onSuccess: () -> Void = {}
+    
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var email = ""
@@ -64,21 +66,29 @@ struct DermatologistRegisterView: View {
                         maxLength: 50
                     )
 
-                    // Birthdate
                     AuthBirthdatePicker(
                         selectedMonth: $selectedMonth,
                         selectedDay: $selectedDay,
                         selectedYear: $selectedYear
                     )
 
-                    // Document upload
                     AuthDocumentUploadBox {
                         print("Upload attest tapped")
                     }
 
-                    // Button
-                    PrimaryButton(title: "NEXT STEP") {
-                        print("Dermatologist register tapped")
+                    PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
+                        Task {
+                            await viewModel.registerDermatologist(
+                                firstName: firstName,
+                                lastName: lastName,
+                                email: email,
+                                password: password
+                            )
+
+                            if viewModel.isLoggedIn {
+                                onSuccess()
+                            }
+                        }
                     }
                     .padding(.horizontal, 60)
                     .padding(.top, 10)

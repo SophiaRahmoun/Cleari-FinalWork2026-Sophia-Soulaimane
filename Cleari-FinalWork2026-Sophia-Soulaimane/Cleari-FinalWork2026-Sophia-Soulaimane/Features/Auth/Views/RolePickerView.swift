@@ -8,25 +8,24 @@
 import SwiftUI
 
 struct RolePickerView: View {
+    var onContinue: (String) -> Void = { _ in }
+    var onLogin: () -> Void = {}
+    
     @State private var selectedRole: String = "User"
 
     var body: some View {
         ZStack {
             AuthBackground()
-
             VStack(spacing: 0) {
 
-                // Title
                 TypographyLabel(
                     text: "Register as",
                     style: .h1Italic,
                     color: .black
                 )
                 .padding(.top, 70)
-
                 Spacer()
 
-                // Description
                 TypographyLabel(
                     text: "As a user, you can learn to understand your skin better, avoid misinformation, scan your skin for insights, and easily connect with dermatologists when needed",
                     style: .body,
@@ -34,7 +33,6 @@ struct RolePickerView: View {
                 )
                 .padding(.horizontal, 32)
 
-                // ROLE BUTTONS
                 HStack(spacing: 70) {
                     AuthRoleButton(
                         title: "User",
@@ -52,14 +50,12 @@ struct RolePickerView: View {
                 }
                 .padding(.top, 90)
 
-                // Continue button
                 PrimaryButton(title: "CONTINUE") {
-                    print("Selected role: \(selectedRole)")
+                    onContinue(selectedRole)
                 }
                 .padding(.horizontal, 70)
                 .padding(.top, 70)
 
-                // Bottom link
                 AuthBottomLink(
                     text: "already have an account?",
                     linkText: "Login"
