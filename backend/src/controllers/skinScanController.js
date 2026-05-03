@@ -85,4 +85,6 @@ exports.getScanHistory = async (req, res) => {
 
 module.exports = {
 	createSkinScan,
+	getLatestScan: exports.getLatestScan,
+	getScanHistory: exports.getScanHistory,
 };
