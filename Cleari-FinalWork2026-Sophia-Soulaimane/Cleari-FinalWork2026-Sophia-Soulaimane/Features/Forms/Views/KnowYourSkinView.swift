@@ -32,8 +32,10 @@ struct KnowYourSkinView: View {
                 Spacer()
 
                 PrimaryButton(title: "NEXT") {
-                    print("Next tapped")
+                    viewModel.goToNextStep()
                 }
+                .disabled(!viewModel.canGoNextFromStepOne)
+                .opacity(viewModel.canGoNextFromStepOne ? 1 : 0.5)
                 .padding(.horizontal, 100)
                 .padding(.bottom, 34)
             }

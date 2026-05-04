@@ -31,6 +31,8 @@ struct YourSkinHistoryView: View {
                 PrimaryButton(title: "NEXT") {
                     viewModel.goToNextStep()
                 }
+                .disabled(!viewModel.canGoNextFromStepTwo)
+                .opacity(viewModel.canGoNextFromStepTwo ? 1 : 0.5)
                 .padding(.horizontal, 100)
                 .padding(.bottom, 34)
             }

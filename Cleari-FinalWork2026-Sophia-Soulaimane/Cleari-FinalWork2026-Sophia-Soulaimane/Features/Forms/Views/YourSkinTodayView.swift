@@ -33,6 +33,8 @@ struct YourSkinTodayView: View {
                         await viewModel.submitForm()
                     }
                 }
+                .disabled(!viewModel.canSubmit)
+                .opacity(viewModel.canSubmit ? 1 : 0.5)
                 .padding(.horizontal, 100)
                 .padding(.bottom, 42)
             }
