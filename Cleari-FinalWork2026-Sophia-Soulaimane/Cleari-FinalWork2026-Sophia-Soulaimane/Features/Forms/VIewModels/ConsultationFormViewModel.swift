@@ -41,7 +41,7 @@ final class ConsultationFormViewModel: ObservableObject {
     var canSubmit: Bool {
         formData.mainConcern != nil &&
         formData.wantsPhotoUpload != nil &&
-        formData.consentShared
+        formData.consentShared != nil 
         
     }
 
@@ -49,8 +49,20 @@ final class ConsultationFormViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
-        print("form completed:", formData)
+        do {
+            let token = "TON_TOKEN_ICI"
 
-        isLoading = false
+            try await SkinFormService.shared.submitSkinForm(
+                formData: formData,
+                token: token
+            )
+
+            print("Skin form saved successfully")
+            isLoading = false
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Error:", error.localizedDescription)
+            isLoading = false
+        }
     }
 }

@@ -10,19 +10,32 @@
 import Foundation
 
 struct ConsultationFormData: Codable {
+
     var skinFeeling: String?
     var productReaction: String?
     var flakiness: String?
-
     var diagnosedCondition: String?
     var hasAllergies: String?
     var allergiesDetails: String
     var hasSkinIssues: String?
-
     var mainConcern: String?
-    var wantsPhotoUpload: String?
-    var optionalPhotosAccepted: Bool
-    var consentShared: Bool
+    var wantsPhotoUpload: Bool?
+    var consentShared: Bool?
+    var stepCompleted: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case skinFeeling = "skin_feeling"
+        case productReaction = "product_reaction"
+        case flakiness
+        case diagnosedCondition = "diagnosed_condition"
+        case hasAllergies = "has_allergies"
+        case allergiesDetails = "allergies_details"
+        case hasSkinIssues = "has_skin_issues"
+        case mainConcern = "main_concern"
+        case wantsPhotoUpload = "wants_photo_upload"
+        case consentShared = "consent_shared"
+        case stepCompleted = "step_completed"
+    }
 
     init(
         skinFeeling: String? = nil,
@@ -33,9 +46,9 @@ struct ConsultationFormData: Codable {
         allergiesDetails: String = "",
         hasSkinIssues: String? = nil,
         mainConcern: String? = nil,
-        wantsPhotoUpload: String? = nil,
-        optionalPhotosAccepted: Bool = false,
-        consentShared: Bool = false
+        wantsPhotoUpload: Bool? = nil,
+        consentShared: Bool? = nil,
+        stepCompleted: Int? = nil
     ) {
         self.skinFeeling = skinFeeling
         self.productReaction = productReaction
@@ -46,7 +59,7 @@ struct ConsultationFormData: Codable {
         self.hasSkinIssues = hasSkinIssues
         self.mainConcern = mainConcern
         self.wantsPhotoUpload = wantsPhotoUpload
-        self.optionalPhotosAccepted = optionalPhotosAccepted
         self.consentShared = consentShared
+        self.stepCompleted = stepCompleted
     }
 }
