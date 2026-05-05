@@ -23,8 +23,14 @@ User.hasMany(SkinAnalysis, {
 });
 
 SkinAnalysis.belongsTo(User, {
-    foreignKey: "user_id",
-    as: "user",
+  foreignKey: "user_id",
+  as: "user",
+});
+
+User.hasMany(SkinFormAnswer, {
+  foreignKey: "user_id",
+  as: "skinFormAnswers",
+  onDelete: "CASCADE",
 });
 
 SkinFormAnswer.belongsTo(User, {
