@@ -6,20 +6,13 @@
 //
 
 import SwiftUI
-
 struct YourSkinHistoryView: View {
-    @State private var diagnosedAnswer: String?
-    @State private var allergiesAnswer: String?
-    @State private var lesionsAnswer: String?
-    @State private var allergiesDetails: String = ""
+    @ObservedObject var viewModel: ConsultationFormViewModel
 
     var body: some View {
         ZStack {
-            LinearGradientBackground(
-                startHex: "C66F8C",
-                endHex: "F9BDB9"
-            )
-            .ignoresSafeArea()
+            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header
@@ -36,8 +29,10 @@ struct YourSkinHistoryView: View {
                 Spacer()
 
                 PrimaryButton(title: "NEXT") {
-                    print("Next tapped")
+                    viewModel.goToNextStep()
                 }
+                .disabled(!viewModel.canGoNextFromStepTwo)
+                .opacity(viewModel.canGoNextFromStepTwo ? 1 : 0.5)
                 .padding(.horizontal, 100)
                 .padding(.bottom, 34)
             }
@@ -51,17 +46,9 @@ struct YourSkinHistoryView: View {
                 .foregroundColor(Color(hex: "1A1018"))
 
             HStack(spacing: 6) {
-                Capsule()
-                    .fill(Color(hex: "1A1018"))
-                    .frame(width: 78, height: 6)
-
-                Capsule()
-                    .fill(Color(hex: "1A1018"))
-                    .frame(width: 78, height: 6)
-
-                Capsule()
-                    .fill(Color.white)
-                    .frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+                Capsule().fill(Color.white).frame(width: 78, height: 6)
             }
 
             Text("Health-related insights for the dermatologist.")
@@ -71,62 +58,99 @@ struct YourSkinHistoryView: View {
         }
         .padding(.top, 55)
     }
-
+    // Question 4
     private var questionFour: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("4)   Have you ever been diagnosed\nwith a skin in condition?")
+            Text("4)   Have you ever been diagnosed\nwith a skin condition?")
                 .font(AppFont.gillSwiftUI(.regular, size: 15))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            Button { diagnosedAnswer = "Yes" } label: {
-                FormCheckbox(title: "Yes", isSelected: diagnosedAnswer == "Yes")
+            Button {
+                viewModel.formData.diagnosedCondition = "Yes"
+            } label: {
+                FormCheckbox(
+                    title: "Yes",
+                    isSelected: viewModel.formData.diagnosedCondition == "Yes"
+                )
             }
 
-            Button { diagnosedAnswer = "Not sure" } label: {
-                FormCheckbox(title: "Not sure", isSelected: diagnosedAnswer == "Not sure")
+            Button {
+                viewModel.formData.diagnosedCondition = "Not sure"
+            } label: {
+                FormCheckbox(
+                    title: "Not sure",
+                    isSelected: viewModel.formData.diagnosedCondition == "Not sure"
+                )
             }
         }
         .buttonStyle(.plain)
     }
 
+    //Question 5
     private var questionFive: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("5)   Do you have any know any know allergies?")
+            Text("5)   Do you have any known allergies?")
                 .font(AppFont.gillSwiftUI(.regular, size: 15))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            Button { allergiesAnswer = "Yes" } label: {
-                FormCheckbox(title: "Yes", isSelected: allergiesAnswer == "Yes")
+            Button {
+                viewModel.formData.hasAllergies = "Yes"
+            } label: {
+                FormCheckbox(
+                    title: "Yes",
+                    isSelected: viewModel.formData.hasAllergies == "Yes"
+                )
             }
 
-            Button { allergiesAnswer = "Not sure" } label: {
-                FormCheckbox(title: "Not sure", isSelected: allergiesAnswer == "Not sure")
+            Button {
+                viewModel.formData.hasAllergies = "Not sure"
+            } label: {
+                FormCheckbox(
+                    title: "Not sure",
+                    isSelected: viewModel.formData.hasAllergies == "Not sure"
+                )
             }
         }
         .buttonStyle(.plain)
     }
 
+    // Question 6
     private var questionSix: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("6)   If yes, which ones")
                 .font(AppFont.gillSwiftUI(.regular, size: 15))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            FormTextBox(text: $allergiesDetails)        }
+            FormTextBox(text: Binding(
+                get: { viewModel.formData.allergiesDetails },
+                set: { viewModel.formData.allergiesDetails = $0 }
+            ))
+        }
     }
 
+    // Question 7
     private var questionSeven: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("7)   Have you noticed any spots, rashes, or\nlesions recently?")
                 .font(AppFont.gillSwiftUI(.regular, size: 15))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            Button { lesionsAnswer = "Yes" } label: {
-                FormCheckbox(title: "Yes", isSelected: lesionsAnswer == "Yes")
+            Button {
+                viewModel.formData.hasSkinIssues = "Yes"
+            } label: {
+                FormCheckbox(
+                    title: "Yes",
+                    isSelected: viewModel.formData.hasSkinIssues == "Yes"
+                )
             }
 
-            Button { lesionsAnswer = "No" } label: {
-                FormCheckbox(title: "No", isSelected: lesionsAnswer == "No")
+            Button {
+                viewModel.formData.hasSkinIssues = "No"
+            } label: {
+                FormCheckbox(
+                    title: "No",
+                    isSelected: viewModel.formData.hasSkinIssues == "No"
+                )
             }
         }
         .buttonStyle(.plain)
