@@ -28,12 +28,12 @@ struct YourSkinTodayView: View {
 
                 Spacer()
 
-                SecondaryButton(title: "CONFIRM") {
+                SecondaryButton(title: viewModel.isLoading ? "SAVING..." : "CONFIRM") {
                     Task {
                         await viewModel.submitForm()
                     }
                 }
-                .disabled(!viewModel.canSubmit)
+                .disabled(!viewModel.canSubmit || viewModel.isLoading)
                 .opacity(viewModel.canSubmit ? 1 : 0.5)
                 .padding(.horizontal, 100)
                 .padding(.bottom, 42)
@@ -131,20 +131,11 @@ extension YourSkinTodayView {
     private var privacyChecks: some View {
         VStack(alignment: .leading, spacing: 22) {
             Button {
-                viewModel.formData.wantsPhotoUpload = true
+                viewModel.formData.consentShared = true
             } label: {
                 FormCheckbox(
-                    title: "Yes",
-                    isSelected: viewModel.formData.wantsPhotoUpload == true
-                )
-            }
-
-            Button {
-                viewModel.formData.wantsPhotoUpload = false
-            } label: {
-                FormCheckbox(
-                    title: "Not sure",
-                    isSelected: viewModel.formData.wantsPhotoUpload == false
+                    title: "I agree to share this information only with\ncertified dermatologists for consultation\npurposes",
+                    isSelected: viewModel.formData.consentShared == true
                 )
             }
         }
