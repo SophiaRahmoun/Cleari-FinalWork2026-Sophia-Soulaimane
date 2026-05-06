@@ -44,7 +44,7 @@ final class ConsultationFormViewModel: ObservableObject {
         formData.consentShared != nil 
         
     }
-
+/*
     func submitForm() async {
         isLoading = true
         errorMessage = nil
@@ -55,6 +55,26 @@ final class ConsultationFormViewModel: ObservableObject {
             try await SkinFormService.shared.submitSkinForm(
                 formData: formData,
                 token: token
+            )
+
+            print("Skin form saved successfully")
+            isLoading = false
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Error:", error.localizedDescription)
+            isLoading = false
+        }
+    }
+ */
+    func submitForm() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            formData.stepCompleted = 3
+
+            try await SkinFormService.shared.submitSkinForm(
+                formData: formData
             )
 
             print("Skin form saved successfully")

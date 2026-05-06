@@ -85,12 +85,22 @@ struct UserRegisterView: View {
 
                               PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
                                   Task {
+                                      print("BUTTON CLICKED")
+
                                       await viewModel.registerUser(
                                           firstName: firstName,
                                           lastName: lastName,
                                           email: email,
                                           password: password
                                       )
+
+                                      print("AFTER REGISTER")
+                                      print("ERROR:", viewModel.errorMessage ?? "no error")
+
+                                      if viewModel.errorMessage == nil {
+                                          print("CALLING onSuccess()")
+                                          onSuccess()
+                                      }
                                   }
                               }
 
@@ -119,12 +129,6 @@ struct UserRegisterView: View {
                           .padding(.horizontal, 32)
 
                       }
-            .onChange(of: viewModel.isLoggedIn) { _, isLoggedIn in
-                if isLoggedIn {
-                    print("REGISTER SUCCESS → GO TO SCAN")
-                    onSuccess()
-                }
-            }
 
                   }
 

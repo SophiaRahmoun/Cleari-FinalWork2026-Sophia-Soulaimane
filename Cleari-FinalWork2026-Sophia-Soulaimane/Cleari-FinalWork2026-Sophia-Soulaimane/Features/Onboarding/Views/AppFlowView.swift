@@ -13,6 +13,7 @@ enum AppRoute: Hashable {
     case rolePicker
     case userRegister
     case dermatologistRegister
+    case consultationForm
     case scan
 }
 
@@ -21,26 +22,35 @@ struct AppFlowView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            WelcomeView {
-                path.append(AppRoute.login)
-            } onRegister: {
-                path.append(AppRoute.rolePicker)
-            }
+            WelcomeView(
+                onLogin: {
+                    path.append(AppRoute.login)
+                },
+                onRegister: {
+                    path.append(AppRoute.rolePicker)
+                }
+            )
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
                 case .welcome:
-                    WelcomeView {
-                        path.append(AppRoute.login)
-                    } onRegister: {
-                        path.append(AppRoute.rolePicker)
-                    }
+                    WelcomeView(
+                        onLogin: {
+                            path.append(AppRoute.login)
+                        },
+                        onRegister: {
+                            path.append(AppRoute.rolePicker)
+                        }
+                    )
 
                 case .login:
-                    LoginView {
-                        path.append(AppRoute.scan)
-                    } onRegister: {
-                        path.append(AppRoute.rolePicker)
-                    }
+                    LoginView(
+                        onSuccess: {
+                            path.append(AppRoute.scan)
+                        },
+                        onRegister: {
+                            path.append(AppRoute.rolePicker)
+                        }
+                    )
 
                 case .rolePicker:
                     RolePickerView { role in
@@ -54,15 +64,24 @@ struct AppFlowView: View {
                     }
 
                 case .userRegister:
-                    UserRegisterView {
-                        path.removeLast(path.count)
-                        path.append(AppRoute.scan)
-                    }
+                    UserRegisterView(
+                        onSuccess: {
+                            print("APPFLOW RECEIVED SUCCESS → GO TO FORM")
+                            path = NavigationPath()
+                            path.append(AppRoute.consultationForm)
+                        },
+                        onBack: {
+                            path.removeLast()
+                        }
+                    )
 
                 case .dermatologistRegister:
                     DermatologistRegisterView {
                         path.append(AppRoute.scan)
                     }
+
+                case .consultationForm:
+                    ConsultationFormView()
 
                 case .scan:
                     CameraCaptureView()
