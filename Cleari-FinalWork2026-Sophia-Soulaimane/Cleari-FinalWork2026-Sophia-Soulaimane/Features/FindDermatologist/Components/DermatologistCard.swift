@@ -42,7 +42,7 @@ struct DermatologistCard: View {
             Spacer()
 
             Image(systemName: "arrow.down.left")
-                .font(.system(size: 26, weight: .regular))
+                .font(.system(size: 20, weight: .regular))
                 .foregroundColor(.white)
         }
         .padding(.horizontal, 22)
