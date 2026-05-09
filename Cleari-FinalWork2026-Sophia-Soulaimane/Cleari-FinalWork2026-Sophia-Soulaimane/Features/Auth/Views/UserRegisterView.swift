@@ -93,13 +93,9 @@ struct UserRegisterView: View {
                                       )
                                   }
                               }
-
                               .padding(.horizontal, 60)
-
                               .padding(.top, 8)
 
-                             
-                             
 
                               AuthBottomLink(
                                   text: "Already have an account?",
