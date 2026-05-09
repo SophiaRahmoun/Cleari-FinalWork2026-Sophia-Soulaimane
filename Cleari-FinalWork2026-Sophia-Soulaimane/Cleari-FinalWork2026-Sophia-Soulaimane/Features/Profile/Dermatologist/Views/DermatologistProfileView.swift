@@ -25,8 +25,8 @@ struct DermatologistProfileView: View {
 
                 expertiseSection
 
-                PrimaryButton(title: "take appointment") {
-                    print("Take appointment tapped")
+                PrimaryButton(title: "schedule") {
+                    print("schedule appointment tapped")
                 }
                 .padding(.horizontal, 70)
             }
@@ -69,7 +69,7 @@ struct DermatologistProfileView: View {
             HStack(spacing: 10) {
                 DarkLabel(title: "Brussels")
                 DarkLabel(title: "Female")
-                DarkLabel(title: "Online In-person")
+                DarkLabel(title: "Flexible")
             }
 
             HStack(spacing: 10) {
