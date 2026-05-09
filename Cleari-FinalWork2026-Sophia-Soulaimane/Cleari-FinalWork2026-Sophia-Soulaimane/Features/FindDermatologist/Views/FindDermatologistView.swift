@@ -5,69 +5,57 @@
     //  Created by Soulaimane Saadi on 29/04/2026.
     //
 
-    import SwiftUI
+import SwiftUI
 
-    struct FindDermatologistView: View {
-        var body: some View {
-            ZStack {
-                LinearGradientBackground(
-                    startHex: "C66F8C",
-                    endHex: "F9BDB9"
-                )
-                .ignoresSafeArea()
+struct FindDermatologistView: View {
+    private let dermatologists = Dermatologist.mockDermatologists
 
-                VStack(spacing: 0) {
-                    Spacer()
+    var body: some View {
+        ZStack {
+            LinearGradientBackground(
+                startHex: "C66F8C",
+                endHex: "F9BDB9"
+            )
+            .ignoresSafeArea()
 
-                    VStack(alignment: .leading, spacing: 26) {
-                        Text("Recommended\ndermatologist")
-                            .font(AppFont.gillSwiftUI(.regular, size: 42))
-                            .foregroundColor(Color(hex: "1A1018"))
-                            .lineSpacing(4)
+            VStack(spacing: 0) {
+                Spacer()
 
-                        HStack(spacing: 8) {
-                            DermatologistFilterLabel(title: "Any", isSelected: true)
-                            DermatologistFilterLabel(title: "Male")
-                            DermatologistFilterLabel(title: "Female")
-                            DermatologistFilterLabel(title: "Location")
-                        }
+                VStack(alignment: .leading, spacing: 26) {
+                    Text("Recommended\ndermatologist")
+                        .font(AppFont.gillSwiftUI(.regular, size: 42))
+                        .foregroundColor(Color(hex: "1A1018"))
+                        .lineSpacing(4)
 
-                        Text("Top matches for you")
-                            .font(AppFont.gillSwiftUI(.regular, size: 18))
-                            .foregroundColor(Color(hex: "1A1018"))
+                    HStack(spacing: 8) {
+                        DermatologistFilterLabel(title: "Any", isSelected: true)
+                        DermatologistFilterLabel(title: "Male")
+                        DermatologistFilterLabel(title: "Female")
+                        DermatologistFilterLabel(title: "Location")
+                    }
 
-                        VStack(spacing: 20) {
+                    Text("Top matches for you")
+                        .font(AppFont.gillSwiftUI(.regular, size: 18))
+                        .foregroundColor(Color(hex: "1A1018"))
+
+                    VStack(spacing: 20) {
+                        ForEach(dermatologists) { dermatologist in
                             DermatologistCard(
-                                imageName: "ProfileSample",
-                                name: "Dr. Sarah Ben Ali",
-                                description: "Lorem ipsum",
-                                city: "Brussels",
-                                rating: "4.9"
-                            )
-
-                            DermatologistCard(
-                                imageName: "ProfileSample",
-                                name: "Dr. Halioui Saïd",
-                                description: "Lorem ipsum",
-                                city: "Brussels",
-                                rating: "4.9"
-                            )
-
-                            DermatologistCard(
-                                imageName: "ProfileSample",
-                                name: "Dr. Stefan Tilburgs",
-                                description: "Lorem ipsum",
-                                city: "Brussels",
-                                rating: "4.9"
+                                imageName: dermatologist.imageName,
+                                name: dermatologist.name,
+                                description: dermatologist.description,
+                                city: dermatologist.city,
+                                rating: String(dermatologist.rating)
                             )
                         }
                     }
-                    .padding(.horizontal, 34)
-
-                    Spacer()
-
-                    ScanBottomBar()
                 }
+                .padding(.horizontal, 34)
+
+                Spacer()
+
+                ScanBottomBar()
             }
         }
     }
+}
