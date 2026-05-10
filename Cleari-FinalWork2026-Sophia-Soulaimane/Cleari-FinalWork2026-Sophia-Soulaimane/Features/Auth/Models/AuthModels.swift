@@ -38,15 +38,10 @@ struct RegisterUserRequest: Codable {
 struct RegisterDermatologistRequest: Codable {
 
     let username: String
-
     let email: String
-
     let password: String
-
     let specialization: String?
-
     let license_number: String?
-
     let bio: String?
 
 }

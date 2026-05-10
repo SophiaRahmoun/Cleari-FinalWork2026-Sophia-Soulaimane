@@ -1,7 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User, DermatologistProfile } = require("../models");
-
+const { isDermatologistInami } = require("../utils/inamiVerification");
+const automaticVerification = isDermatologistInami(inami_number);
 const generateToken = (user) => {
   return jwt.sign(
     {
@@ -76,8 +77,13 @@ exports.registerDermatologist = async (req, res) => {
       username,
       email,
       password,
+      first_name,
+      last_name,
       specialization,
       license_number,
+      inami_number,
+      postal_code,
+      city,
       bio,
       certificate_url,
       language,
@@ -109,8 +115,13 @@ exports.registerDermatologist = async (req, res) => {
 
     await DermatologistProfile.create({
       user_id: user.id,
+      first_name: first_name || null,
+      last_name: last_name || null,
       specialization: specialization || null,
       license_number: license_number || null,
+      inami_number: inami_number || null,
+      postal_code: postal_code || null,
+      city: city || null,
       bio: bio || null,
       certificate_url: certificate_url || null,
       verification_status: "pending",
