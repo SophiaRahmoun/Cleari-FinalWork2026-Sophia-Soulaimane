@@ -23,6 +23,7 @@ final class AuthViewModel: ObservableObject {
                 endpoint: "/auth/login",
                 body: LoginRequest(email: email, password: password)
             )
+            print("LOGIN SUCCESS:", response.user.email)
             
             TokenStorage.shared.token = response.token
             currentUser = response.user

@@ -44,3 +44,7 @@ struct CameraCaptureView: View {
         }
     }
 }
+
+#Preview {
+    CameraCaptureView()
+}
