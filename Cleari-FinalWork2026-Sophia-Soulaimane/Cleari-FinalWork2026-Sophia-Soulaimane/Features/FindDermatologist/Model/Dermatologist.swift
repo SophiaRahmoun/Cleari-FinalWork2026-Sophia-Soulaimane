@@ -23,115 +23,123 @@ struct Dermatologist: Identifiable, Hashable {
 extension Dermatologist {
     static let mockDermatologists: [Dermatologist] = [
         Dermatologist(
-            name: "Dr. Sarah Ben Ali",
-            description: "Specialized in acne and sensitive skin.",
-            city: "Brussels",
+            name: "Dr. Emma Laurent",
+            description: "Focused on eczema and dry skin treatments.",
+            city: "Antwerp",
+            gender: "Female",
+            rating: 4.8,
+            imageName: "ProfileSample",
+            speciality: "Eczema . Dry Skin",
+            experience: "8 years experience",
+            availability: "Weekdays"
+        ),
+
+        Dermatologist(
+            name: "Dr. Adam El Idrissi",
+            description: "Experienced in acne scars and pigmentation.",
+            city: "Ghent",
+            gender: "Male",
+            rating: 4.7,
+            imageName: "ProfileSample",
+            speciality: "Acne Scars . Pigmentation",
+            experience: "12 years experience",
+            availability: "Flexible"
+        ),
+
+        Dermatologist(
+            name: "Dr. Lina Vermeulen",
+            description: "Helping patients with sensitive and reactive skin.",
+            city: "Leuven",
             gender: "Female",
             rating: 4.9,
             imageName: "ProfileSample",
-            speciality: "Acne . Rosacea",
-            experience: "10 years experience",
-            availability: "Flexible"
+            speciality: "Sensitive Skin . Rosacea",
+            experience: "6 years experience",
+            availability: "Evenings"
         ),
+
         Dermatologist(
-            name: "Dr. Halioui Saïd",
-            description: "Focused on skin inflammation and routines.",
+            name: "Dr. Noah Janssens",
+            description: "Specialized in anti-aging and skin rejuvenation.",
             city: "Brussels",
             gender: "Male",
+            rating: 4.6,
+            imageName: "ProfileSample",
+            speciality: "Anti-Aging . Skin Rejuvenation",
+            experience: "14 years experience",
+            availability: "Flexible"
+        ),
+
+        Dermatologist(
+            name: "Dr. Yasmine Haddad",
+            description: "Passionate about treating hormonal acne.",
+            city: "Liège",
+            gender: "Female",
+            rating: 5.0,
+            imageName: "ProfileSample",
+            speciality: "Hormonal Acne . Oily Skin",
+            experience: "9 years experience",
+            availability: "Weekends"
+        ),
+
+        Dermatologist(
+            name: "Dr. Lucas Peeters",
+            description: "Expert in laser treatments and pigmentation.",
+            city: "Namur",
+            gender: "Male",
+            rating: 4.5,
+            imageName: "ProfileSample",
+            speciality: "Laser Treatments . Pigmentation",
+            experience: "11 years experience",
+            availability: "Weekdays"
+        ),
+
+        Dermatologist(
+            name: "Dr. Sofia Karim",
+            description: "Dedicated to helping patients with chronic skin conditions.",
+            city: "Bruges",
+            gender: "Female",
             rating: 4.8,
             imageName: "ProfileSample",
-            speciality: "Sensitive skin",
-            experience: "8 years experience",
-            availability: "Available this week"
+            speciality: "Psoriasis . Eczema",
+            experience: "7 years experience",
+            availability: "Flexible"
         ),
+
         Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
+            name: "Dr. Elias Dubois",
+            description: "Specialized in skin allergies and dermatitis.",
+            city: "Mons",
             gender: "Male",
             rating: 4.7,
             imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
-            
+            speciality: "Dermatitis . Allergies",
+            experience: "13 years experience",
+            availability: "Evenings"
         ),
+
         Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
-            gender: "Male",
-            rating: 4.7,
+            name: "Dr. Ines Moreau",
+            description: "Focused on skincare routines and preventive dermatology.",
+            city: "Charleroi",
+            gender: "Female",
+            rating: 4.9,
             imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
-        ),
-        Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
-            gender: "Male",
-            rating: 4.7,
-            imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
+            speciality: "Preventive Care . Skincare",
+            experience: "5 years experience",
             availability: "Flexible"
         ),
+
         Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
+            name: "Dr. Karim Van Dijk",
+            description: "Experienced in treating acne and uneven skin texture.",
+            city: "Mechelen",
             gender: "Male",
-            rating: 4.7,
+            rating: 4.6,
             imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
-        ),
-        Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
-            gender: "Male",
-            rating: 4.7,
-            imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
-        ),
-        Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
-            gender: "Male",
-            rating: 4.7,
-            imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
-        ),
-        Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
-            gender: "Male",
-            rating: 4.7,
-            imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
-        ),
-        Dermatologist(
-            name: "Dr. Stefan Tilburgs",
-            description: "Expert in pigmentation and skin concerns.",
-            city: "Antwerp",
-            gender: "Male",
-            rating: 4.7,
-            imageName: "ProfileSample",
-            speciality: "Hyperpigmentation",
-            experience: "12 years experience",
-            availability: "Flexible"
+            speciality: "Acne . Skin Texture",
+            experience: "10 years experience",
+            availability: "Weekdays"
         ),
     ]
 }

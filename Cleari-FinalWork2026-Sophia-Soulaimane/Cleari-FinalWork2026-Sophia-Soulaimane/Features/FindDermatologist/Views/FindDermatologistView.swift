@@ -19,50 +19,57 @@ struct FindDermatologistView: View {
     }
 
     var body: some View {
-        ZStack {
-            LinearGradientBackground(
-                startHex: "C66F8C",
-                endHex: "F9BDB9"
-            )
-            .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                LinearGradientBackground(
+                    startHex: "C66F8C",
+                    endHex: "F9BDB9"
+                )
+                .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 26) {
-                        Text("Recommended\ndermatologist")
-                            .font(AppFont.gillSwiftUI(.regular, size: 42))
-                            .foregroundColor(Color(hex: "1A1018"))
-                            .lineSpacing(4)
+                VStack(spacing: 0) {
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 26) {
+                            Text("Recommended\ndermatologist")
+                                .font(AppFont.gillSwiftUI(.regular, size: 42))
+                                .foregroundColor(Color(hex: "1A1018"))
+                                .lineSpacing(4)
 
-                        HStack(spacing: 8) {
-                            filterButton("Any")
-                            filterButton("Male")
-                            filterButton("Female")
-                            DermatologistFilterLabel(title: "Location")
-                        }
+                            HStack(spacing: 8) {
+                                filterButton("Any")
+                                filterButton("Male")
+                                filterButton("Female")
+                                DermatologistFilterLabel(title: "Location")
+                            }
 
-                        Text("Top matches for you")
-                            .font(AppFont.gillSwiftUI(.regular, size: 18))
-                            .foregroundColor(Color(hex: "1A1018"))
+                            Text("Top matches for you")
+                                .font(AppFont.gillSwiftUI(.regular, size: 18))
+                                .foregroundColor(Color(hex: "1A1018"))
 
-                        VStack(spacing: 20) {
-                            ForEach(filteredDermatologists) { dermatologist in
-                                DermatologistCard(
-                                    imageName: dermatologist.imageName,
-                                    name: dermatologist.name,
-                                    description: dermatologist.description,
-                                    city: dermatologist.city,
-                                    rating: String(dermatologist.rating)
-                                )
+                            VStack(spacing: 20) {
+                                ForEach(filteredDermatologists) { dermatologist in
+                                    NavigationLink {
+                                        DermatologistProfileView(dermatologist: dermatologist)
+                                    } label: {
+                                        DermatologistCard(
+                                            imageName: dermatologist.imageName,
+                                            name: dermatologist.name,
+                                            description: dermatologist.description,
+                                            city: dermatologist.city,
+                                            rating: String(dermatologist.rating)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
                         }
+                        .padding(.horizontal, 34)
+                        .padding(.top, 70)
+                        .padding(.bottom, 120)
                     }
-                    .padding(.horizontal, 34)
-                    .padding(.top, 70)
-                    .padding(.bottom, 120)
-                }
 
-                ScanBottomBar()
+                    ScanBottomBar()
+                }
             }
         }
     }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DermatologistProfileView: View {
+    let dermatologist: Dermatologist
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -16,13 +17,9 @@ struct DermatologistProfileView: View {
 
             VStack(alignment: .leading, spacing: 22) {
                 header
-
                 Spacer()
-
                 labels
-
                 bioSection
-
                 expertiseSection
 
                 PrimaryButton(title: "schedule") {
@@ -48,14 +45,14 @@ struct DermatologistProfileView: View {
             }
 
             VStack(spacing: 8) {
-                Text("Dr Sarah Ben Ali")
+                Text(dermatologist.name)
                     .font(AppFont.gillSwiftUI(.bold, size: 30))
                     .foregroundColor(.white)
 
                 HStack(spacing: 12) {
                     Text("Dermatologist")
                     Text("•")
-                    Text("10 years experience")
+                    Text(dermatologist.experience)
                 }
                 .font(AppFont.gillSwiftUI(.regular, size: 16))
                 .foregroundColor(.white)
@@ -67,14 +64,13 @@ struct DermatologistProfileView: View {
     private var labels: some View {
         VStack(spacing: 10) {
             HStack(spacing: 10) {
-                DarkLabel(title: "Brussels")
-                DarkLabel(title: "Female")
-                DarkLabel(title: "Flexible")
+                DarkLabel(title: dermatologist.city)
+                DarkLabel(title: dermatologist.gender)
+                DarkLabel(title: dermatologist.availability)
             }
 
             HStack(spacing: 10) {
-                DarkLabel(title: "Acne . Rosacea")
-                DarkLabel(title: "Hyperpigmentation")
+                DarkLabel(title: dermatologist.speciality)
             }
         }
         .frame(maxWidth: .infinity)
@@ -84,7 +80,7 @@ struct DermatologistProfileView: View {
         VStack(alignment: .leading, spacing: 10) {
             DermatologistSectionTitle(title: "Bio")
 
-            Text("Dr. Laurent specializes in skin inflammation, acne treatment, and sensitive skin conditions. She helps patients understand their skin and guides them toward safe, effective routines.")
+            Text(dermatologist.description)
                 .font(AppFont.gillSwiftUI(.regular, size: 16))
                 .foregroundColor(Color(hex: "1A1018"))
                 .lineSpacing(4)
@@ -95,16 +91,15 @@ struct DermatologistProfileView: View {
         VStack(alignment: .leading, spacing: 6) {
             DermatologistSectionTitle(title: "Expertise")
 
-            DermatologistExpertiseRow(title: "Acne & breakouts")
+            DermatologistExpertiseRow(title: dermatologist.speciality)
             DermatologistExpertiseRow(title: "Sensitive skin")
-            DermatologistExpertiseRow(title: "Hyperpigmentation")
-            DermatologistExpertiseRow(title: "Rosacea")
-            DermatologistExpertiseRow(title: "Anti-aging care")
+            DermatologistExpertiseRow(title: "Skin routine advice")
         }
     }
 }
 
 #Preview {
-    DermatologistProfileView()
+    DermatologistProfileView(
+        dermatologist: Dermatologist.mockDermatologists[0]
+    )
 }
-
