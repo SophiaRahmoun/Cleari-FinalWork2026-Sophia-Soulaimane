@@ -87,31 +87,86 @@ exports.updateVerificationStatus = async (req, res) => {
 };
 
 exports.getSilverpagesSearchUrl = async (req, res) => {
-    try {
-      const profile = await DermatologistProfile.findByPk(req.params.id);
-  
-      if (!profile) {
-        return res.status(404).json({
-          message: "Dermatologist profile not found.",
-        });
-      }
-  
-      return res.status(200).json({
-        message: "Use this information to verify the dermatologist manually on Silverpages.",
-        verificationData: {
-          first_name: profile.first_name,
-          last_name: profile.last_name,
-          inami_number: profile.inami_number,
-          postal_code: profile.postal_code,
-          city: profile.city,
-          expectedQualification: "Dermatology / Dermatologie / Dermatoloog",
-        },
-        silverpagesUrl: "https://webappsa.riziv-inami.fgov.be/silverpages/"
-      });
-    } catch (error) {
-      return res.status(500).json({
-        message: "Error while preparing Silverpages verification.",
-        error: error.message,
-      });
-    }
-  };
+	try {
+		const profile = await DermatologistProfile.findByPk(req.params.id);
+
+		if (!profile) {
+			return res.status(404).json({
+				message: "Dermatologist profile not found.",
+			});
+		}
+
+		return res.status(200).json({
+			message:
+				"Use this information to verify the dermatologist manually on Silverpages.",
+			verificationData: {
+				first_name: profile.first_name,
+				last_name: profile.last_name,
+				inami_number: profile.inami_number,
+				postal_code: profile.postal_code,
+				city: profile.city,
+				expectedQualification: "Dermatology / Dermatologie / Dermatoloog",
+			},
+			silverpagesUrl: "https://webappsa.riziv-inami.fgov.be/silverpages/",
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while preparing Silverpages verification.",
+			error: error.message,
+		});
+	}
+};
+
+exports.getPendingDermatologists = async (req, res) => {
+	try {
+		const dermatologists = await DermatologistProfile.findAll({
+			where: {
+				verification_status: "pending",
+			},
+			include: [
+				{
+					model: User,
+					as: "user",
+					attributes: ["id", "username", "email"],
+				},
+			],
+		});
+
+		return res.status(200).json({ dermatologists });
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while fetching pending dermatologists.",
+			error: error.message,
+		});
+	}
+};
+
+exports.continueAsUser = async (req, res) => {
+	try {
+		const user = await User.findByPk(req.user.id);
+		if (!user) {
+			return res.status(404).json({
+				message: "User not found.",
+			});
+		}
+
+		user.role = "user";
+		await user.save();
+		return res.status(200).json({
+			message: "Account converted to regular user successfully.",
+			user: {
+				id: user.id,
+				username: user.username,
+				email: user.email,
+				role: user.role,
+				profile_picture_url: user.profile_picture_url,
+				language: user.language,
+			},
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while converting account to user.",
+			error: error.message,
+		});
+	}
+};

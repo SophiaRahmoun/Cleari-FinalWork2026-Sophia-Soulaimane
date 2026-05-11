@@ -2,214 +2,219 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User, DermatologistProfile } = require("../models");
 const { isDermatologistInami } = require("../utils/inamiVerification");
-const automaticVerification = isDermatologistInami(inami_number);
 const generateToken = (user) => {
-  return jwt.sign(
-    {
-      id: user.id,
-      role: user.role,
-      email: user.email,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
-    }
-  );
+	return jwt.sign(
+		{
+			id: user.id,
+			role: user.role,
+			email: user.email,
+		},
+		process.env.JWT_SECRET,
+		{
+			expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+		}
+	);
 };
 
 const sanitizeUser = (user) => {
-  return {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    role: user.role,
-    profile_picture_url: user.profile_picture_url,
-    language: user.language,
-  };
+	return {
+		id: user.id,
+		username: user.username,
+		email: user.email,
+		role: user.role,
+		profile_picture_url: user.profile_picture_url,
+		language: user.language,
+	};
 };
 
 exports.registerUser = async (req, res) => {
-  try {
-    const { username, email, password, language } = req.body;
+	try {
+		const { username, email, password, language } = req.body;
 
-    if (!username || !email || !password) {
-      return res.status(400).json({
-        message: "Username, email and password are required.",
-      });
-    }
+		if (!username || !email || !password) {
+			return res.status(400).json({
+				message: "Username, email and password are required.",
+			});
+		}
 
-    const existingUser = await User.findOne({ where: { email } });
+		const existingUser = await User.findOne({ where: { email } });
 
-    if (existingUser) {
-      return res.status(409).json({
-        message: "This email is already used.",
-      });
-    }
+		if (existingUser) {
+			return res.status(409).json({
+				message: "This email is already used.",
+			});
+		}
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      role: "user",
-      language: language || "en",
-    });
+		const user = await User.create({
+			username,
+			email,
+			password: hashedPassword,
+			role: "user",
+			language: language || "en",
+		});
 
-    const token = generateToken(user);
+		const token = generateToken(user);
 
-    return res.status(201).json({
-      message: "User registered successfully.",
-      token,
-      user: sanitizeUser(user),
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error while registering user.",
-      error: error.message,
-    });
-  }
+		return res.status(201).json({
+			message: "User registered successfully.",
+			token,
+			user: sanitizeUser(user),
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while registering user.",
+			error: error.message,
+		});
+	}
 };
 
 exports.registerDermatologist = async (req, res) => {
-  try {
-    const {
-      username,
-      email,
-      password,
-      first_name,
-      last_name,
-      specialization,
-      license_number,
-      inami_number,
-      postal_code,
-      city,
-      bio,
-      certificate_url,
-      language,
-    } = req.body;
+	try {
+		const {
+			username,
+			email,
+			password,
+			first_name,
+			last_name,
+			specialization,
+			license_number,
+			inami_number,
+			postal_code,
+			city,
+			bio,
+			certificate_url,
+			language,
+		} = req.body;
 
-    if (!username || !email || !password) {
-      return res.status(400).json({
-        message: "Username, email and password are required.",
-      });
-    }
+		if (!username || !email || !password) {
+			return res.status(400).json({
+				message: "Username, email and password are required.",
+			});
+		}
 
-    const existingUser = await User.findOne({ where: { email } });
+		const existingUser = await User.findOne({ where: { email } });
+    const automaticVerification = inami_number
 
-    if (existingUser) {
-      return res.status(409).json({
-        message: "This email is already used.",
-      });
-    }
+    ? isDermatologistInami(inami_number)
+  
+    : false;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+		if (existingUser) {
+			return res.status(409).json({
+				message: "This email is already used.",
+			});
+		}
 
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      role: "dermatologist",
-      language: language || "en",
-    });
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-    await DermatologistProfile.create({
-      user_id: user.id,
-      first_name: first_name || null,
-      last_name: last_name || null,
-      specialization: specialization || null,
-      license_number: license_number || null,
-      inami_number: inami_number || null,
-      postal_code: postal_code || null,
-      city: city || null,
-      bio: bio || null,
-      certificate_url: certificate_url || null,
-      verification_status: "pending",
-      verified: false,
-    });
+		const user = await User.create({
+			username,
+			email,
+			password: hashedPassword,
+			role: "dermatologist",
+			language: language || "en",
+		});
 
-    const token = generateToken(user);
+		await DermatologistProfile.create({
+			user_id: user.id,
+			first_name: first_name || null,
+			last_name: last_name || null,
+			specialization: specialization || null,
+			license_number: license_number || null,
+			inami_number: inami_number || null,
+			postal_code: postal_code || null,
+			city: city || null,
+			bio: bio || null,
+			certificate_url: certificate_url || null,
+			verification_status: "pending",
+			verified: false,
+		});
 
-    return res.status(201).json({
-      message: "Dermatologist registered successfully. Verification is pending.",
-      token,
-      user: sanitizeUser(user),
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error while registering dermatologist.",
-      error: error.message,
-    });
-  }
+		const token = generateToken(user);
+
+		return res.status(201).json({
+			message:
+				"Dermatologist registered successfully. Verification is pending.",
+			token,
+			user: sanitizeUser(user),
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while registering dermatologist.",
+			error: error.message,
+		});
+	}
 };
 
 exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+	try {
+		const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required.",
-      });
-    }
+		if (!email || !password) {
+			return res.status(400).json({
+				message: "Email and password are required.",
+			});
+		}
 
-    const user = await User.findOne({
-      where: { email },
-      include: [{ model: DermatologistProfile, as: "dermatologistProfile" }],
-    });
+		const user = await User.findOne({
+			where: { email },
+			include: [{ model: DermatologistProfile, as: "dermatologistProfile" }],
+		});
 
-    if (!user) {
-      return res.status(401).json({
-        message: "Invalid email or password.",
-      });
-    }
+		if (!user) {
+			return res.status(401).json({
+				message: "Invalid email or password.",
+			});
+		}
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+		const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        message: "Invalid email or password.",
-      });
-    }
+		if (!isPasswordValid) {
+			return res.status(401).json({
+				message: "Invalid email or password.",
+			});
+		}
 
-    const token = generateToken(user);
+		const token = generateToken(user);
 
-    return res.status(200).json({
-      message: "Login successful.",
-      token,
-      user: {
-        ...sanitizeUser(user),
-        dermatologistProfile: user.dermatologistProfile || null,
-      },
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error while logging in.",
-      error: error.message,
-    });
-  }
+		return res.status(200).json({
+			message: "Login successful.",
+			token,
+			user: {
+				...sanitizeUser(user),
+				dermatologistProfile: user.dermatologistProfile || null,
+			},
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while logging in.",
+			error: error.message,
+		});
+	}
 };
 
 exports.me = async (req, res) => {
-  try {
-    const user = await User.findByPk(req.user.id, {
-      attributes: { exclude: ["password"] },
-      include: [{ model: DermatologistProfile, as: "dermatologistProfile" }],
-    });
+	try {
+		const user = await User.findByPk(req.user.id, {
+			attributes: { exclude: ["password"] },
+			include: [{ model: DermatologistProfile, as: "dermatologistProfile" }],
+		});
 
-    return res.status(200).json({
-      user,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error while fetching profile.",
-      error: error.message,
-    });
-  }
+		return res.status(200).json({
+			user,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			message: "Error while fetching profile.",
+			error: error.message,
+		});
+	}
 };
 
 exports.logout = async (req, res) => {
-  return res.status(200).json({
-    message: "Logout successful. Please remove the token on the frontend.",
-  });
+	return res.status(200).json({
+		message: "Logout successful. Please remove the token on the frontend.",
+	});
 };

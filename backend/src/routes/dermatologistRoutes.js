@@ -15,6 +15,20 @@ router.get(
 );
 
 router.get(
+    "/pending",
+    authMiddleware,
+    roleMiddleware("admin"),
+    dermatologistController.getPendingDermatologists
+  );
+
+  router.patch(
+    "/me/continue-as-user",
+    authMiddleware,
+    roleMiddleware("dermatologist"),
+    dermatologistController.continueAsUser
+  );
+
+router.get( 
     "/:id/silverpages-check",
     authMiddleware,
     roleMiddleware("admin"),
