@@ -10,6 +10,14 @@ import SwiftUI
 struct FindDermatologistView: View {
     private let dermatologists = Dermatologist.mockDermatologists
 
+    @State private var selectedGender = "Any"
+
+    private var filteredDermatologists: [Dermatologist] {
+        dermatologists.filter { dermatologist in
+            selectedGender == "Any" || dermatologist.gender == selectedGender
+        }
+    }
+
     var body: some View {
         ZStack {
             LinearGradientBackground(
@@ -27,9 +35,9 @@ struct FindDermatologistView: View {
                             .lineSpacing(4)
 
                         HStack(spacing: 8) {
-                            DermatologistFilterLabel(title: "Any", isSelected: true)
-                            DermatologistFilterLabel(title: "Male")
-                            DermatologistFilterLabel(title: "Female")
+                            filterButton("Any")
+                            filterButton("Male")
+                            filterButton("Female")
                             DermatologistFilterLabel(title: "Location")
                         }
 
@@ -38,7 +46,7 @@ struct FindDermatologistView: View {
                             .foregroundColor(Color(hex: "1A1018"))
 
                         VStack(spacing: 20) {
-                            ForEach(dermatologists) { dermatologist in
+                            ForEach(filteredDermatologists) { dermatologist in
                                 DermatologistCard(
                                     imageName: dermatologist.imageName,
                                     name: dermatologist.name,
@@ -57,5 +65,17 @@ struct FindDermatologistView: View {
                 ScanBottomBar()
             }
         }
+    }
+
+    private func filterButton(_ gender: String) -> some View {
+        Button {
+            selectedGender = gender
+        } label: {
+            DermatologistFilterLabel(
+                title: gender,
+                isSelected: selectedGender == gender
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
