@@ -50,11 +50,10 @@ final class ConsultationFormViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            let token = "TON_TOKEN_ICI"
+            formData.stepCompleted = 3
 
             try await SkinFormService.shared.submitSkinForm(
-                formData: formData,
-                token: token
+                formData: formData
             )
 
             print("Skin form saved successfully")

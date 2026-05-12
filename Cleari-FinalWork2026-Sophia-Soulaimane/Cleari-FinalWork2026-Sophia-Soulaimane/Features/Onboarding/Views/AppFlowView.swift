@@ -13,6 +13,7 @@ enum AppRoute: Hashable {
     case rolePicker
     case userRegister
     case dermatologistRegister
+    case consultationForm
     case scan
 }
 
@@ -37,7 +38,7 @@ struct AppFlowView: View {
 
                 case .login:
                     LoginView {
-                        path.append(AppRoute.scan)
+                        path.append(AppRoute.consultationForm)
                     } onRegister: {
                         path.append(AppRoute.rolePicker)
                     }
@@ -55,14 +56,20 @@ struct AppFlowView: View {
 
                 case .userRegister:
                     UserRegisterView {
+                        print("REGISTER SUCCESS → GO TO FORM")
                         path = NavigationPath()
-                        path.append(AppRoute.scan)
+                        path.append(AppRoute.consultationForm)
+                    } onBack: {
+                        path.removeLast()
                     }
 
                 case .dermatologistRegister:
                     DermatologistRegisterView {
                         path.append(AppRoute.scan)
                     }
+
+                case .consultationForm:
+                    ConsultationFormView()
 
                 case .scan:
                     CameraCaptureView()
