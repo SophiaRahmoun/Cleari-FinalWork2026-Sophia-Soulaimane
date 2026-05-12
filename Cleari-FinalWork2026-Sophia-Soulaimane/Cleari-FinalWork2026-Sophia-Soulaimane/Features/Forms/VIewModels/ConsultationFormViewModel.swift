@@ -52,8 +52,17 @@ final class ConsultationFormViewModel: ObservableObject {
         do {
             formData.stepCompleted = 3
 
+            guard let token = TokenStorage.shared.token else {
+                throw NSError(
+                    domain: "",
+                    code: 401,
+                    userInfo: [NSLocalizedDescriptionKey: "No token found"]
+                )
+            }
+
             try await SkinFormService.shared.submitSkinForm(
-                formData: formData
+                formData: formData,
+                token: token
             )
 
             print("Skin form saved successfully")
