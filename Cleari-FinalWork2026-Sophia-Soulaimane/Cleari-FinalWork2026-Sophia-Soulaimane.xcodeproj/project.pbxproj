@@ -34,6 +34,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Features/Debunk/Views/DebunkDetailView.swift,
+				Features/SkinGoals/Views/Untitled.swift,
 				Info.plist,
 			);
 			target = 847B5D102F40C40A00224093 /* Cleari-FinalWork2026-Sophia-Soulaimane */;
