@@ -101,8 +101,19 @@ extension EditProfileView {
                 print("Edit name tapped")
             }
 
-            EditProfileRow(title: "Username", value: username) {
-                print("Edit username tapped")
+            HStack {
+                Text("Username")
+                    .font(AppFont.gillSwiftUI(.regular, size: 18))
+                    .foregroundColor(Color(hex: "1A1018"))
+
+                Spacer()
+
+                TextField("Username", text: $username)
+                    .multilineTextAlignment(.trailing)
+                    .font(AppFont.gillSwiftUI(.regular, size: 16))
+                    .foregroundColor(Color(hex: "1A1018").opacity(0.45))
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
             }
 
             EditProfileRow(title: "Pronouns", value: pronouns) {
@@ -132,3 +143,4 @@ extension EditProfileView {
         }
     }
 }
+
