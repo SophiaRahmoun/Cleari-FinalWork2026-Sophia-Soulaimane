@@ -20,13 +20,13 @@ struct EditProfileRow: View {
         } label: {
             HStack {
                 Text(title)
-                    .font(AppFont.gillSwiftUI(.regular, size: 25))
+                    .font(AppFont.gillSwiftUI(.regular, size: 18))
                     .foregroundColor(Color(hex: "1A1018"))
 
                 Spacer()
 
                 Text(value)
-                    .font(AppFont.gillSwiftUI(.regular, size: 25))
+                    .font(AppFont.gillSwiftUI(.regular, size: 16))
                     .foregroundColor(Color(hex: "1A1018").opacity(0.45))
                     .multilineTextAlignment(.trailing)
 

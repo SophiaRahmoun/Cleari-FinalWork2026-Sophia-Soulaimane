@@ -32,6 +32,7 @@ struct EditProfileView: View {
                     .padding(.top, 70)
 
                 Spacer()
+                    .frame(height: 30)
 
                 PrimaryButton(title: "Done") {
                     print("Profile saved")
@@ -54,7 +55,7 @@ struct EditProfileView: View {
                 .padding(.bottom, 45)
             }
             .padding(.horizontal, 34)
-            .padding(.top, 65)
+            .padding(.top, 95)
         }
     }
 }
@@ -73,10 +74,6 @@ extension EditProfileView {
 
                 Spacer()
             }
-
-            Text("Edit profile")
-                .font(AppFont.gillSwiftUI(.bold, size: 40))
-                .foregroundColor(Color(hex: "1A1018"))
         }
     }
 
@@ -117,7 +114,7 @@ extension EditProfileView {
             }
 
             Spacer()
-                .frame(height: 45)
+                .frame(height: 15)
 
             EditProfileRow(
                 title: "E-mail",
