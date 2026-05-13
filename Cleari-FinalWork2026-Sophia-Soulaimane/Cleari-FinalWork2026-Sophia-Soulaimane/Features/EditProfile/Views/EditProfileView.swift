@@ -116,9 +116,7 @@ extension EditProfileView {
                     .textInputAutocapitalization(.never)
             }
 
-            EditProfileRow(title: "Pronouns", value: pronouns) {
-                print("Edit pronouns tapped")
-            }
+            pronounsRow
 
             EditProfileRow(title: "Skin Type", value: skinType) {
                 print("Edit skin type tapped")
@@ -142,5 +140,40 @@ extension EditProfileView {
             }
         }
     }
-}
 
+    private var pronounsRow: some View {
+        HStack {
+            Text("Pronouns")
+                .font(AppFont.gillSwiftUI(.regular, size: 18))
+                .foregroundColor(Color(hex: "1A1018"))
+
+            Spacer()
+
+            HStack(spacing: 8) {
+                pronounButton("she/her")
+                pronounButton("he/him")
+            }
+        }
+    }
+
+    private func pronounButton(_ value: String) -> some View {
+        Button {
+            pronouns = value
+        } label: {
+            Text(value)
+                .font(AppFont.gillSwiftUI(.regular, size: 13))
+                .foregroundColor(pronouns == value ? .white : Color(hex: "1A1018"))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(
+                    Capsule()
+                        .fill(pronouns == value ? Color(hex: "1A1018") : Color.white.opacity(0.55))
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(Color(hex: "1A1018"), lineWidth: 1.2)
+                )
+        }
+        .buttonStyle(.plain)
+    }
+}
