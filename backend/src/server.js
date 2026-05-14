@@ -24,7 +24,9 @@ app.use("/api/skin-scan", skinScanRoutes);
 app.use("/api/skin-form", skinFormRoutes);
 app.use("/api/dermatologists", dermatologistRoutes);
 app.use("/api/appointments", appointmentRoutes);
-
+const communityPostRoutes = require("./routes/communityPostRoutes");
+app.use("/uploads", express.static("src/uploads"));
+app.use("/api/community", communityPostRoutes);
 const PORT = process.env.PORT || 4000;
 
 const startServer = async () => {
@@ -42,5 +44,7 @@ const startServer = async () => {
 		console.error("Unable to start server:", error);
 	}
 };
+
+
 
 startServer();
