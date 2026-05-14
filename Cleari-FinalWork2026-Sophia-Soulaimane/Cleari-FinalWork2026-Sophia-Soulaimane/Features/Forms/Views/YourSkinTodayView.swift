@@ -28,12 +28,12 @@ struct YourSkinTodayView: View {
 
                 Spacer()
 
-                SecondaryButton(title: "CONFIRM") {
+                SecondaryButton(title: viewModel.isLoading ? "SAVING..." : "CONFIRM") {
                     Task {
                         await viewModel.submitForm()
                     }
                 }
-                .disabled(!viewModel.canSubmit)
+                .disabled(!viewModel.canSubmit || viewModel.isLoading)
                 .opacity(viewModel.canSubmit ? 1 : 0.5)
                 .padding(.horizontal, 100)
                 .padding(.bottom, 42)
@@ -106,20 +106,20 @@ extension YourSkinTodayView {
                 .foregroundColor(Color(hex: "1A1018"))
 
             Button {
-                viewModel.formData.wantsPhotoUpload = "Yes"
+                viewModel.formData.wantsPhotoUpload = true
             } label: {
                 FormCheckbox(
                     title: "Yes",
-                    isSelected: viewModel.formData.wantsPhotoUpload == "Yes"
+                    isSelected: viewModel.formData.wantsPhotoUpload == true
                 )
             }
 
             Button {
-                viewModel.formData.wantsPhotoUpload = "Not sure"
+                viewModel.formData.wantsPhotoUpload = false
             } label: {
                 FormCheckbox(
                     title: "Not sure",
-                    isSelected: viewModel.formData.wantsPhotoUpload == "Not sure"
+                    isSelected: viewModel.formData.wantsPhotoUpload == false
                 )
             }
         }
@@ -131,20 +131,11 @@ extension YourSkinTodayView {
     private var privacyChecks: some View {
         VStack(alignment: .leading, spacing: 22) {
             Button {
-                viewModel.formData.optionalPhotosAccepted.toggle()
-            } label: {
-                FormCheckbox(
-                    title: "Photos are optional and only shared with\ncertified dermatologists",
-                    isSelected: viewModel.formData.optionalPhotosAccepted
-                )
-            }
-
-            Button {
-                viewModel.formData.consentShared.toggle()
+                viewModel.formData.consentShared = !(viewModel.formData.consentShared ?? false)
             } label: {
                 FormCheckbox(
                     title: "I agree to share this information only with\ncertified dermatologists for consultation\npurposes",
-                    isSelected: viewModel.formData.consentShared
+                    isSelected: viewModel.formData.consentShared == true
                 )
             }
         }
