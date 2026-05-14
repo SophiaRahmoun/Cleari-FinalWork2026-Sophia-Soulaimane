@@ -7,6 +7,7 @@ const upload = require("../middleware/uploadMiddleware");
 const {
 	createPost,
 	getAllPosts,
+    getPostById,
 	getPostsByUser,
 	updatePost,
 	deletePost,
@@ -16,4 +17,5 @@ router.get("/posts", getAllPosts);
 router.get("/users/:userId/posts", getPostsByUser);
 router.put("/posts/:id", authMiddleware, upload.single("image"), updatePost);
 router.delete("/posts/:id", authMiddleware, deletePost);
+router.get("/posts/:id", getPostById);
 module.exports = router;

@@ -103,3 +103,20 @@ exports.deletePost = async (req, res) => {
 			.json({ message: "Error deleting post", error: error.message });
 	}
 };
+
+exports.getPostById = async (req, res) => {
+	try {
+		const post = await CommunityPost.findByPk(req.params.id, {
+			include: [{ model: User, attributes: ["id", "username", "email"] }],
+		});
+
+		if (!post) return res.status(404).json({ message: "Post not found" });
+
+		res.json(post);
+	} catch (error) {
+		res.status(500).json({
+			message: "Error fetching post",
+			error: error.message,
+		});
+	}
+};
