@@ -14,6 +14,7 @@ enum AppRoute: Hashable {
     case userRegister
     case dermatologistRegister
     case consultationForm
+    case userHome
     case scan
 }
 
@@ -69,7 +70,13 @@ struct AppFlowView: View {
                     }
 
                 case .consultationForm:
-                    ConsultationFormView()
+                    ConsultationFormView {
+                        path = NavigationPath()
+                        path.append(AppRoute.userHome)
+                    }
+
+                case .userHome:
+                    UserHomeShellView()
 
                 case .scan:
                     CameraCaptureView()

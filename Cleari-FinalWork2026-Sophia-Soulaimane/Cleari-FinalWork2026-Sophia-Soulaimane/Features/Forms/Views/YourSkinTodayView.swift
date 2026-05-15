@@ -9,6 +9,7 @@ import SwiftUI
 
 struct YourSkinTodayView: View {
     @ObservedObject var viewModel: ConsultationFormViewModel
+    let onFinished: () -> Void
 
     var body: some View {
         ZStack {
@@ -31,6 +32,10 @@ struct YourSkinTodayView: View {
                 SecondaryButton(title: viewModel.isLoading ? "SAVING..." : "CONFIRM") {
                     Task {
                         await viewModel.submitForm()
+
+                        if viewModel.errorMessage == nil {
+                            onFinished()
+                        }
                     }
                 }
                 .disabled(!viewModel.canSubmit || viewModel.isLoading)

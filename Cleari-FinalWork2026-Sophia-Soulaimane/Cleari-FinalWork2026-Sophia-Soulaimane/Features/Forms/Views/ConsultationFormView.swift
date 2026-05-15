@@ -10,6 +10,8 @@ import SwiftUI
 struct ConsultationFormView: View {
     @StateObject private var viewModel = ConsultationFormViewModel()
 
+    let onFinished: () -> Void
+
     var body: some View {
         Group {
             switch viewModel.currentStep {
@@ -20,7 +22,10 @@ struct ConsultationFormView: View {
                 YourSkinHistoryView(viewModel: viewModel)
 
             case 3:
-                YourSkinTodayView(viewModel: viewModel)
+                YourSkinTodayView(
+                    viewModel: viewModel,
+                    onFinished: onFinished
+                )
 
             default:
                 KnowYourSkinView(viewModel: viewModel)
