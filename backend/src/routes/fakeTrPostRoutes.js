@@ -14,6 +14,13 @@ const {
 	deleteFakeTrendPost,
 } = require("../controllers/fakeTrendPostController");
 
+const {
+	addScientificSource,
+	getSourcesByPost,
+	updateScientificSource,
+	deleteScientificSource,
+} = require("../controllers/fakeTrendScientificSourceController");
+
 router.post(
 	"/posts",
 	authMiddleware,
@@ -24,7 +31,10 @@ router.post(
 
 router.get("/posts", getAllFakeTrendPosts);
 router.get("/posts/:id", getFakeTrendPostById);
-router.get("/dermatologists/:dermatologistId/posts", getFakeTrendPostsByDermatologist);
+router.get(
+	"/dermatologists/:dermatologistId/posts",
+	getFakeTrendPostsByDermatologist
+);
 
 router.put(
 	"/posts/:id",
@@ -39,6 +49,28 @@ router.delete(
 	authMiddleware,
 	dermatologistOnlyMiddleware,
 	deleteFakeTrendPost
+);
+router.post(
+	"/posts/:postId/sources",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	addScientificSource
+);
+
+router.get("/posts/:postId/sources", getSourcesByPost);
+
+router.put(
+	"/sources/:sourceId",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	updateScientificSource
+);
+
+router.delete(
+	"/sources/:sourceId",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	deleteScientificSource
 );
 
 module.exports = router;
