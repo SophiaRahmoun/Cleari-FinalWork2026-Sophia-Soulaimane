@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
-const dermatologistOnlyMiddleware = require("../middleware/dermatologistOnlyMiddleware");
-const upload = require("../middleware/fakeTrendUploadMiddleware");
+const dermatologistOnlyMiddleware = require("../middleware/dermatoloOnlyMiddleware");
+const upload = require("../middleware/fakeTrendUplMiddleware");
 
 const {
 	createFakeTrendPost,

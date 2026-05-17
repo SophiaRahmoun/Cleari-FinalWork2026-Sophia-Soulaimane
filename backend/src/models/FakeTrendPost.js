@@ -4,23 +4,29 @@ const sequelize = require("../config/database");
 const User = require("./User");
 
 const FakeTrendPost = sequelize.define("FakeTrendPost", {
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    trendName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-
-    },
-    desctipyion: {
-        type: DataTypes.TEXT,
-        allowNull: false,
-    },
-    debunkExplanation: {
-
+	title: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+	trendName: {
+		type: DataTypes.STRING,
+		allowNull: false,
+	},
+	description: {
 		type: DataTypes.TEXT,
 		allowNull: false,
+	},
+	debunkExplanation: {
+		type: DataTypes.TEXT,
+		allowNull: false,
+	},
+	tiktokUrl: {
+		type: DataTypes.STRING,
+		allowNull: true,
+	},
+	tiktokVideoId: {
+		type: DataTypes.STRING,
+		allowNull: true,
 	},
 	videoUrl: {
 		type: DataTypes.STRING,
@@ -29,11 +35,6 @@ const FakeTrendPost = sequelize.define("FakeTrendPost", {
 	imageUrl: {
 		type: DataTypes.STRING,
 		allowNull: true,
-	},
-	sourceUrls: {
-		type: DataTypes.TEXT,
-		allowNull: true,
-		// store as hson string: ["https://study1.com", "https://study2.com"]
 	},
 	skinConcernTag: {
 		type: DataTypes.STRING,
@@ -47,21 +48,16 @@ const FakeTrendPost = sequelize.define("FakeTrendPost", {
 		type: DataTypes.INTEGER,
 		allowNull: false,
 	},
-
 });
 
 FakeTrendPost.belongsTo(User, {
-
 	foreignKey: "dermatologistId",
 	as: "dermatologist",
-
 });
 
 User.hasMany(FakeTrendPost, {
-
 	foreignKey: "dermatologistId",
 	as: "fakeTrendPosts",
-
 });
 
 module.exports = FakeTrendPost;

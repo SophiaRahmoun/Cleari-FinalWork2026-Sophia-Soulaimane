@@ -17,17 +17,14 @@ const FakeTrendScientificSource = sequelize.define(
 			type: DataTypes.ENUM("study", "article", "official_guideline", "other"),
 			defaultValue: "study",
 		},
-		summary: {
-			type: DataTypes.TEXT,
-			allowNull: true,
-		},
-		postId: {
+	
+		FakeTrendPostId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
 		},
 	}
 );
 
-FakeTrendScientificSource.belongsTo(FakeTrendPost, { foreignKey: "postId" });
-FakeTrendPost.hasMany(FakeTrendScientificSource, { foreignKey: "postId" });
+FakeTrendScientificSource.belongsTo(FakeTrendPost, { foreignKey: "fakeTrendPostId" });
+FakeTrendPost.hasMany(FakeTrendScientificSource, { foreignKey: "fakeTrendPostId" });
 module.exports = FakeTrendScientificSource;

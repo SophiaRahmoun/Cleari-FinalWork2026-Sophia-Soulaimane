@@ -7,7 +7,7 @@ const skinFormRoutes = require("./routes/skinFormRoutes");
 const authRoutes = require("./routes/authRoutes");
 const dermatologistRoutes = require("./routes/dermatologistRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
-const fakeTrendPostRoutes = require("./routes/fakeTrendPostRoutes");
+const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
 
 const app = express();
 
@@ -26,7 +26,7 @@ app.use("/api/skin-form", skinFormRoutes);
 app.use("/api/dermatologists", dermatologistRoutes);
 app.use("/api/appointments", appointmentRoutes);
 const communityPostRoutes = require("./routes/communityPostRoutes");
-app.use("/uploads", express.static("src/uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
 const PORT = process.env.PORT || 4000;
@@ -46,7 +46,5 @@ const startServer = async () => {
 		console.error("Unable to start server:", error);
 	}
 };
-
-
 
 startServer();
