@@ -8,20 +8,25 @@
 import SwiftUI
 
 struct FeedPostCard: View {
+
+    let post: CommunityPost
+
     var body: some View {
+
         VStack(alignment: .leading, spacing: 16) {
+
             HStack {
+
                 Image("dr_naak")
-                //Image(systemName: "person.circle.fill")
                     .resizable()
                     .frame(width: 40, height: 40)
-                    .foregroundColor(.gray)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Dr. Naak Mouloud")
+
+                    Text(post.User.username)
                         .font(.headline)
 
-                    Text("Dermatologist")
+                    Text("Community member")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
@@ -34,7 +39,7 @@ struct FeedPostCard: View {
 
             Divider()
 
-            Text("No applying heat like ironing won't reduce wrinkles. In fact, it can irritate the skin and lead to burns or damage.")
+            Text(post.content)
                 .font(.body)
         }
         .padding()
@@ -44,9 +49,5 @@ struct FeedPostCard: View {
         .shadow(radius: 4)
         .padding(.vertical, 24)
         .padding(.horizontal, 20)
-      }
-}
-
-#Preview {
-    FeedPostCard()
+    }
 }

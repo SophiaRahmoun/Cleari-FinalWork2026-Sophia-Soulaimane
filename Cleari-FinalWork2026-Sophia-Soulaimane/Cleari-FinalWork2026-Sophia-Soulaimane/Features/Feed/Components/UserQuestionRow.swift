@@ -8,31 +8,31 @@
 import SwiftUI
 
 struct UserQuestionRow: View {
+
+    let post: CommunityPost
+
     var body: some View {
+
         VStack(alignment: .leading, spacing: 8) {
-            
+
             HStack(spacing: 10) {
-                
+
                 Image(systemName: "person.circle.fill")
                     .resizable()
                     .frame(width: 32, height: 32)
                     .foregroundColor(.gray)
-                
-                Text("jules.ctm · 20h")
+
+                Text("\(post.User.username) · now")
                     .font(.subheadline)
                     .foregroundColor(.gray)
-                
+
                 Spacer()
             }
-            
-            Text("Does applying iron to the body reduce wrinkles?")
+
+            Text(post.content)
                 .font(.body)
                 .foregroundColor(.primary)
         }
         .padding(.horizontal, 16)
     }
-}
-
-#Preview {
-    UserQuestionRow()
 }

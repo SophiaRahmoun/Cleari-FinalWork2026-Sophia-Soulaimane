@@ -29,6 +29,3 @@ struct ReplyBar: View {
     }
 }
 
-#Preview {
-    ReplyBar()
-}

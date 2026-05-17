@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct FeedView: View {
+
+    @StateObject private var viewModel = FeedViewModel()
+
     var body: some View {
+
         ZStack {
+
             LinearGradientBackground(
                 startHex: "C66F8C",
                 endHex: "F9BDB9"
@@ -17,19 +22,36 @@ struct FeedView: View {
             .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
+
                 LazyVStack(alignment: .leading, spacing: 16) {
+
                     FeedTopBar()
-                    UserQuestionRow()
-                    FeedPostCard()
-                    PostActionsRow()
-                    ReplyBar()
+
+                    if viewModel.isLoading {
+
+                        ProgressView()
+                            .padding(.top, 50)
+                            .frame(maxWidth: .infinity)
+
+                    } else {
+
+                        ForEach(viewModel.posts) { post in
+
+                            UserQuestionRow(post: post)
+
+                            FeedPostCard(post: post)
+
+                            PostActionsRow()
+
+                            ReplyBar()
+                        }
+                    }
                 }
                 .padding(.top, 20)
             }
         }
+        .task {
+            await viewModel.fetchPosts()
+        }
     }
-}
-
-#Preview {
-    FeedView()
 }
