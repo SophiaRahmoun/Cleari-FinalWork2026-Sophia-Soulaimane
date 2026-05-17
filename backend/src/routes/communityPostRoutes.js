@@ -11,7 +11,14 @@ const {
 	getPostsByUser,
 	updatePost,
 	deletePost,
+	getPersonalizedFeed,
 } = require("../controllers/communityPostController");
+
+const {
+	savePost,
+	unsavePost,
+	getSavedPosts,
+} = require("../controllers/communityPostSaveController");
 
 const {
 	likePost,
@@ -19,22 +26,13 @@ const {
 } = require("../controllers/communityPostLikeController");
 
 const {
-
-	savePost,
-	unsavePost,
-
-} = require("../controllers/communityPostSaveController");
-
-const {
-
 	createComment,
 	getCommentsByPost,
 	updateComment,
 	deleteComment,
-
 } = require("../controllers/communityPostCommentController");
 
-
+router.get("/feed", authMiddleware, getPersonalizedFeed);
 router.post("/posts", authMiddleware, upload.single("image"), createPost);
 router.get("/posts", getAllPosts);
 router.get("/users/:userId/posts", getPostsByUser);
@@ -47,6 +45,7 @@ router.delete("/posts/:postId/like", authMiddleware, unlikePost);
 
 router.post("/posts/:postId/save", authMiddleware, savePost);
 router.delete("/posts/:postId/save", authMiddleware, unsavePost);
+router.get("/saved-posts", authMiddleware, getSavedPosts);
 
 router.post("/posts/:postId/comments", authMiddleware, createComment);
 router.get("/posts/:postId/comments", getCommentsByPost);
