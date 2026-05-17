@@ -1,10 +1,11 @@
 const fs = require("fs");
-
 const path = require("path");
-
 const FakeTrendPost = require("../models/FakeTrendPost");
-
 const User = require("../models/User");
+
+const FakeTrendLike = require("../models/FakeTrendLike");
+const FakeTrendSave = require("../models/FakeTrendSave");
+const FakeTrendComment = require("../models/FakeTrendComment");
 
 const {
 	extractTikTokVideoId,
@@ -251,6 +252,74 @@ exports.deleteFakeTrendPost = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({
 			message: "Error deleting fake trend post",
+			error: error.message,
+		});
+	}
+};
+
+exports.getFakeTrendFeed = async (req, res) => {
+	try {
+		const userId = req.user.id;
+
+		const page = parseInt(req.query.page) || 1;
+		const limit = parseInt(req.query.limit) || 10;
+		const offset = (page - 1) * limit;
+
+		const posts = await FakeTrendPost.findAll({
+			include: [
+				{
+					model: User,
+					as: "dermatologist",
+					attributes: ["id", "username", "email", "role"],
+				},
+			],
+			order: [["createdAt", "DESC"]],
+			limit,
+			offset,
+		});
+
+		const formattedPosts = await Promise.all(
+			posts.map(async (post) => {
+				const likesCount = await FakeTrendLike.count({
+					where: { fakeTrendPostId: post.id },
+				});
+
+				const commentsCount = await FakeTrendComment.count({
+					where: { fakeTrendPostId: post.id },
+				});
+
+				const savesCount = await FakeTrendSave.count({
+					where: { fakeTrendPostId: post.id },
+				});
+
+				const isLikedByCurrentUser = await FakeTrendLike.findOne({
+					where: { fakeTrendPostId: post.id, userId },
+				});
+
+				const isSavedByCurrentUser = await FakeTrendSave.findOne({
+					where: { fakeTrendPostId: post.id, userId },
+				});
+
+				return {
+					...post.toJSON(),
+					likesCount,
+					commentsCount,
+					savesCount,
+					isLikedByCurrentUser: !!isLikedByCurrentUser,
+					isSavedByCurrentUser: !!isSavedByCurrentUser,
+				};
+			})
+		);
+
+		res.json({
+			page,
+			limit,
+			hasMore: posts.length === limit,
+			posts: formattedPosts,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error fetching fake trend feed",
 			error: error.message,
 		});
 	}
