@@ -1,6 +1,7 @@
 const CommunityPost = require("../models/CommunityPost");
 
 const User = require("../models/User");
+const CommunityPostLike = require("../models/CommunityPostLike");
 
 exports.createPost = async (req, res) => {
 	try {
@@ -28,9 +29,20 @@ exports.getAllPosts = async (req, res) => {
 	try {
 		const posts = await CommunityPost.findAll({
 			include: [{ model: User, attributes: ["id", "username", "email"] }],
-
 			order: [["createdAt", "DESC"]],
 		});
+
+		const postsWithLikes = await Promise.all(
+			posts.map(async (post) => {
+				const likesCount = await CommunityPostLike.count({
+					where: { postId: post.id },
+				});
+				return {
+					...post.toJSON(),
+					likesCount,
+				};
+			})
+		);
 
 		res.json(posts);
 	} catch (error) {
@@ -85,9 +97,7 @@ exports.updatePost = async (req, res) => {
 exports.deletePost = async (req, res) => {
 	try {
 		const post = await CommunityPost.findByPk(req.params.id);
-
 		if (!post) return res.status(404).json({ message: "Post not found" });
-
 		if (post.userId !== req.user.id) {
 			return res
 				.status(403)
@@ -95,7 +105,6 @@ exports.deletePost = async (req, res) => {
 		}
 
 		await post.destroy();
-
 		res.json({ message: "Post deleted successfully" });
 	} catch (error) {
 		res
@@ -109,10 +118,15 @@ exports.getPostById = async (req, res) => {
 		const post = await CommunityPost.findByPk(req.params.id, {
 			include: [{ model: User, attributes: ["id", "username", "email"] }],
 		});
-
 		if (!post) return res.status(404).json({ message: "Post not found" });
 
-		res.json(post);
+		const likesCount = await CommunityPostLike.count({
+			where: { postId: post.id },
+		});
+		res.json({
+			...post.toJSON(),
+			likesCount,
+		});
 	} catch (error) {
 		res.status(500).json({
 			message: "Error fetching post",
