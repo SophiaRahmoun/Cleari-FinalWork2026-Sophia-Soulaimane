@@ -46,11 +46,29 @@ struct FeedView: View {
                     }
                 }
                 .padding(.top, 20)
-                .padding(.bottom, 160)
+                .padding(.bottom, 220)
             }
 
-            ReplyBar()
-                .padding(.bottom, 85)
+            VStack(spacing: 0) {
+
+                Rectangle()
+                    .fill(Color(hex: "1A1018").opacity(0.35))
+                    .frame(height: 1)
+
+                ReplyBar()
+                    .padding(.top, 12)
+
+                Spacer()
+                    .frame(height: 100)
+            }
+            .frame(maxWidth: .infinity)
+            .background(
+                LinearGradientBackground(
+                    startHex: "C66F8C",
+                    endHex: "F9BDB9"
+                )
+                .ignoresSafeArea(edges: .bottom)
+            )
         }
         .task {
             await viewModel.fetchPosts()
