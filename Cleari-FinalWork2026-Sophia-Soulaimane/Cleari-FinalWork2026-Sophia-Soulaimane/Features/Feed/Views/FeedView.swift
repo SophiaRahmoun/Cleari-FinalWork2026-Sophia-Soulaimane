@@ -13,7 +13,7 @@ struct FeedView: View {
 
     var body: some View {
 
-        ZStack {
+        ZStack(alignment: .bottom) {
 
             LinearGradientBackground(
                 startHex: "C66F8C",
@@ -42,13 +42,15 @@ struct FeedView: View {
                             FeedPostCard(post: post)
 
                             PostActionsRow()
-
-                            ReplyBar()
                         }
                     }
                 }
                 .padding(.top, 20)
+                .padding(.bottom, 160)
             }
+
+            ReplyBar()
+                .padding(.bottom, 85)
         }
         .task {
             await viewModel.fetchPosts()

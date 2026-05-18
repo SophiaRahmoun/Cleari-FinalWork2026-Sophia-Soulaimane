@@ -24,7 +24,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "DAE37B21-A407-45A9-8494-50251E2566B7"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Cleari-FinalWork2026-Sophia-Soulaimane/Cleari_FinalWork2026_Sophia_SoulaimaneApp.swift"
