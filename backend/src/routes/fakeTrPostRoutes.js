@@ -16,6 +16,11 @@ const {
 } = require("../controllers/fakeTrendPostController");
 
 const {
+	reportFakeTrendPost,
+	getFakeTrendPostReports,
+} = require("../controllers/fakeTrendPostReportController");
+
+const {
 	createProReply,
 	getProRepliesByPost,
 	updateProReply,
@@ -131,6 +136,19 @@ router.post(
 	authMiddleware,
 	dermatologistOnlyMiddleware,
 	addScientificSource
+);
+router.post(
+	"/posts/:postId/report",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	reportFakeTrendPost
+);
+
+router.get(
+	"/reports",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	getFakeTrendPostReports
 );
 
 router.get("/posts/:postId/sources", getSourcesByPost);
