@@ -6,7 +6,8 @@ exports.createFakeTrendComment = async (req, res) => {
 	try {
 		const fakeTrendPostId = req.params.postId;
 		const userId = req.user.id;
-		const { content } = req.body;
+		const { content, parentCommentId } = req.body;
+        
 
 		if (!content || content.trim() === "") {
 			return res.status(400).json({ message: "Comment content is required" });
@@ -22,6 +23,7 @@ exports.createFakeTrendComment = async (req, res) => {
 			content,
 			userId,
 			fakeTrendPostId,
+			parentCommentId: parentCommentId || null,
 		});
 
 		res.status(201).json(comment);
@@ -36,15 +38,30 @@ exports.createFakeTrendComment = async (req, res) => {
 exports.getFakeTrendCommentsByPost = async (req, res) => {
 	try {
 		const fakeTrendPostId = req.params.postId;
+
 		const comments = await FakeTrendComment.findAll({
 			where: { fakeTrendPostId },
 			include: [
 				{ model: User, attributes: ["id", "username", "email", "role"] },
+				{
+					model: FakeTrendComment,
+					as: "childComments",
+					include: [
+						{
+							model: User,
+							attributes: ["id", "username", "email", "role"],
+						},
+					],
+				},
 			],
 			order: [["createdAt", "ASC"]],
 		});
 
-		res.json(comments);
+		const topLevelComments = comments.filter(
+			(comment) => !comment.parentCommentId
+		);
+
+		res.json(topLevelComments);
 	} catch (error) {
 		res.status(500).json({
 			message: "Error fetching fake trend comments",

@@ -64,11 +64,7 @@ router.post(
 
 router.get("/posts", getAllFakeTrendPosts);
 router.get("/feed", authMiddleware, getFakeTrendFeed);
-router.get("/posts/:id", getFakeTrendPostById);
-router.get(
-	"/dermatologists/:dermatologistId/posts",
-	getFakeTrendPostsByDermatologist
-);
+
 router.get("/saved-posts", authMiddleware, getSavedFakeTrendPosts);
 router.get(
 	"/dermatologists/:dermatologistId/posts",
