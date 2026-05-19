@@ -15,10 +15,19 @@ struct CommunityPost: Codable, Identifiable {
     let createdAt: String
     let updatedAt: String
     let User: PostUser
+
+    var likesCount: Int?
+    var isLikedByCurrentUser: Bool?
 }
 
 struct PostUser: Codable {
     let id: Int
     let username: String
     let email: String
+}
+
+struct LikeResponse: Codable {
+    let message: String
+    let likesCount: Int
+    let isLikedByCurrentUser: Bool
 }

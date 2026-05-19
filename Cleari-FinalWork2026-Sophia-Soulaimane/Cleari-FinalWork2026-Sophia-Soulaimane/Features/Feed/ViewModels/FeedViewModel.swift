@@ -27,4 +27,25 @@ final class FeedViewModel: ObservableObject {
 
         isLoading = false
     }
+
+    func toggleLike(for post: CommunityPost) async {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else { return }
+
+        do {
+            let isLiked = posts[index].isLikedByCurrentUser ?? false
+            let response: LikeResponse
+
+            if isLiked {
+                response = try await CommunityPostService.shared.unlikePost(postId: post.id)
+            } else {
+                response = try await CommunityPostService.shared.likePost(postId: post.id)
+            }
+
+            posts[index].likesCount = response.likesCount
+            posts[index].isLikedByCurrentUser = response.isLikedByCurrentUser
+
+        } catch {
+            print("ERROR TOGGLING LIKE:", error.localizedDescription)
+        }
+    }
 }
