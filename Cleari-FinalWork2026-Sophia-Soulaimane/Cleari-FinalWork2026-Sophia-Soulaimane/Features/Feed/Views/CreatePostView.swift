@@ -9,7 +9,11 @@ import SwiftUI
 
 struct CreatePostView: View {
     @Environment(\.dismiss) private var dismiss
+
+    let onPostCreated: () async -> Void
+
     @State private var content = ""
+    @State private var isPosting = false
 
     var body: some View {
         ZStack {
@@ -26,9 +30,12 @@ struct CreatePostView: View {
 
                     Spacer()
 
-                    Button("Post") {
-                        print("POST:", content)
+                    Button(isPosting ? "Posting..." : "Post") {
+                        Task {
+                            await createPost()
+                        }
                     }
+                    .disabled(content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isPosting)
                     .font(AppFont.gillSwiftUI(.bold, size: 16))
                     .foregroundColor(Color(hex: "1A1018"))
                     .padding(.horizontal, 18)
@@ -64,5 +71,19 @@ struct CreatePostView: View {
             .padding(.horizontal, 34)
             .padding(.top, 70)
         }
+    }
+
+    private func createPost() async {
+        isPosting = true
+
+        do {
+            try await CommunityPostService.shared.createPost(content: content)
+            await onPostCreated()
+            dismiss()
+        } catch {
+            print("ERROR CREATING POST:", error.localizedDescription)
+        }
+
+        isPosting = false
     }
 }
