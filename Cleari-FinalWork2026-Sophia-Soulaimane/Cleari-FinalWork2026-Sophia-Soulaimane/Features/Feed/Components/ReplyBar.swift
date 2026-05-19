@@ -6,26 +6,33 @@
 //
 
 import SwiftUI
-
 struct ReplyBar: View {
+
+    let action: () -> Void
+
     var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "person.circle.fill")
-                .resizable()
-                .frame(width: 36, height: 36)
-                .foregroundColor(.gray)
-            
-            Text("Post your reply")
-                .font(.system(size: 14))
-                .foregroundColor(.white)
-                .padding(.vertical, 6)
-                .padding(.horizontal, 10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.zwart)
-                .cornerRadius(999)
+
+        Button(action: action) {
+
+            HStack(spacing: 12) {
+
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .frame(width: 36, height: 36)
+                    .foregroundColor(.gray)
+
+                Text("Post your reply")
+                    .font(.system(size: 14))
+                    .foregroundColor(.white)
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.zwart)
+                    .cornerRadius(999)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
     }
 }
 

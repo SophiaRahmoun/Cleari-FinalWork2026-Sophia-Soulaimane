@@ -10,6 +10,7 @@ import SwiftUI
 struct FeedView: View {
 
     @StateObject private var viewModel = FeedViewModel()
+    @State private var showCreatePost = false
 
     var body: some View {
 
@@ -55,8 +56,10 @@ struct FeedView: View {
                     .fill(Color(hex: "1A1018").opacity(0.35))
                     .frame(height: 1)
 
-                ReplyBar()
-                    .padding(.top, 12)
+                ReplyBar {
+                    showCreatePost = true
+                }
+                .padding(.top, 12)
 
                 Spacer()
                     .frame(height: 100)
@@ -72,6 +75,9 @@ struct FeedView: View {
         }
         .task {
             await viewModel.fetchPosts()
+        }
+        .sheet(isPresented: $showCreatePost) {
+            CreatePostView()
         }
     }
 }
