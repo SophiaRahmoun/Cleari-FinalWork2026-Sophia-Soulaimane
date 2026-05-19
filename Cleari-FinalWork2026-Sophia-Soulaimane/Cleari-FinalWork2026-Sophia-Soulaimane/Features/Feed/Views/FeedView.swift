@@ -38,8 +38,11 @@ struct FeedView: View {
                         
                         ForEach(viewModel.posts) { post in
                             
-                            FeedPostCard(post: post)
-                        }
+                            FeedPostCard(post: post) {
+                                Task {
+                                    await viewModel.toggleLike(for: post)
+                                }
+                            }                        }
                     }
                 }
                 .padding(.top, 20)

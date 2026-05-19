@@ -8,32 +8,36 @@
 import SwiftUI
 
 struct PostActionsRow: View {
+    let likesCount: Int
+    let isLiked: Bool
+    let onLikeTapped: () -> Void
+
     var body: some View {
         HStack(spacing: 32) {
-            
-            HStack(spacing: 6) {
-                Image(systemName: "heart")
-                Text("30")
+            Button {
+                onLikeTapped()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                    Text("\(likesCount)")
+                }
             }
-            
+            .buttonStyle(.plain)
+
             HStack(spacing: 6) {
                 Image(systemName: "bubble.right")
-                Text("14")
+                Text("0")
             }
-            
+
             HStack(spacing: 6) {
                 Image(systemName: "arrowshape.turn.up.right")
-                Text("1")
+                Text("0")
             }
-            
+
             Spacer()
         }
         .font(.subheadline)
-        .foregroundColor(.primary)
+        .foregroundColor(Color(hex: "1A1018"))
         .padding(.horizontal, 16)
     }
-}
-
-#Preview {
-    PostActionsRow()
 }

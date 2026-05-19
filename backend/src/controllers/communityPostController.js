@@ -51,7 +51,7 @@ exports.getAllPosts = async (req, res) => {
 			})
 		);
 
-		res.json(posts);
+		res.json(postsWithLikes);
 	} catch (error) {
 		res
 			.status(500)
