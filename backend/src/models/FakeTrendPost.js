@@ -12,6 +12,14 @@ const FakeTrendPost = sequelize.define("FakeTrendPost", {
 		type: DataTypes.STRING,
 		allowNull: false,
 	},
+	skinTypeTag: {
+		type: DataTypes.STRING,
+		allowNull: true,
+	},
+	skinConcernTag: {
+		type: DataTypes.STRING,
+		allowNull: true,
+	},
 	description: {
 		type: DataTypes.TEXT,
 		allowNull: false,
@@ -33,10 +41,6 @@ const FakeTrendPost = sequelize.define("FakeTrendPost", {
 		allowNull: true,
 	},
 	imageUrl: {
-		type: DataTypes.STRING,
-		allowNull: true,
-	},
-	skinConcernTag: {
 		type: DataTypes.STRING,
 		allowNull: true,
 	},

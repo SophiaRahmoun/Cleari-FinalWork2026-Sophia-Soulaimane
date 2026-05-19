@@ -6,6 +6,7 @@ const User = require("../models/User");
 const FakeTrendLike = require("../models/FakeTrendLike");
 const FakeTrendSave = require("../models/FakeTrendSave");
 const FakeTrendComment = require("../models/FakeTrendComment");
+const SkinFormAnswer = require("../models/SkinFormAnswer");
 
 const {
 	extractTikTokVideoId,
@@ -44,6 +45,7 @@ exports.createFakeTrendPost = async (req, res) => {
 			tiktokUrl,
 			scientificSources,
 			skinConcernTag,
+			skinTypeTag,
 			status,
 		} = req.body;
 		if (!title || !trendName || !description || !debunkExplanation) {
@@ -80,6 +82,7 @@ exports.createFakeTrendPost = async (req, res) => {
 			imageUrl: mediaUrl,
 			scientificSources: JSON.stringify(parsedSources),
 			skinConcernTag,
+			skinTypeTag,
 			status: status || "published",
 			dermatologistId: req.user.id,
 		});
@@ -265,7 +268,13 @@ exports.getFakeTrendFeed = async (req, res) => {
 		const limit = parseInt(req.query.limit) || 10;
 		const offset = (page - 1) * limit;
 
+		const userSkinProfile = await SkinFormAnswer.findOne({
+			where: { user_id: userId },
+			order: [["created_at", "DESC"]],
+		});
+
 		const posts = await FakeTrendPost.findAll({
+			where: { status: "published" },
 			include: [
 				{
 					model: User,
@@ -274,7 +283,7 @@ exports.getFakeTrendFeed = async (req, res) => {
 				},
 			],
 			order: [["createdAt", "DESC"]],
-			limit,
+			limit: limit * 5,
 			offset,
 		});
 
@@ -299,23 +308,65 @@ exports.getFakeTrendFeed = async (req, res) => {
 				const isSavedByCurrentUser = await FakeTrendSave.findOne({
 					where: { fakeTrendPostId: post.id, userId },
 				});
+				let matchScore = 0;
+				if (userSkinProfile) {
+					if (
+						post.skinConcernTag &&
+						userSkinProfile.main_concern &&
+						post.skinConcernTag.toLowerCase() ===
+							userSkinProfile.main_concern.toLowerCase()
+					) {
+						matchScore += 5;
+					}
+					if (
+						post.skinTypeTag &&
+						userSkinProfile.skin_feeling &&
+						post.skinTypeTag.toLowerCase() ===
+							userSkinProfile.skin_feeling.toLowerCase()
+					) {
+						matchScore += 4;
+					}
+					if (
+						post.skinConcernTag &&
+						userSkinProfile.diagnosed_condition &&
+						post.skinConcernTag.toLowerCase() ===
+							userSkinProfile.diagnosed_condition.toLowerCase()
+					) {
+						matchScore += 3;
+					}
+				}
+				const engagementScore =
+					likesCount * 0.5 + commentsCount * 1 + savesCount * 1.5;
+				const finalScore = matchScore + engagementScore;
 
 				return {
-					...post.toJSON(),
+					...formatFakeTrendPost(post),
 					likesCount,
 					commentsCount,
 					savesCount,
+					matchScore,
+					engagementScore,
+					finalScore,
 					isLikedByCurrentUser: !!isLikedByCurrentUser,
 					isSavedByCurrentUser: !!isSavedByCurrentUser,
 				};
 			})
 		);
 
+		const sortedPosts = formattedPosts
+			.sort((a, b) => {
+				if (b.finalScore !== a.finalScore) {
+					return b.finalScore - a.finalScore;
+				}
+				return new Date(b.createdAt) - new Date(a.createdAt);
+			})
+			.slice(0, limit);
+
 		res.json({
 			page,
 			limit,
-			hasMore: posts.length === limit,
-			posts: formattedPosts,
+			hasMore: posts.length > limit,
+			posts: sortedPosts,
 		});
 	} catch (error) {
 		res.status(500).json({
