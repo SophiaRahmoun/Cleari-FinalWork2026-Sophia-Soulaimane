@@ -16,6 +16,13 @@ const {
 } = require("../controllers/fakeTrendPostController");
 
 const {
+	createProReply,
+	getProRepliesByPost,
+	updateProReply,
+	deleteProReply,
+} = require("../controllers/FTProReplyController");
+
+const {
 	addScientificSource,
 	getSourcesByPost,
 	updateScientificSource,
@@ -71,22 +78,42 @@ router.get("/posts/:id", getFakeTrendPostById);
 router.post("/posts/:postId/like", authMiddleware, likeFakeTrendPost);
 router.delete("/posts/:postId/like", authMiddleware, unlikeFakeTrendPost);
 
-// saves
 router.post("/posts/:postId/save", authMiddleware, saveFakeTrendPost);
 router.delete("/posts/:postId/save", authMiddleware, unsaveFakeTrendPost);
 
-// comments
 router.post("/posts/:postId/comments", authMiddleware, createFakeTrendComment);
 router.get("/posts/:postId/comments", getFakeTrendCommentsByPost);
 router.put("/comments/:commentId", authMiddleware, updateFakeTrendComment);
 router.delete("/comments/:commentId", authMiddleware, deleteFakeTrendComment);
 
-// scientific sources
 router.post(
 	"/posts/:postId/sources",
 	authMiddleware,
 	dermatologistOnlyMiddleware,
 	addScientificSource
+);
+
+router.post(
+	"/posts/:postId/pro-replies",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	createProReply
+);
+
+router.get("/posts/:postId/pro-replies", getProRepliesByPost);
+
+router.put(
+	"/pro-replies/:replyId",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	updateProReply
+);
+
+router.delete(
+	"/pro-replies/:replyId",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	deleteProReply
 );
 
 router.put(
