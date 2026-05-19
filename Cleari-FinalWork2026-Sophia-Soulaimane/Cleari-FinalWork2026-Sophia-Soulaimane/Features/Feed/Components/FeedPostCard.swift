@@ -8,46 +8,52 @@
 import SwiftUI
 
 struct FeedPostCard: View {
-
     let post: CommunityPost
 
     var body: some View {
-
-        VStack(alignment: .leading, spacing: 16) {
-
-            HStack {
-
-                Image("dr_naak")
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "person.circle.fill")
                     .resizable()
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
+                    .foregroundColor(.gray)
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(post.User.username)
+                            .font(AppFont.gillSwiftUI(.bold, size: 18))
+                            .foregroundColor(Color(hex: "1A1018"))
 
-                    Text(post.User.username)
-                        .font(.headline)
+                        Text("· now")
+                            .font(AppFont.gillSwiftUI(.regular, size: 15))
+                            .foregroundColor(.gray)
 
-                    Text("Community member")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                        Spacer()
+                    }
+
+                    Text(post.content)
+                        .font(AppFont.gillSwiftUI(.regular, size: 18))
+                        .foregroundColor(Color(hex: "1A1018"))
+                        .lineSpacing(4)
+
+                    if let imageUrl = post.imageUrl {
+                        AsyncImage(url: URL(string: "http://localhost:4000\(imageUrl)")) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } placeholder: {
+                            Color.white.opacity(0.25)
+                        }
+                        .frame(height: 190)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                    }
+
+                    PostActionsRow()
+                        .padding(.top, 6)
                 }
-
-                Spacer()
-
-                Image(systemName: "checkmark.seal")
-                    .foregroundColor(Color.bonni)
             }
-
-            Divider()
-
-            Text(post.content)
-                .font(.body)
         }
-        .padding()
-        .frame(minHeight: 200)
-        .background(Color.accentColor)
-        .cornerRadius(20)
-        .shadow(radius: 4)
-        .padding(.vertical, 24)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 18)
     }
 }

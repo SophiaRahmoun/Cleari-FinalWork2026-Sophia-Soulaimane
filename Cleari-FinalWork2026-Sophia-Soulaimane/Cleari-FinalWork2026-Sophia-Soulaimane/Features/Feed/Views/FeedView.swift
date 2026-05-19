@@ -37,12 +37,8 @@ struct FeedView: View {
                     } else {
 
                         ForEach(viewModel.posts) { post in
-
-                            UserQuestionRow(post: post)
-
+                            
                             FeedPostCard(post: post)
-
-                            PostActionsRow()
                         }
                     }
                 }
