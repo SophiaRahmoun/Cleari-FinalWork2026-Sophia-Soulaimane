@@ -25,9 +25,13 @@ struct PostDetailView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     header
 
-                    FeedPostCard(post: post) {
-                        // Like later if needed
-                    }
+                    FeedPostCard(
+                        post: post,
+                        onLikeTapped: {
+                        },
+                        onCommentTapped: {
+                        }
+                    )
 
                     Divider()
                         .background(Color(hex: "1A1018").opacity(0.35))

@@ -18,6 +18,8 @@ struct CommunityPost: Codable, Identifiable {
 
     var likesCount: Int?
     var isLikedByCurrentUser: Bool?
+    var commentsCount: Int?
+
 }
 
 struct PostUser: Codable {
@@ -30,5 +32,4 @@ struct LikeResponse: Codable {
     let message: String
     let likesCount: Int
     let isLikedByCurrentUser: Bool
-    var commentsCount: Int?
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct FeedPostCard: View {
     let post: CommunityPost
     let onLikeTapped: () -> Void
+    let onCommentTapped: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -52,7 +53,9 @@ struct FeedPostCard: View {
                     PostActionsRow(
                         likesCount: post.likesCount ?? 0,
                         isLiked: post.isLikedByCurrentUser ?? false,
-                        onLikeTapped: onLikeTapped
+                        onLikeTapped: onLikeTapped,
+                        commentsCount: post.commentsCount ?? 0,
+                        onCommentTapped: onCommentTapped
                     )
                     .padding(.top, 6)
                 }

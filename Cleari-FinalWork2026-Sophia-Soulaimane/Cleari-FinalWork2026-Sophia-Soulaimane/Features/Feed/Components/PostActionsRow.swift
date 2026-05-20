@@ -11,9 +11,12 @@ struct PostActionsRow: View {
     let likesCount: Int
     let isLiked: Bool
     let onLikeTapped: () -> Void
-
+    let commentsCount: Int
+    let onCommentTapped: () -> Void
+    
     var body: some View {
         HStack(spacing: 32) {
+            
             Button {
                 onLikeTapped()
             } label: {
@@ -23,17 +26,22 @@ struct PostActionsRow: View {
                 }
             }
             .buttonStyle(.plain)
-
-            HStack(spacing: 6) {
-                Image(systemName: "bubble.right")
-                Text("0")
+            
+            Button {
+                onCommentTapped()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "bubble.right")
+                    Text("\(commentsCount)")
+                }
             }
-
+            .buttonStyle(.plain)
+            
             HStack(spacing: 6) {
                 Image(systemName: "arrowshape.turn.up.right")
                 Text("0")
             }
-
+            
             Spacer()
         }
         .font(.subheadline)
