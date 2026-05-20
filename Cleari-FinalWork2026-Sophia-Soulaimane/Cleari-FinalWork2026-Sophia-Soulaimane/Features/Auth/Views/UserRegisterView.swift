@@ -28,99 +28,61 @@ struct UserRegisterView: View {
             )
             .ignoresSafeArea()
             ScrollView(showsIndicators: false) {
-
                           VStack(spacing: 18) {
-
                               HStack {
-
                                   Button {
-
                                       onBack()
-
                                   } label: {
-
                                       Image(systemName: "chevron.left")
-
                                           .font(.system(size: 22, weight: .bold))
-
                                           .foregroundColor(.white)
-
                                           .padding(12)
-
                                   }
-
                                   Spacer()
-
                               }
-
                               .padding(.top, 20)
-
                               TypographyLabel(
-
                                   text: "Create your account",
-
                                   style: .h1Italic,
-
                                   color: .black
-
                               )
-
                               .padding(.top, 5)
-
                               VStack(spacing: 16) {
-
                                   AuthRegisterInput(label: "First Name", text: $firstName, maxLength: 20)
-
                                   AuthRegisterInput(label: "Surname", text: $lastName, maxLength: 20)
-
                                   AuthRegisterInput(label: "Email", text: $email, maxLength: 20)
-
                                   AuthRegisterInput(label: "Password", text: $password, maxLength: 25, isSecure: true)
-
                                   AuthBirthdatePicker(birthdate: $birthdate)
-
                               }
 
                               .padding(.horizontal, 8)
-
                               PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
                                   Task {
                                       await viewModel.registerUser(
                                           firstName: firstName,
                                           lastName: lastName,
                                           email: email,
-                                          password: password
-                                      )
+                                          password: password)
+                                      if viewModel.isLoggedIn {
+                                                  onSuccess()
+                                    }
                                   }
                               }
                               .padding(.horizontal, 60)
                               .padding(.top, 8)
-
-
                               AuthBottomLink(
                                   text: "Already have an account?",
-
                                   linkText: "Sign in"
-
                               )
 
                               .frame(maxWidth: .infinity, alignment: .leading)
-
                               .padding(.top, 8)
-
                               Spacer(minLength: 30)
-
                           }
 
                           .padding(.horizontal, 32)
-
                       }
-            .onChange(of: viewModel.isLoggedIn) { _, isLoggedIn in
-                if isLoggedIn {
-                    print("REGISTER SUCCESS → GO TO SCAN")
-                    onSuccess()
-                }
-            }
+            
 
                   }
 

@@ -6,37 +6,32 @@
 //
 
 import Foundation
-
 struct AuthResponse: Codable {
-    let message: String
+    let message: String?
     let token: String
     let user: AuthUser
 }
 
-struct AuthUser: Codable {
+struct AuthUser: Codable, Identifiable {
     let id: Int
     let username: String
     let email: String
     let role: String
+    let verificationStatus: String?
 }
 
 struct LoginRequest: Codable {
-
     let email: String
     let password: String
-
 }
 
 struct RegisterUserRequest: Codable {
-
     let username: String
     let email: String
     let password: String
-
 }
 
 struct RegisterDermatologistRequest: Codable {
-
     let username: String
     let email: String
     let password: String

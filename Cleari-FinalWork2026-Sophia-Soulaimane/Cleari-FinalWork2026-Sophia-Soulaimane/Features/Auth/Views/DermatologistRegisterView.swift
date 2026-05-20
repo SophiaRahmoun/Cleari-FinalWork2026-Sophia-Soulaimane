@@ -78,9 +78,7 @@ struct DermatologistRegisterView: View {
                                 firstName: firstName,
                                 lastName: lastName,
                                 email: email,
-                                password: password
-                            )
-
+                                password: password)
                             if viewModel.isLoggedIn {
                                 onSuccess()
                             }
