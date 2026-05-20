@@ -30,4 +30,5 @@ struct LikeResponse: Codable {
     let message: String
     let likesCount: Int
     let isLikedByCurrentUser: Bool
+    var commentsCount: Int?
 }
