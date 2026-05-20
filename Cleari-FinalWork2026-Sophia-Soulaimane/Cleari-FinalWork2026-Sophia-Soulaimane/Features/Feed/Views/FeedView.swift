@@ -88,7 +88,11 @@ struct FeedView: View {
                 await viewModel.fetchPosts()
             }
         }
-        .fullScreenCover(item: $selectedPost) { post in
+        .fullScreenCover(item: $selectedPost, onDismiss: {
+            Task {
+                await viewModel.fetchPosts()
+            }
+        }) { post in
             PostDetailView(post: post)
         }
     }

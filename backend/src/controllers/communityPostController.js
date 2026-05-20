@@ -44,18 +44,25 @@ exports.getAllPosts = async (req, res) => {
 				const likesCount = await CommunityPostLike.count({
 					where: { postId: post.id },
 				});
+
+				const commentsCount = await CommunityPostComment.count({
+					where: { postId: post.id },
+				});
+
 				return {
 					...post.toJSON(),
 					likesCount,
+					commentsCount,
 				};
 			})
 		);
 
 		res.json(postsWithLikes);
 	} catch (error) {
-		res
-			.status(500)
-			.json({ message: "Error fetching posts", error: error.message });
+		res.status(500).json({
+			message: "Error fetching posts",
+			error: error.message,
+		});
 	}
 };
 
