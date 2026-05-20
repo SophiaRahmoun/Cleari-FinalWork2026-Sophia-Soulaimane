@@ -39,7 +39,7 @@ exports.unsavePost = async (req, res) => {
 		const savedPost = await CommunityPostSave.findOne({
 			where: { postId, userId },
 		});
-		if (!save) {
+		if (!savedPost) {
 			return res.status(404).json({ message: "Save not found" });
 		}
 		await savedPost.destroy();
