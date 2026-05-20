@@ -56,6 +56,52 @@ final class CommunityPostService {
             throw URLError(.badServerResponse)
         }
     }
+
+    func likePost(postId: Int) async throws -> LikeResponse {
+        guard let url = URL(string: "http://localhost:4000/api/community/posts/\(postId)/like") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 201 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(LikeResponse.self, from: data)
+    }
+
+    func unlikePost(postId: Int) async throws -> LikeResponse {
+        guard let url = URL(string: "http://localhost:4000/api/community/posts/\(postId)/like") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(LikeResponse.self, from: data)
+    }
 }
 
 extension Data {
