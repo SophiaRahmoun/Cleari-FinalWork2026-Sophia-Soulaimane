@@ -10,6 +10,9 @@ import SwiftUI
 struct AddDebunkView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @State private var title: String = ""
+    @State private var trendName: String = ""
+    @State private var description: String = ""
     @State private var trendLink: String = ""
     @State private var selectedStatus: String?
     @State private var message: String = ""
@@ -24,37 +27,56 @@ struct AddDebunkView: View {
                     dismiss()
                 }
 
-                VStack(alignment: .leading, spacing: 18) {
-                    AddDebunkSectionTitle("Select trend debunk")
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        AddDebunkSectionTitle("Select trend debunk")
 
-                    AddDebunkInputField(
-                        placeholder: "Put your link...",
-                        text: $trendLink
-                    )
-                    .frame(height: 55)
+                        AddDebunkInputField(
+                            placeholder: "Debunk title...",
+                            text: $title
+                        )
+                        .frame(height: 55)
 
-                    AddDebunkStatusSelector(selectedStatus: $selectedStatus)
+                        AddDebunkInputField(
+                            placeholder: "Trend name...",
+                            text: $trendName
+                        )
+                        .frame(height: 55)
 
-                    AddDebunkSectionTitle("Add your message")
+                        AddDebunkInputField(
+                            placeholder: "Short description...",
+                            text: $description
+                        )
+                        .frame(height: 55)
 
-                    AddDebunkMessageCardCompact(
-                        message: $message,
-                        imageName: "ProfileSample",
-                        name: "Dr. Sarah Ben Ali",
-                        role: "Dermatologist"
-                    )
+                        AddDebunkInputField(
+                            placeholder: "Put your link...",
+                            text: $trendLink
+                        )
+                        .frame(height: 55)
 
-                    AddDebunkSectionTitle("Media")
+                        AddDebunkStatusSelector(selectedStatus: $selectedStatus)
 
-                    AddDebunkMediaPicker {
-                        print("Pick media tapped")
+                        AddDebunkSectionTitle("Add your message")
+
+                        AddDebunkMessageCardCompact(
+                            message: $message,
+                            imageName: "ProfileSample",
+                            name: "Dr. Sarah Ben Ali",
+                            role: "Dermatologist"
+                        )
+
+                        AddDebunkSectionTitle("Media")
+
+                        AddDebunkMediaPicker {
+                            print("Pick media tapped")
+                        }
+                        .frame(height: 70)
                     }
-                    .frame(height: 70)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 120)
                 }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-
-                Spacer()
 
                 AddDebunkActionsBar {
                     dismiss()
