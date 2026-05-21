@@ -29,6 +29,7 @@ final class AuthViewModel: ObservableObject {
                let response = try await AuthAPIService.shared.login(email: email, password: password)
 
                TokenStorage.shared.token = response.token
+               TokenStorage.shared.userRole = response.user.role
                currentUser = response.user
                isLoggedIn = true
                print("LOGIN SUCCESS:", response.user.email)
@@ -46,6 +47,7 @@ final class AuthViewModel: ObservableObject {
                let username = "\(firstName) \(lastName)"
                let response = try await AuthAPIService.shared.registerUser(username: username, email: email, password: password)
                TokenStorage.shared.token = response.token
+               TokenStorage.shared.userRole = response.user.role
                currentUser = response.user
                isLoggedIn = true
                print("USER REGISTER SUCCESS:", response.user.email)
@@ -64,6 +66,7 @@ final class AuthViewModel: ObservableObject {
                let username = "\(firstName) \(lastName)"
                let response = try await AuthAPIService.shared.registerDermatologist(username: username, email: email, password: password, licenseNumber: licenseNumber)
                TokenStorage.shared.token = response.token
+               TokenStorage.shared.userRole = response.user.role
                currentUser = response.user
                isLoggedIn = true
                print("DERMATOLOGIST REGISTER SUCCESS:", response.user.email)
@@ -74,12 +77,12 @@ final class AuthViewModel: ObservableObject {
            }
        }
 
-       func logout() {
-           TokenStorage.shared.token = nil
-           currentUser = nil
-           isLoggedIn = false
-           errorMessage = nil
-       }
+    func logout() {
+        TokenStorage.shared.clear()
+        currentUser = nil
+        isLoggedIn = false
+        errorMessage = nil
+    }
 
        private func cleanError(_ message: String) -> String {
            message.replacingOccurrences(of: "{\"message\":\"", with: "").replacingOccurrences(of: "\"}", with: "")

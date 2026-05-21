@@ -12,6 +12,7 @@ struct FeedView: View {
     @StateObject private var viewModel = FeedViewModel()
     @State private var showCreatePost = false
     @State private var selectedPost: CommunityPost?
+    @State private var showDebunkFeed = false
 
     var body: some View {
 
@@ -27,7 +28,9 @@ struct FeedView: View {
 
                 LazyVStack(alignment: .leading, spacing: 16) {
 
-                    FeedTopBar()
+                    FeedTopBar {
+                        showDebunkFeed = true
+                    }
 
                     if viewModel.isLoading {
 
@@ -94,6 +97,11 @@ struct FeedView: View {
             }
         }) { post in
             PostDetailView(post: post)
+        }
+        .fullScreenCover(isPresented: $showDebunkFeed) {
+            DebunkFeedView(
+                isDermatologist: TokenStorage.shared.userRole == "dermatologist"
+            )
         }
     }
 }
