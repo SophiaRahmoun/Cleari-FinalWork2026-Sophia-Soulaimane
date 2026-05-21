@@ -6,6 +6,7 @@ const SkinAnalysis = require("./SkinAnalysis");
 const SkinFormAnswer = require("./SkinFormAnswer");
 const Appointment = require("./Appointment");
 const Subscription = require("./Subscription");
+const DermatologistAvailability = require("./DermatologistAvailability");
 
 User.hasOne(DermatologistProfile, {
   foreignKey: "user_id",
@@ -77,5 +78,6 @@ module.exports = {
   SkinAnalysis,
   SkinFormAnswer,
   Appointment,
+  DermatologistAvailability,
   Subscription,
 };
