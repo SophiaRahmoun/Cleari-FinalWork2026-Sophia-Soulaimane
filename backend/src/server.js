@@ -13,6 +13,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const availabilityRoutes = require("./routes/availabilityRoutes");
+app.use("/api/availability", availabilityRoutes);
+
 app.get("/", (req, res) => {
 	res.json({
 		message: "Cleari backend is running.",
@@ -24,6 +27,7 @@ app.use("/api/skin-scan", skinScanRoutes);
 app.use("/api/skin-form", skinFormRoutes);
 app.use("/api/dermatologists", dermatologistRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/availability", availabilityRoutes);
 
 const PORT = process.env.PORT || 4000;
 
