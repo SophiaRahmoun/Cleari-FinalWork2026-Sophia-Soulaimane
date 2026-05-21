@@ -64,8 +64,8 @@ struct DebunkFeedView: View {
         HStack(spacing: 12) {
             DermatologistFilterLabel(title: "All", isSelected: true)
             DermatologistFilterLabel(title: "Acne")
-            DermatologistFilterLabel(title: "Anti-aging")
-            DermatologistFilterLabel(title: "Sensitive skin")
+            DermatologistFilterLabel(title: "Aging")
+            DermatologistFilterLabel(title: "Sensitive")
         }
         .padding(.horizontal, 34)
     }

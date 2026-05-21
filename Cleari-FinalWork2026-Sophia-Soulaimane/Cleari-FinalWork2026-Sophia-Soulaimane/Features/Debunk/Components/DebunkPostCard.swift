@@ -14,14 +14,14 @@ struct DebunkPostCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text(title)
-                .font(AppFont.gillSwiftUI(.bold, size: 22))
+                .font(AppFont.gillSwiftUI(.bold, size: 20))
                 .foregroundColor(Color(hex: "1A1018"))
                 .lineLimit(2)
 
             Image(mediaName)
                 .resizable()
                 .scaledToFill()
-                .frame(height: 230)
+                .frame(height: 220)
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
 
@@ -29,7 +29,7 @@ struct DebunkPostCard: View {
                 imageName: "ProfileSample",
                 name: "Dr. Sarah Ben Ali",
                 role: "Dermatologist",
-                message: "This trend is risky and not supported by science.\nHeat can damage the skin barrier and cause burns."
+                message: "This trend is risky and not supported by science.Heat can damage the skin barrier and cause burns."
             )
         }
         .padding(22)
