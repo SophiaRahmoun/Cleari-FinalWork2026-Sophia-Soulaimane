@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct DebunkFeedView: View {
+    @State private var showAddDebunk = false
     var isDermatologist: Bool = false
+
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -31,7 +33,7 @@ struct DebunkFeedView: View {
 
                         if isDermatologist {
                             AddDebunkButton {
-                                print("Add debunk tapped")
+                                showAddDebunk = true
                             }
                             .padding(.horizontal, 80)
                         }
@@ -61,6 +63,9 @@ struct DebunkFeedView: View {
 
                 ScanBottomBar()
             }
+        }
+        .fullScreenCover(isPresented: $showAddDebunk) {
+            AddDebunkView()
         }
     }
 
