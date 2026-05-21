@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FeedTopBar: View {
+    var onExploreTapped: (() -> Void)? = nil
     var onFakeTrendsTapped: (() -> Void)? = nil
 
     var body: some View {
@@ -33,13 +34,18 @@ struct FeedTopBar: View {
             HStack {
                 Spacer()
 
-                TypographyLabel(
-                    text: "explore",
-                    style: .button,
-                    color: .black,
-                    alignment: .center
-                )
-                .underline()
+                Button {
+                    onExploreTapped?()
+                } label: {
+                    TypographyLabel(
+                        text: "explore",
+                        style: .button,
+                        color: .black,
+                        alignment: .center
+                    )
+                    .underline()
+                }
+                .buttonStyle(.plain)
 
                 Spacer()
 

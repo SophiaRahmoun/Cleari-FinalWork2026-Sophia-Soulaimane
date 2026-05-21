@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DebunkFeedView: View {
     var isDermatologist: Bool = false
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -21,8 +22,11 @@ struct DebunkFeedView: View {
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 26) {
-                        FeedTopBar()
-
+                        FeedTopBar(
+                            onExploreTapped: {
+                                dismiss()
+                            }
+                        )
                         filters
 
                         if isDermatologist {
