@@ -83,7 +83,12 @@ struct AddDebunkView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 120)
                 }
-
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(AppFont.gillSwiftUI(.regular, size: 13))
+                        .foregroundColor(.red)
+                        .padding(.horizontal, 24)
+                }
                 AddDebunkActionsBar {
 
                     dismiss()
@@ -100,6 +105,7 @@ struct AddDebunkView: View {
                             tiktokUrl: trendLink,
                             status: selectedStatus
                         )
+                        print("POST SUCCESS:", success)
 
                         if success {
                             dismiss()

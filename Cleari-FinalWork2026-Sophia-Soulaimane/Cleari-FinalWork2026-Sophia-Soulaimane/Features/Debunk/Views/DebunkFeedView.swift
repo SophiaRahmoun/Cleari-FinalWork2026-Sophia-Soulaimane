@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct DebunkFeedView: View {
+    @StateObject private var viewModel = DebunkFeedViewModel()
     @State private var showAddDebunk = false
+
     var isDermatologist: Bool = false
 
     @Environment(\.dismiss) private var dismiss
@@ -29,6 +31,7 @@ struct DebunkFeedView: View {
                                 dismiss()
                             }
                         )
+
                         filters
 
                         if isDermatologist {
@@ -38,20 +41,15 @@ struct DebunkFeedView: View {
                             .padding(.horizontal, 80)
                         }
 
-                        DebunkPostCard(
-                            title: "Does applying iron on the skin reduce wrinkles?",
-                            mediaName: "DebunkSample"
-                        )
-                        .padding(.horizontal, 34)
-
-                        Divider()
-                            .background(Color(hex: "1A1018").opacity(0.35))
-
-                        Text("Does applying Gold on the skin reduce wrinkles?")
-                            .font(AppFont.gillSwiftUI(.bold, size: 22))
-                            .foregroundColor(Color(hex: "1A1018"))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 34)
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .padding(.top, 40)
+                        } else {
+                            ForEach(viewModel.posts) { post in
+                                DebunkPostCard(post: post)
+                                    .padding(.horizontal, 34)
+                            }
+                        }
                     }
                     .padding(.top, 55)
                     .padding(.bottom, 30)
@@ -64,7 +62,14 @@ struct DebunkFeedView: View {
                 ScanBottomBar()
             }
         }
-        .fullScreenCover(isPresented: $showAddDebunk) {
+        .task {
+            await viewModel.fetchPosts()
+        }
+        .fullScreenCover(isPresented: $showAddDebunk, onDismiss: {
+            Task {
+                await viewModel.fetchPosts()
+            }
+        }) {
             AddDebunkView()
         }
     }

@@ -33,6 +33,7 @@
 		847B5D3A2F40C40D00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Cleari-FinalWork2026-Sophia-Soulaimane" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Features/Debunk/ViewModels/DebunkFeedViewModel.swift,
 				Features/Debunk/Views/DebunkDetailView.swift,
 				Info.plist,
 			);

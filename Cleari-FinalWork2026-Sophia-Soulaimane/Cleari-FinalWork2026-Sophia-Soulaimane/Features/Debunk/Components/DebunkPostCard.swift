@@ -8,28 +8,42 @@
 import SwiftUI
 
 struct DebunkPostCard: View {
-    let title: String
-    let mediaName: String
+    let post: FakeTrendPost
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text(title)
+            Text(post.title)
                 .font(AppFont.gillSwiftUI(.bold, size: 20))
                 .foregroundColor(Color(hex: "1A1018"))
                 .lineLimit(2)
 
-            Image(mediaName)
-                .resizable()
-                .scaledToFill()
+            if let imageUrl = post.imageUrl {
+                AsyncImage(url: URL(string: "http://localhost:4000\(imageUrl)")) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    Color.white.opacity(0.25)
+                }
                 .frame(height: 220)
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
+            } else {
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(Color.white.opacity(0.25))
+                    .frame(height: 220)
+                    .overlay {
+                        Text(post.trendName)
+                            .font(AppFont.gillSwiftUI(.bold, size: 22))
+                            .foregroundColor(Color(hex: "1A1018"))
+                    }
+            }
 
             DebunkExpertReplyCard(
                 imageName: "ProfileSample",
-                name: "Dr. Sarah Ben Ali",
+                name: post.dermatologist?.username ?? "Dermatologist",
                 role: "Dermatologist",
-                message: "This trend is risky and not supported by science.Heat can damage the skin barrier and cause burns."
+                message: post.debunkExplanation
             )
         }
         .padding(22)
