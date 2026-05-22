@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddDebunkView: View {
     @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = AddDebunkViewModel()
 
     @State private var title: String = ""
     @State private var trendName: String = ""
@@ -23,12 +24,15 @@ struct AddDebunkView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
+
                 AddDebunkHeader {
                     dismiss()
                 }
 
                 ScrollView(showsIndicators: false) {
+
                     VStack(alignment: .leading, spacing: 18) {
+
                         AddDebunkSectionTitle("Select trend debunk")
 
                         AddDebunkInputField(
@@ -55,7 +59,9 @@ struct AddDebunkView: View {
                         )
                         .frame(height: 55)
 
-                        AddDebunkStatusSelector(selectedStatus: $selectedStatus)
+                        AddDebunkStatusSelector(
+                            selectedStatus: $selectedStatus
+                        )
 
                         AddDebunkSectionTitle("Add your message")
 
@@ -79,9 +85,26 @@ struct AddDebunkView: View {
                 }
 
                 AddDebunkActionsBar {
+
                     dismiss()
+
                 } onPost: {
-                    print("Post tapped")
+
+                    Task {
+
+                        let success = await viewModel.createDebunkPost(
+                            title: title,
+                            trendName: trendName,
+                            description: description,
+                            debunkExplanation: message,
+                            tiktokUrl: trendLink,
+                            status: selectedStatus
+                        )
+
+                        if success {
+                            dismiss()
+                        }
+                    }
                 }
             }
         }
