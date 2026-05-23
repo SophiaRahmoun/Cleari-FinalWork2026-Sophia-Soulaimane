@@ -10,6 +10,7 @@ import SwiftUI
 struct DebunkPostCard: View {
     let post: FakeTrendPost
     let onLikeTapped: () -> Void
+    let onCommentTapped: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -69,12 +70,15 @@ struct DebunkPostCard: View {
                 }
                 .buttonStyle(.plain)
 
-                HStack(spacing: 6) {
-
-                    Image(systemName: "bubble.right")
-
-                    Text("\(post.commentsCount ?? 0)")
+                Button {
+                    onCommentTapped()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "bubble.right")
+                        Text("\(post.commentsCount ?? 0)")
+                    }
                 }
+                .buttonStyle(.plain)
 
                 Spacer()
             }
