@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct FakeTrendFeedResponse: Codable {
+    let posts: [FakeTrendPost]
+}
+
 struct FakeTrendPost: Codable, Identifiable {
     let id: Int
     let title: String
@@ -24,10 +28,21 @@ struct FakeTrendPost: Codable, Identifiable {
     let createdAt: String
     let updatedAt: String
     let dermatologist: FakeTrendDermatologist?
+
+    var likesCount: Int?
+    var isLikedByCurrentUser: Bool?
+    var commentsCount: Int?
+    var savesCount: Int?
 }
 
 struct FakeTrendDermatologist: Codable {
     let id: Int
     let username: String
     let email: String
+}
+
+struct FakeTrendLikeResponse: Codable {
+    let message: String
+    let likesCount: Int
+    let isLikedByCurrentUser: Bool
 }
