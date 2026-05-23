@@ -46,8 +46,14 @@ struct DebunkFeedView: View {
                                 .padding(.top, 40)
                         } else {
                             ForEach(viewModel.posts) { post in
-                                DebunkPostCard(post: post)
-                                    .padding(.horizontal, 34)
+                                DebunkPostCard(
+                                    post: post,
+                                    onLikeTapped: {
+                                        Task {
+                                            await viewModel.toggleLike(for: post)
+                                        }
+                                    }
+                                )                                    .padding(.horizontal, 34)
                             }
                         }
                     }
