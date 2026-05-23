@@ -26,4 +26,24 @@ final class DebunkFeedViewModel: ObservableObject {
 
         isLoading = false
     }
+    func toggleLike(for post: FakeTrendPost) async {
+        guard let index = posts.firstIndex(where: { $0.id == post.id }) else { return }
+
+        do {
+            let isLiked = posts[index].isLikedByCurrentUser ?? false
+            let response: FakeTrendLikeResponse
+
+            if isLiked {
+                response = try await DebunkService.shared.unlikeFakeTrendPost(postId: post.id)
+            } else {
+                response = try await DebunkService.shared.likeFakeTrendPost(postId: post.id)
+            }
+
+            posts[index].likesCount = response.likesCount
+            posts[index].isLikedByCurrentUser = response.isLikedByCurrentUser
+
+        } catch {
+            print("ERROR TOGGLING FAKE TREND LIKE:", error.localizedDescription)
+        }
+    }
 }
