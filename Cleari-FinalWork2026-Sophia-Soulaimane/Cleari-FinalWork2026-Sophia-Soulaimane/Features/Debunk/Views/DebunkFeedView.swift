@@ -10,13 +10,15 @@ import SwiftUI
 struct DebunkFeedView: View {
     @StateObject private var viewModel = DebunkFeedViewModel()
     @State private var showAddDebunk = false
+    @State private var selectedPost: FakeTrendPost?
 
     var isDermatologist: Bool = false
 
     @Environment(\.dismiss) private var dismiss
-
     var body: some View {
+
         ZStack {
+
             LinearGradientBackground(
                 startHex: "C66F8C",
                 endHex: "F9BDB9"
@@ -24,8 +26,11 @@ struct DebunkFeedView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 0) {
+
                 ScrollView(showsIndicators: false) {
+
                     VStack(spacing: 26) {
+
                         FeedTopBar(
                             onExploreTapped: {
                                 dismiss()
@@ -35,6 +40,7 @@ struct DebunkFeedView: View {
                         filters
 
                         if isDermatologist {
+
                             AddDebunkButton {
                                 showAddDebunk = true
                             }
@@ -42,18 +48,28 @@ struct DebunkFeedView: View {
                         }
 
                         if viewModel.isLoading {
+
                             ProgressView()
                                 .padding(.top, 40)
+
                         } else {
+
                             ForEach(viewModel.posts) { post in
+
                                 DebunkPostCard(
                                     post: post,
+
                                     onLikeTapped: {
                                         Task {
                                             await viewModel.toggleLike(for: post)
                                         }
+                                    },
+
+                                    onCommentTapped: {
+                                        selectedPost = post
                                     }
-                                )                                    .padding(.horizontal, 34)
+                                )
+                                .padding(.horizontal, 34)
                             }
                         }
                     }
@@ -69,22 +85,40 @@ struct DebunkFeedView: View {
             }
         }
         .task {
+
             await viewModel.fetchPosts()
         }
+
         .fullScreenCover(isPresented: $showAddDebunk, onDismiss: {
+
             Task {
                 await viewModel.fetchPosts()
             }
+
         }) {
+
             AddDebunkView()
         }
-    }
 
+        .fullScreenCover(item: $selectedPost, onDismiss: {
+
+            Task {
+                await viewModel.fetchPosts()
+            }
+
+        }) { post in
+
+            DebunkDetailView(post: post)
+        }
+    }
+    
     private var filters: some View {
+
         HStack(spacing: 12) {
+
             DermatologistFilterLabel(title: "All", isSelected: true)
             DermatologistFilterLabel(title: "Acne")
-            DermatologistFilterLabel(title: "Aging")
+            DermatologistFilterLabel(title: "Aging") 
             DermatologistFilterLabel(title: "Sensitive")
         }
         .padding(.horizontal, 34)

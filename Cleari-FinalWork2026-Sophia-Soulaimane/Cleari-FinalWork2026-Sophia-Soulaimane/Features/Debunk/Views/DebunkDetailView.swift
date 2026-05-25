@@ -25,7 +25,7 @@ struct DebunkDetailView: View {
                     VStack(alignment: .leading, spacing: 22) {
                         DebunkPostCard(
                             post: post,
-                            onLikeTapped: {}
+                            onLikeTapped: {},
                             onCommentTapped: {}
                         )
 
