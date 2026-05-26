@@ -13,6 +13,8 @@ struct FeedView: View {
     @State private var showCreatePost = false
     @State private var selectedPost: CommunityPost?
     @State private var showDebunkFeed = false
+    @State private var showLockedSheet = false
+    @State private var showPayementView = false
 
     var body: some View {
 
@@ -28,9 +30,15 @@ struct FeedView: View {
 
                 LazyVStack(alignment: .leading, spacing: 16) {
 
-                    FeedTopBar {
-                        showDebunkFeed = true
-                    }
+                    FeedTopBar(
+                        onFakeTrendsTapped: {
+                            if TokenStorage.shared.hasFakeTrendAccess {
+                                showDebunkFeed = true
+                            } else {
+                                showLockedSheet = true
+                            }
+                        }
+                    )
 
                     if viewModel.isLoading {
 
@@ -102,6 +110,18 @@ struct FeedView: View {
             DebunkFeedView(
                 isDermatologist: TokenStorage.shared.userRole == "dermatologist"
             )
+        }
+        .sheet(isPresented: $showLockedSheet) {
+            FakeTrendLockedSheet {
+                showLockedSheet = false
+                showPayementView = true
+            } onNotNowTapped: {
+                showLockedSheet = false
+            }
+        }
+
+        .fullScreenCover(isPresented: $showPayementView) {
+            PayementView()
         }
     }
 }
