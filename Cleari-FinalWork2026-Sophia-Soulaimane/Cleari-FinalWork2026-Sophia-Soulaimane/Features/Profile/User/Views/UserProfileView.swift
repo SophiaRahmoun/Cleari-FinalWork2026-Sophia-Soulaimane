@@ -8,11 +8,26 @@
 import SwiftUI
 
 struct UserProfileView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var showPayementView = false
     var body: some View {
         ZStack {
             DarkBackground()
             VStack(spacing: 0) {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 28)
+                .padding(.top, 20)
+
                 ScrollView(showsIndicators: false) {
 
                     VStack(spacing: 32) {
@@ -23,6 +38,7 @@ struct UserProfileView: View {
                             username: "Annedupont",
                             memberSince: "2026"
                         )
+
                         VStack(spacing: 10) {
 
                             ProfileMenuSection(title: "Account")
@@ -56,10 +72,9 @@ struct UserProfileView: View {
                         }
                         .padding(.horizontal, 32)
                     }
-                    .padding(.top, 45)
+                    .padding(.top, 25)
                     .padding(.bottom, 35)
                 }
-
                 ScanBottomBar()
             }
         }
