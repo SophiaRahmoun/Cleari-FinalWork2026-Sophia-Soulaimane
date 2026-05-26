@@ -31,6 +31,10 @@ app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
 const PORT = process.env.PORT || 4000;
 
+const chatRoutes = require("./routes/chatRoutes");
+app.use("/api/chat", chatRoutes);
+
+
 const startServer = async () => {
 	try {
 		await sequelize.authenticate();

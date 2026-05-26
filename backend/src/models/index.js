@@ -6,64 +6,78 @@ const SkinAnalysis = require("./SkinAnalysis");
 const SkinFormAnswer = require("./SkinFormAnswer");
 const Appointment = require("./Appointment");
 
+const Conversation = require("./Conversation");
+const Message = require("./Message");
+
+Conversation.hasMany(Message, {
+	foreignKey: "conversationId",
+	onDelete: "CASCADE",
+});
+
+Message.belongsTo(Conversation, {
+	foreignKey: "conversationId",
+});
+
 User.hasOne(DermatologistProfile, {
-  foreignKey: "user_id",
-  as: "dermatologistProfile",
-  onDelete: "CASCADE",
+	foreignKey: "user_id",
+	as: "dermatologistProfile",
+	onDelete: "CASCADE",
 });
 
 DermatologistProfile.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "user",
+	foreignKey: "user_id",
+	as: "user",
 });
 
 User.hasMany(SkinAnalysis, {
-  foreignKey: "user_id",
-  as: "skinAnalyses",
-  onDelete: "CASCADE",
+	foreignKey: "user_id",
+	as: "skinAnalyses",
+	onDelete: "CASCADE",
 });
 
 SkinAnalysis.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "user",
+	foreignKey: "user_id",
+	as: "user",
 });
 
 User.hasMany(SkinFormAnswer, {
-  foreignKey: "user_id",
-  as: "skinFormAnswers",
-  onDelete: "CASCADE",
+	foreignKey: "user_id",
+	as: "skinFormAnswers",
+	onDelete: "CASCADE",
 });
 
 SkinFormAnswer.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "user",
+	foreignKey: "user_id",
+	as: "user",
 });
 
 User.hasMany(Appointment, {
-  foreignKey: "user_id",
-  as: "appointments",
+	foreignKey: "user_id",
+	as: "appointments",
 });
 
 Appointment.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "user",
+	foreignKey: "user_id",
+	as: "user",
 });
 
 DermatologistProfile.hasMany(Appointment, {
-  foreignKey: "dermatologist_profile_id",
-  as: "appointments",
+	foreignKey: "dermatologist_profile_id",
+	as: "appointments",
 });
 
 Appointment.belongsTo(DermatologistProfile, {
-  foreignKey: "dermatologist_profile_id",
-  as: "dermatologistProfile",
+	foreignKey: "dermatologist_profile_id",
+	as: "dermatologistProfile",
 });
 
 module.exports = {
-  sequelize,
-  User,
-  DermatologistProfile,
-  SkinAnalysis,
-  SkinFormAnswer,
-  Appointment
+	sequelize,
+	User,
+	DermatologistProfile,
+	SkinAnalysis,
+	SkinFormAnswer,
+	Appointment,
+	Conversation,
+	Message,
 };
