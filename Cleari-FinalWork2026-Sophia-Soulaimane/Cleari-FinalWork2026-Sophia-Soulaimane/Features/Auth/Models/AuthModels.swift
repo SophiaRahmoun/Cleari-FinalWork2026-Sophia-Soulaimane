@@ -17,6 +17,8 @@ struct AuthUser: Codable, Identifiable {
     let username: String
     let email: String
     let role: String
+    let dermatologistProfile: DermatologistProfile?
+    let verificationStatus: String
     let verificationStatus: String?
 }
 

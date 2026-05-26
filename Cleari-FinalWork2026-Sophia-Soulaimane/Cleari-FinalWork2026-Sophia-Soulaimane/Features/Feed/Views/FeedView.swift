@@ -8,6 +8,18 @@
 import SwiftUI
 
 struct FeedView: View {
+    @State private var showPendingDermatologistPopup = false
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
+    func canInteract() -> Bool {
+           if authViewModel.currentUser?.role == "dermatologist",
+              authViewModel.currentUser?.dermatologistProfile?.verificationStatus != "approved" {
+               showPendingDermatologistPopup = true
+               return false
+           }
+           return true
+       }
+    
 
     @StateObject private var viewModel = FeedViewModel()
     @State private var showCreatePost = false
