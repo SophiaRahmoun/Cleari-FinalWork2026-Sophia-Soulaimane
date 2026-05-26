@@ -90,6 +90,22 @@ struct FeedView: View {
                 )
                 .ignoresSafeArea(edges: .bottom)
             )
+            if showLockedSheet {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showLockedSheet = false
+                    }
+
+                FakeTrendLockedSheet {
+                    showLockedSheet = false
+                    showPayementView = true
+                } onNotNowTapped: {
+                    showLockedSheet = false
+                }
+                .padding(.horizontal, 28)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .task {
             await viewModel.fetchPosts()
@@ -111,15 +127,6 @@ struct FeedView: View {
                 isDermatologist: TokenStorage.shared.userRole == "dermatologist"
             )
         }
-        .sheet(isPresented: $showLockedSheet) {
-            FakeTrendLockedSheet {
-                showLockedSheet = false
-                showPayementView = true
-            } onNotNowTapped: {
-                showLockedSheet = false
-            }
-        }
-
         .fullScreenCover(isPresented: $showPayementView) {
             PayementView()
         }

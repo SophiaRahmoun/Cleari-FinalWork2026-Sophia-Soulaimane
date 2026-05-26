@@ -13,11 +13,6 @@ struct FakeTrendLockedSheet: View {
 
     var body: some View {
         VStack(spacing: 22) {
-            Capsule()
-                .fill(Color(hex: "1A1018").opacity(0.25))
-                .frame(width: 45, height: 5)
-                .padding(.top, 10)
-
             Text("Unlock fake trends")
                 .font(AppFont.gillSwiftUI(.bold, size: 26))
                 .foregroundColor(Color(hex: "1A1018"))
@@ -26,7 +21,6 @@ struct FakeTrendLockedSheet: View {
                 .font(AppFont.gillSwiftUI(.regular, size: 17))
                 .foregroundColor(Color(hex: "1A1018"))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 24)
 
             PrimaryButton(title: "unlock premium") {
                 onUnlockTapped()
@@ -40,7 +34,9 @@ struct FakeTrendLockedSheet: View {
                     .foregroundColor(Color(hex: "1A1018"))
             }
         }
-        .padding(24)
+        .padding(26)
         .background(Color("AccentColor"))
+        .clipShape(RoundedRectangle(cornerRadius: 28))
+        .shadow(color: .black.opacity(0.18), radius: 18, x: 0, y: 8)
     }
 }
