@@ -15,6 +15,7 @@ struct FeedView: View {
     @State private var showDebunkFeed = false
     @State private var showLockedSheet = false
     @State private var showPayementView = false
+    @State private var showProfile = false
 
     var body: some View {
 
@@ -37,6 +38,9 @@ struct FeedView: View {
                             } else {
                                 showLockedSheet = true
                             }
+                        },
+                        onProfileTapped: {
+                            showProfile = true
                         }
                     )
 
@@ -129,6 +133,9 @@ struct FeedView: View {
         }
         .fullScreenCover(isPresented: $showPayementView) {
             PayementView()
+        }
+        .fullScreenCover(isPresented: $showProfile) {
+            UserProfileView()
         }
     }
 }
