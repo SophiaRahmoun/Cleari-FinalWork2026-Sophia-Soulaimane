@@ -1,3 +1,5 @@
+console.log("Stripe key starts with:", process.env.STRIPE_SECRET_KEY?.slice(0, 7));
+
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 exports.createCheckoutSession = async (req, res) => {
@@ -36,3 +38,4 @@ exports.createCheckoutSession = async (req, res) => {
 		});
 	}
 };
+
