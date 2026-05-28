@@ -9,10 +9,16 @@ const dermatologistRoutes = require("./routes/dermatologistRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const { handleStripeWebhook } = require("./controllers/paymentWebhookController");
 
 const app = express();
 
 app.use(cors());
+app.post(
+	"/api/payments/webhook",
+	express.raw({ type: "application/json" }),
+	handleStripeWebhook
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
