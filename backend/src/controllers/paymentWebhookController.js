@@ -30,16 +30,13 @@ exports.handleStripeWebhook = async (req, res) => {
             session.metadata.planType
         );
     
-        // Import subscriptions model
-        const { subscriptions } = require("../models");
+        const { Subscription } = require("../models");
     
-        // Create subscription in database
-        await subscriptions.create({
-    
+        await Subscription.create({
             user_id: session.metadata.userId,
             subscription_category: session.metadata.planType,
             start_date: new Date(),
-            status: "active"
+            status: "active",
         });
     
         console.log("SUBSCRIPTION CREATED");
