@@ -8,18 +8,27 @@
 import SwiftUI
 
 struct PayementView: View {
+
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
+
         ZStack {
-            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
-                .ignoresSafeArea()
+
+            LinearGradientBackground(
+                startHex: "C66F8C",
+                endHex: "F9BDB9"
+            )
+            .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
+
                 VStack(spacing: 28) {
+
                     header
 
                     VStack(spacing: 12) {
+
                         Text("Unlock full access")
                             .font(AppFont.gillSwiftUI(.regular, size: 34))
                             .foregroundColor(Color(hex: "1A1018"))
@@ -34,6 +43,7 @@ struct PayementView: View {
                     freePlanCard
 
                     VStack(spacing: 10) {
+
                         Text("Go Premium")
                             .font(AppFont.gillSwiftUI(.regular, size: 30))
                             .foregroundColor(Color(hex: "1A1018"))
@@ -70,10 +80,14 @@ struct PayementView: View {
     }
 
     private var header: some View {
+
         HStack {
+
             Button {
                 dismiss()
+
             } label: {
+
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(Color(hex: "1A1018"))
@@ -84,12 +98,15 @@ struct PayementView: View {
     }
 
     private var freePlanCard: some View {
+
         HStack(spacing: 18) {
+
             Circle()
                 .fill(Color(hex: "3A1718"))
                 .frame(width: 64, height: 64)
 
             VStack(alignment: .leading, spacing: 10) {
+
                 Text("Free plan")
                     .font(AppFont.gillSwiftUI(.regular, size: 24))
                     .foregroundColor(Color(hex: "1A1018"))
@@ -120,32 +137,69 @@ struct PayementView: View {
         price: String,
         period: String
     ) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 18) {
-                Text(title)
-                    .font(AppFont.gillSwiftUI(.regular, size: 23))
-                    .foregroundColor(Color(hex: "1A1018"))
 
-                Text(subtitle)
-                    .font(AppFont.gillSwiftUI(.regular, size: 14))
-                    .foregroundColor(Color(hex: "1A1018"))
+        Button {
+
+            // Start async Stripe request
+            Task {
+
+                do {
+
+                    // Ask backend to create Stripe checkout
+                    let checkoutUrl = try await PayementService.shared
+                        .createCheckoutSession(planType: "monthly")
+
+                    // Open Stripe checkout page
+                    if let url = URL(string: checkoutUrl) {
+
+                        await MainActor.run {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+
+                } catch {
+
+                    // Print Stripe errors in console
+                    print(
+                        "STRIPE CHECKOUT ERROR:",
+                        error.localizedDescription
+                    )
+                }
             }
 
-            Spacer()
+        } label: {
 
-            HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(price)
-                    .font(AppFont.gillSwiftUI(.bold, size: 28))
-                    .foregroundColor(Color(hex: "1A1018"))
+            HStack {
 
-                Text(period)
-                    .font(AppFont.gillSwiftUI(.regular, size: 24))
-                    .foregroundColor(Color(hex: "1A1018"))
+                VStack(alignment: .leading, spacing: 18) {
+
+                    Text(title)
+                        .font(AppFont.gillSwiftUI(.regular, size: 23))
+                        .foregroundColor(Color(hex: "1A1018"))
+
+                    Text(subtitle)
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(Color(hex: "1A1018"))
+                }
+
+                Spacer()
+
+                HStack(alignment: .firstTextBaseline, spacing: 2) {
+
+                    Text(price)
+                        .font(AppFont.gillSwiftUI(.bold, size: 28))
+                        .foregroundColor(Color(hex: "1A1018"))
+
+                    Text(period)
+                        .font(AppFont.gillSwiftUI(.regular, size: 24))
+                        .foregroundColor(Color(hex: "1A1018"))
+                }
             }
+            .padding(24)
+            .frame(height: 120)
+            .background(Color("AccentColor").opacity(0.35))
+            .clipShape(RoundedRectangle(cornerRadius: 18))
         }
-        .padding(24)
-        .frame(height: 120)
-        .background(Color("AccentColor").opacity(0.35))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .buttonStyle(.plain)
     }
 }
