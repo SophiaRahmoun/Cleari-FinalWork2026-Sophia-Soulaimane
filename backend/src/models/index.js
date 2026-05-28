@@ -5,6 +5,7 @@ const DermatologistProfile = require("./DermatologistProfile");
 const SkinAnalysis = require("./SkinAnalysis");
 const SkinFormAnswer = require("./SkinFormAnswer");
 const Appointment = require("./Appointment");
+const Subscription = require("./Subscription");
 
 User.hasOne(DermatologistProfile, {
   foreignKey: "user_id",
@@ -59,11 +60,22 @@ Appointment.belongsTo(DermatologistProfile, {
   as: "dermatologistProfile",
 });
 
+User.hasMany(Subscription, {
+	foreignKey: "user_id",
+	as: "subscriptions",
+});
+
+Subscription.belongsTo(User, {
+	foreignKey: "user_id",
+	as: "user",
+});
+
 module.exports = {
   sequelize,
   User,
   DermatologistProfile,
   SkinAnalysis,
   SkinFormAnswer,
-  Appointment
+  Appointment,
+  Subscription,
 };
