@@ -1,6 +1,6 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
 const skinScanRoutes = require("./routes/skinScanRoutes");
 const { sequelize } = require("./models");
 const skinFormRoutes = require("./routes/skinFormRoutes");
@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const dermatologistRoutes = require("./routes/dermatologistRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 const app = express();
 
@@ -29,6 +30,7 @@ const communityPostRoutes = require("./routes/communityPostRoutes");
 app.use("/uploads", express.static("uploads"));
 app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
+app.use("/api/payments", paymentRoutes);
 const PORT = process.env.PORT || 4000;
 
 const startServer = async () => {
