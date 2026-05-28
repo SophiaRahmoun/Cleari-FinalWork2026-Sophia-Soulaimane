@@ -39,8 +39,13 @@ struct CameraCaptureView: View {
         .onDisappear {
             viewModel.stopCamera()
         }
-        .fullScreenCover(item: $viewModel.scanImage) { image in
-            ScanResultView(scanImage: image)
+        .fullScreenCover(isPresented: Binding(
+            get: { viewModel.scanImage != nil },
+            set: { if !$0 { viewModel.scanImage = nil } }
+        )) {
+            if let image = viewModel.scanImage {
+                ScanResultView(scanImage: image)
+            }
         }
     }
 }
