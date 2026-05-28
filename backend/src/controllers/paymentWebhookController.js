@@ -17,14 +17,33 @@ exports.handleStripeWebhook = async (req, res) => {
 	}
 
 	if (event.type === "checkout.session.completed") {
-		const session = event.data.object;
 
-		console.log("PAYMENT SUCCESS FOR USER:", session.metadata.userId);
-		console.log("PLAN TYPE:", session.metadata.planType);
-
-		// Later:
-		// update user subscription_status = active
-	}
+        const session = event.data.object;
+    
+        console.log(
+            "PAYMENT SUCCESS FOR USER:",
+            session.metadata.userId
+        );
+    
+        console.log(
+            "PLAN TYPE:",
+            session.metadata.planType
+        );
+    
+        // Import subscriptions model
+        const { subscriptions } = require("../models");
+    
+        // Create subscription in database
+        await subscriptions.create({
+    
+            user_id: session.metadata.userId,
+            subscription_category: session.metadata.planType,
+            start_date: new Date(),
+            status: "active"
+        });
+    
+        console.log("SUBSCRIPTION CREATED");
+    }
 
 	res.json({ received: true });
 };
