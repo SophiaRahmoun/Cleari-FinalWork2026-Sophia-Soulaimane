@@ -10,6 +10,11 @@ import Foundation
 struct CheckoutSessionResponse: Codable {
     let checkoutUrl: String
 }
+struct SubscriptionStatusResponse: Codable {
+
+    let isPremium: Bool
+    let status: String
+}
 
 final class PayementService {
     static let shared = PayementService()
@@ -50,5 +55,38 @@ final class PayementService {
 
         let decodedResponse = try JSONDecoder().decode(CheckoutSessionResponse.self, from: data)
         return decodedResponse.checkoutUrl
+    }
+    func fetchSubscriptionStatus() async throws {
+
+        guard let url = URL(string: "\(APIConfig.baseURL)/payments/subscription-status") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+
+        request.setValue(
+            "Bearer \(token)",
+            forHTTPHeaderField: "Authorization"
+        )
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              200..<300 ~= httpResponse.statusCode else {
+
+            throw URLError(.badServerResponse)
+        }
+
+        let decodedResponse = try JSONDecoder().decode(
+            SubscriptionStatusResponse.self,
+            from: data
+        )
+
+        TokenStorage.shared.subscriptionStatus = decodedResponse.status
     }
 }

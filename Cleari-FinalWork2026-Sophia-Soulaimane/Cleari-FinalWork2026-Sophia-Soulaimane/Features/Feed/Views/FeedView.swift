@@ -112,7 +112,17 @@ struct FeedView: View {
             }
         }
         .task {
+
             await viewModel.fetchPosts()
+
+            do {
+
+                try await PayementService.shared.fetchSubscriptionStatus()
+
+            } catch {
+
+                print("Failed to fetch subscription status:", error)
+            }
         }
         .sheet(isPresented: $showCreatePost) {
             CreatePostView {
