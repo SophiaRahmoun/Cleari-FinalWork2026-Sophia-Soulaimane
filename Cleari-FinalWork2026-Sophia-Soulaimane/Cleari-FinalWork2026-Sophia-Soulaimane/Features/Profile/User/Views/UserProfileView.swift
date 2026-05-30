@@ -10,6 +10,7 @@ import SwiftUI
 struct UserProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showPayementView = false
+    @State private var showEditProfileView = false
     @StateObject private var viewModel = UserProfileViewModel()
     
     var body: some View {
@@ -44,8 +45,12 @@ struct UserProfileView: View {
                         VStack(spacing: 10) {
 
                             ProfileMenuSection(title: "Account")
-                            ProfileMenuRow(title: "Edit profile")
-
+                            Button {
+                                showEditProfileView = true
+                            } label: {
+                                ProfileMenuRow(title: "Edit profile")
+                            }
+                            .buttonStyle(.plain)
                             Button {
 
                                 if TokenStorage.shared.userRole != "dermatologist" {
@@ -87,6 +92,9 @@ struct UserProfileView: View {
         .fullScreenCover(isPresented: $showPayementView) {
 
             PayementView()
+        }
+        .fullScreenCover(isPresented: $showEditProfileView) {
+            EditProfileView()
         }
     }
 }

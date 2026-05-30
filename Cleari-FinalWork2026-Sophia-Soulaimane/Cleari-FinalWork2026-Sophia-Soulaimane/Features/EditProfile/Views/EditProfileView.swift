@@ -10,12 +10,12 @@ import SwiftUI
 struct EditProfileView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State private var fullName = "Anne Dupont"
-    @State private var username = "annedupont"
+    @State private var fullName = ""
+    @State private var username = ""
+    @State private var email = ""
     @State private var pronouns = "she/her"
     @State private var skinType = "Dry, Sensitive"
-
-    private let email = "annedpnt98@gmail.com"
+    @State private var isLoading = false
 
     var body: some View {
         ZStack {
@@ -57,6 +57,31 @@ struct EditProfileView: View {
             .padding(.horizontal, 34)
             .padding(.top, 95)
         }
+        .task {
+            await loadProfile()
+        }
+    }
+
+    private func loadProfile() async {
+        isLoading = true
+
+        do {
+            let user = try await UserProfileService.shared.fetchCurrentUser()
+
+            let firstName = user.firstName ?? ""
+            let lastName = user.lastName ?? ""
+
+            fullName = "\(firstName) \(lastName)"
+                .trimmingCharacters(in: .whitespaces)
+
+            username = user.username
+            email = user.email
+
+        } catch {
+            print("EDIT PROFILE LOAD ERROR:", error.localizedDescription)
+        }
+
+        isLoading = false
     }
 }
 
@@ -97,9 +122,7 @@ extension EditProfileView {
 
     private var profileInfoSection: some View {
         VStack(spacing: 30) {
-            EditProfileRow(title: "Name", value: fullName) {
-                print("Edit name tapped")
-            }
+            EditProfileRow(title: "Name", value: fullName)
 
             HStack {
                 Text("Username")
@@ -118,9 +141,7 @@ extension EditProfileView {
 
             pronounsRow
 
-            EditProfileRow(title: "Skin Type", value: skinType) {
-                print("Edit skin type tapped")
-            }
+            EditProfileRow(title: "Skin Type", value: skinType)
 
             Spacer()
                 .frame(height: 15)
