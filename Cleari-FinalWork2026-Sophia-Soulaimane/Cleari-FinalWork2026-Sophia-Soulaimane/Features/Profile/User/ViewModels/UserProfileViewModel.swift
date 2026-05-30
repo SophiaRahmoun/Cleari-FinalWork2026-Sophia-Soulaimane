@@ -32,12 +32,21 @@ final class UserProfileViewModel: ObservableObject {
     }
 
     var username: String {
-        user?.username ?? "loading"
+
+        let firstName = user?.firstName ?? ""
+        let lastName = user?.lastName ?? ""
+
+        let realName = "\(firstName) \(lastName)"
+            .trimmingCharacters(in: .whitespaces)
+
+        return realName.isEmpty
+            ? (user?.username ?? "loading")
+            : realName
     }
 
     var memberSince: String {
         guard let createdAt = user?.createdAt else {
-            return "2026"
+            return "2026" // make dynamic later
         }
 
         return String(createdAt.prefix(4))

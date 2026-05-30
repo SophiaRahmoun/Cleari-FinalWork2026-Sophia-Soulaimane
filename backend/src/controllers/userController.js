@@ -4,14 +4,16 @@ exports.getCurrentUser = async (req, res) => {
 	try {
 		const user = await User.findByPk(req.user.id, {
 			attributes: [
-				"id",
-				"username",
-				"email",
-				"role",
-				"profile_picture_url",
-				"language",
-				"createdAt",
-			],
+                "id",
+                "first_name",
+                "last_name",
+                "username",
+                "email",
+                "role",
+                "profile_picture_url",
+                "language",
+                "createdAt",
+            ],
 		});
 
 		if (!user) {

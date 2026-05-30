@@ -9,6 +9,8 @@ import Foundation
 
 struct CurrentUserProfile: Codable {
     let id: Int
+    let firstName: String?
+    let lastName: String?
     let username: String
     let email: String
     let role: String
@@ -18,6 +20,8 @@ struct CurrentUserProfile: Codable {
 
     enum CodingKeys: String, CodingKey {
         case id
+        case firstName = "first_name"
+        case lastName = "last_name"
         case username
         case email
         case role
