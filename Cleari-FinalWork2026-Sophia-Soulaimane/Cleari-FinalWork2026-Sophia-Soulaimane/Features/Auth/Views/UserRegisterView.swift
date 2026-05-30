@@ -88,7 +88,3 @@ struct UserRegisterView: View {
 
               }
           }
-
-#Preview {
-    UserRegisterView()
-}
