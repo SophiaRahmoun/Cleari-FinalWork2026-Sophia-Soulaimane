@@ -32,7 +32,6 @@ final class UserProfileViewModel: ObservableObject {
     }
 
     var username: String {
-
         let firstName = user?.firstName ?? ""
         let lastName = user?.lastName ?? ""
 
@@ -46,9 +45,20 @@ final class UserProfileViewModel: ObservableObject {
 
     var memberSince: String {
         guard let createdAt = user?.createdAt else {
-            return "2026" // make dynamic later
+            return "Unknown"
         }
 
-        return String(createdAt.prefix(4))
+        let inputFormatter = DateFormatter()
+        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+        inputFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+
+        guard let date = inputFormatter.date(from: createdAt) else {
+            return createdAt
+        }
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "dd/MM/yyyy"
+
+        return outputFormatter.string(from: date)
     }
 }
