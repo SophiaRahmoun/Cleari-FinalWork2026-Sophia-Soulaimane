@@ -10,6 +10,7 @@ const appointmentRoutes = require("./routes/appointmentRoutes");
 const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const { handleStripeWebhook } = require("./controllers/paymentWebhookController");
+const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/users", userRoutes);
 const PORT = process.env.PORT || 4000;
 
 const startServer = async () => {
