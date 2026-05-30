@@ -1,5 +1,5 @@
 //
-//  PostActionsRow.swift
+//  AuthPostActionsRow.swift
 //  Cleari-FinalWork2026-Sophia-Soulaimane
 //
 //  Created by admin on 21/05/2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct PostActionsRow: View {
+struct AuthPostActionsRow: View {
     let canInteract: () -> Bool
     var body: some View {
         HStack {
