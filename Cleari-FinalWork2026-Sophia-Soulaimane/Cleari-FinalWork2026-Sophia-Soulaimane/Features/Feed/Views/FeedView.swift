@@ -90,9 +90,7 @@ struct FeedView: View {
                     .fill(Color(hex: "1A1018").opacity(0.35))
                     .frame(height: 1)
 
-                ReplyBar {
-                    showCreatePost = true
-                }
+                ReplyBar(canInteract: canInteract)
                 .padding(.top, 12)
 
                 Spacer()
