@@ -17,9 +17,24 @@ struct AuthUser: Codable, Identifiable {
     let username: String
     let email: String
     let role: String
-    let dermatologistProfile: DermatologistProfile?
-    let verificationStatus: String
+    let dermatologistProfile: AuthDermatologistProfile?
+        enum CodingKeys: String, CodingKey {
+            case id
+            case username
+            case email
+            case role
+            case dermatologistProfile
+        }
+}
+struct AuthDermatologistProfile: Codable {
+    let id: Int?
+    let verified: Bool?
     let verificationStatus: String?
+    enum CodingKeys: String, CodingKey {
+        case id
+        case verified
+        case verificationStatus = "verification_status"
+    }
 }
 
 struct LoginRequest: Codable {
