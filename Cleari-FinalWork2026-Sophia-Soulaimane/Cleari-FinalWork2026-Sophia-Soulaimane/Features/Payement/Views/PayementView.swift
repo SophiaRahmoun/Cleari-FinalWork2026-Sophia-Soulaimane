@@ -10,6 +10,10 @@ import SwiftUI
 struct PayementView: View {
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
+
+    @State private var isCheckingSubscription = false
+    @State private var didOpenStripeCheckout = false
 
     var body: some View {
 
@@ -22,13 +26,10 @@ struct PayementView: View {
             .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-
                 VStack(spacing: 28) {
-
                     header
 
                     VStack(spacing: 12) {
-
                         Text("Unlock full access")
                             .font(AppFont.gillSwiftUI(.regular, size: 34))
                             .foregroundColor(Color(hex: "1A1018"))
@@ -43,7 +44,6 @@ struct PayementView: View {
                     freePlanCard
 
                     VStack(spacing: 10) {
-
                         Text("Go Premium")
                             .font(AppFont.gillSwiftUI(.regular, size: 30))
                             .foregroundColor(Color(hex: "1A1018"))
@@ -77,17 +77,21 @@ struct PayementView: View {
                 .padding(.bottom, 40)
             }
         }
+        .onAppear {
+            refreshSubscriptionStatus()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active && didOpenStripeCheckout {
+                refreshSubscriptionStatus()
+            }
+        }
     }
 
     private var header: some View {
-
         HStack {
-
             Button {
                 dismiss()
-
             } label: {
-
                 Image(systemName: "chevron.left")
                     .font(.system(size: 28, weight: .bold))
                     .foregroundColor(Color(hex: "1A1018"))
@@ -98,15 +102,12 @@ struct PayementView: View {
     }
 
     private var freePlanCard: some View {
-
         HStack(spacing: 18) {
-
             Circle()
                 .fill(Color(hex: "3A1718"))
                 .frame(width: 64, height: 64)
 
             VStack(alignment: .leading, spacing: 10) {
-
                 Text("Free plan")
                     .font(AppFont.gillSwiftUI(.regular, size: 24))
                     .foregroundColor(Color(hex: "1A1018"))
@@ -139,18 +140,13 @@ struct PayementView: View {
     ) -> some View {
 
         Button {
-
-            // Start async Stripe request
             Task {
-
                 do {
-
-                    // Ask backend to create Stripe checkout
                     let checkoutUrl = try await PayementService.shared
                         .createCheckoutSession(planType: "monthly")
 
-                    // Open Stripe checkout page
                     if let url = URL(string: checkoutUrl) {
+                        didOpenStripeCheckout = true
 
                         await MainActor.run {
                             UIApplication.shared.open(url)
@@ -158,21 +154,13 @@ struct PayementView: View {
                     }
 
                 } catch {
-
-                    // Print Stripe errors in console
-                    print(
-                        "STRIPE CHECKOUT ERROR:",
-                        error.localizedDescription
-                    )
+                    print("STRIPE CHECKOUT ERROR:", error.localizedDescription)
                 }
             }
 
         } label: {
-
             HStack {
-
                 VStack(alignment: .leading, spacing: 18) {
-
                     Text(title)
                         .font(AppFont.gillSwiftUI(.regular, size: 23))
                         .foregroundColor(Color(hex: "1A1018"))
@@ -185,7 +173,6 @@ struct PayementView: View {
                 Spacer()
 
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
-
                     Text(price)
                         .font(AppFont.gillSwiftUI(.bold, size: 28))
                         .foregroundColor(Color(hex: "1A1018"))
@@ -201,5 +188,31 @@ struct PayementView: View {
             .clipShape(RoundedRectangle(cornerRadius: 18))
         }
         .buttonStyle(.plain)
+    }
+
+    private func refreshSubscriptionStatus() {
+        guard isCheckingSubscription == false else { return }
+
+        isCheckingSubscription = true
+
+        Task {
+            do {
+                try await PayementService.shared.fetchSubscriptionStatus()
+
+                if TokenStorage.shared.hasFakeTrendAccess {
+                    await MainActor.run {
+                        didOpenStripeCheckout = false
+                        dismiss()
+                    }
+                }
+
+            } catch {
+                print("FAILED TO REFRESH SUBSCRIPTION:", error.localizedDescription)
+            }
+
+            await MainActor.run {
+                isCheckingSubscription = false
+            }
+        }
     }
 }
