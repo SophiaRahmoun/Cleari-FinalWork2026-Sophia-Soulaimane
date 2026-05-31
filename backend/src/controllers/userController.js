@@ -128,6 +128,45 @@ exports.updatePassword = async (req, res) => {
 		res.json({
 			message: "Password updated successfully.",
 		});
+
+		exports.updatePronouns = async (req, res) => {
+			try {
+				const { pronouns } = req.body;
+		
+				if (!pronouns) {
+					return res.status(400).json({
+						message: "Pronouns are required.",
+					});
+				}
+		
+				if (!["she/her", "he/him"].includes(pronouns)) {
+					return res.status(400).json({
+						message: "Invalid pronouns value.",
+					});
+				}
+		
+				const user = await User.findByPk(req.user.id);
+		
+				if (!user) {
+					return res.status(404).json({
+						message: "User not found.",
+					});
+				}
+		
+				user.pronouns = pronouns;
+				await user.save();
+		
+				res.json({
+					message: "Pronouns updated successfully.",
+					pronouns: user.pronouns,
+				});
+			} catch (error) {
+				res.status(500).json({
+					message: "Error updating pronouns.",
+					error: error.message,
+				});
+			}
+		};
 	} catch (error) {
 		res.status(500).json({
 			message: "Error updating password.",
