@@ -117,7 +117,9 @@ struct EditProfileView: View {
 
             let firstName = user.firstName ?? ""
             let lastName = user.lastName ?? ""
+
             skinType = user.skinType ?? ""
+            pronouns = user.pronouns ?? ""
 
             fullName = "\(firstName) \(lastName)"
                 .trimmingCharacters(in: .whitespaces)
