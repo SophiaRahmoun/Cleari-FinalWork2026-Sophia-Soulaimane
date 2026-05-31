@@ -15,6 +15,14 @@ final class AppointmentViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var successMessage: String?
+    
+    init(
+        appointments: [Appointment] = [],
+        requests: [Appointment] = []
+       ) {
+           self.appointments = appointments
+           self.requests = requests
+       }
 
     func createAppointment(
         dermatologistProfileId: Int,

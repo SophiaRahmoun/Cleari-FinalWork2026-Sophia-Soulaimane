@@ -9,7 +9,20 @@ import SwiftUI
 
 struct DermatologistAppointmentRequestsView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = AppointmentViewModel()
+    @StateObject private var viewModel: AppointmentViewModel
+    init(previewRequests: [Appointment] = []) {
+        
+        _viewModel = StateObject(
+
+            wrappedValue: AppointmentViewModel(
+
+                requests: previewRequests
+
+            )
+
+        )
+
+    }
 
     var body: some View {
         
@@ -19,16 +32,16 @@ struct DermatologistAppointmentRequestsView: View {
                 endHex: "F9BDB9"
             )
             .ignoresSafeArea()
-
+            
             VStack(alignment: .leading, spacing: 28) {
                 header
                     .padding(.top, 40)
-
                 
-
-                       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                   
-
+                
+                
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                
+                
                 if viewModel.isLoading {
                     ProgressView()
                         .frame(maxWidth: .infinity)
@@ -68,10 +81,12 @@ struct DermatologistAppointmentRequestsView: View {
                 }
             }
             .padding(.horizontal, 28)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        
         }
         .task {
-            await viewModel.fetchDermatologistRequests()
+            if viewModel.requests.isEmpty {
+                await viewModel.fetchDermatologistRequests()
+            }
         }
     }
     
@@ -173,5 +188,44 @@ struct DermatologistAppointmentRequestsView: View {
 }
 
 #Preview {
-    DermatologistAppointmentRequestsView()
-}
+    DermatologistAppointmentRequestsView(
+            previewRequests: [
+                Appointment(
+                    id: 1,
+                    userId: 4,
+                    dermatologistProfileId: 1,
+                    appointmentDate: "2026-08-07",
+                    appointmentTime: "10:00",
+                    reason: "Skin irritation after using a new product.",
+                    status: "pending",
+                    createdAt: "2026-05-30T17:55:00.000Z",
+                    updatedAt: nil,
+                    user: AppointmentUser(
+                        id: 4,
+                        username: "Yser",
+                        email: "yser@example.com",
+                        profilePictureUrl: nil
+                    ),
+                    dermatologistProfile: nil
+                ),
+                Appointment(
+                    id: 2,
+                    userId: 5,
+                    dermatologistProfileId: 1,
+                    appointmentDate: "2026-03-06",
+                    appointmentTime: "14:00",
+                    reason: "Acne consultation.",
+                    status: "pending",
+                    createdAt: "2026-05-30T17:42:00.000Z",
+                    updatedAt: nil,
+                    user: AppointmentUser(
+                        id: 5,
+                        username: "Jason",
+                        email: "jason@example.com",
+                        profilePictureUrl: nil
+                    ),
+                    dermatologistProfile: nil
+                )
+            ]
+        )
+    }
