@@ -13,6 +13,16 @@ const User = sequelize.define("User", {
     allowNull: false,
   },
 
+  first_name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  
+  last_name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -42,6 +52,14 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
     defaultValue: "en",
+  },
+  skin_type: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  pronouns: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
 }, {
   tableName: "users",
