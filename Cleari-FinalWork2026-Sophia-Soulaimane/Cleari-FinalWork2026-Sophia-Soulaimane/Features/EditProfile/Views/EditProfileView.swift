@@ -55,8 +55,13 @@ struct EditProfileView: View {
                 PrimaryButton(title: "Done") {
                     Task {
                         do {
-                            let message = try await UserProfileService.shared.updateUsername(
+
+                            try await UserProfileService.shared.updateUsername(
                                 username: username
+                            )
+
+                            let message = try await UserProfileService.shared.updatePronouns(
+                                pronouns: pronouns
                             )
 
                             successMessage = message
@@ -66,12 +71,13 @@ struct EditProfileView: View {
                             dismiss()
 
                         } catch {
+
                             successMessage = nil
 
                             if error.localizedDescription.contains("Username already exists") {
                                 errorMessage = "Username already taken"
                             } else {
-                                errorMessage = "Could not update username"
+                                errorMessage = "Could not update profile"
                             }
                         }
                     }
