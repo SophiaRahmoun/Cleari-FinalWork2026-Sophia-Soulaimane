@@ -53,6 +53,10 @@ const User = sequelize.define("User", {
     allowNull: true,
     defaultValue: "en",
   },
+  skin_type: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 }, {
   tableName: "users",
   timestamps: true,

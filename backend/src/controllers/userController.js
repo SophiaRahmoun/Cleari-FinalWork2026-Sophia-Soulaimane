@@ -13,6 +13,7 @@ exports.getCurrentUser = async (req, res) => {
                 "profile_picture_url",
                 "language",
                 "createdAt",
+                "skin_type",
             ],
 		});
 

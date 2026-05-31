@@ -14,10 +14,11 @@ struct EditProfileView: View {
     @State private var username = ""
     @State private var email = ""
     @State private var pronouns = "she/her"
-    @State private var skinType = "Dry, Sensitive"
+    @State private var skinType = ""
     @State private var isLoading = false
     @State private var successMessage: String?
     @State private var errorMessage: String?
+
 
     var body: some View {
         ZStack {
@@ -112,6 +113,7 @@ struct EditProfileView: View {
 
             let firstName = user.firstName ?? ""
             let lastName = user.lastName ?? ""
+            skinType = user.skinType ?? ""
 
             fullName = "\(firstName) \(lastName)"
                 .trimmingCharacters(in: .whitespaces)
@@ -183,8 +185,10 @@ extension EditProfileView {
 
             pronounsRow
 
-            EditProfileRow(title: "Skin Type", value: skinType)
-
+            EditProfileRow(
+                title: "Skin Type",
+                value: skinType.isEmpty ? "Not completed" : skinType
+            )
             Spacer()
                 .frame(height: 15)
 

@@ -17,6 +17,7 @@ struct CurrentUserProfile: Codable {
     let profilePictureUrl: String?
     let language: String?
     let createdAt: String
+    let skinType: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -28,5 +29,6 @@ struct CurrentUserProfile: Codable {
         case profilePictureUrl = "profile_picture_url"
         case language
         case createdAt
+        case skinType = "skin_type"
     }
 }
