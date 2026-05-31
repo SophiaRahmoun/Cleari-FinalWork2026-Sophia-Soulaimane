@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User, DermatologistProfile } = require("../models");
 const { isDermatologistInami } = require("../utils/inamiVerification");
+
 const generateToken = (user) => {
 	return jwt.sign(
 		{
@@ -31,27 +32,46 @@ const sanitizeUser = (user) => {
 
 exports.registerUser = async (req, res) => {
 	try {
-		const { first_name, last_name, email, password, language } = req.body;
+		const {
+			first_name,
+			last_name,
+			username,
+			email,
+			password,
+			language,
+		} = req.body;
 
-		if (!username || !email || !password) {
+		if (!first_name || !last_name || !username || !email || !password) {
 			return res.status(400).json({
-				message: "Username, email and password are required.",
+				message: "First name, last name, username, email and password are required.",
 			});
 		}
 
-		const existingUser = await User.findOne({ where: { email } });
+		const existingEmail = await User.findOne({
+			where: { email },
+		});
 
-		if (existingUser) {
+		if (existingEmail) {
 			return res.status(409).json({
 				message: "This email is already used.",
+			});
+		}
+
+		const existingUsername = await User.findOne({
+			where: { username },
+		});
+
+		if (existingUsername) {
+			return res.status(409).json({
+				message: "This username is already used.",
 			});
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const user = await User.create({
-			first_name: first_name || null,
-			last_name: last_name || null,
+			first_name,
+			last_name,
 			username,
 			email,
 			password: hashedPassword,
@@ -99,11 +119,10 @@ exports.registerDermatologist = async (req, res) => {
 		}
 
 		const existingUser = await User.findOne({ where: { email } });
-    const automaticVerification = inami_number
 
-    ? isDermatologistInami(inami_number)
-  
-    : false;
+		const automaticVerification = inami_number
+			? isDermatologistInami(inami_number)
+			: false;
 
 		if (existingUser) {
 			return res.status(409).json({
@@ -133,7 +152,7 @@ exports.registerDermatologist = async (req, res) => {
 			bio: bio || null,
 			certificate_url: certificate_url || null,
 			verification_status: "pending",
-			verified: false,
+			verified: automaticVerification,
 		});
 
 		const token = generateToken(user);
