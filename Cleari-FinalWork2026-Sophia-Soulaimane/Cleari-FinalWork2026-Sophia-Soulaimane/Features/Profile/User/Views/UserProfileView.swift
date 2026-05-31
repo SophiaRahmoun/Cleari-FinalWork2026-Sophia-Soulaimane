@@ -93,7 +93,11 @@ struct UserProfileView: View {
 
             PayementView()
         }
-        .fullScreenCover(isPresented: $showEditProfileView) {
+        .fullScreenCover(isPresented: $showEditProfileView, onDismiss: {
+            Task {
+                await viewModel.fetchCurrentUser()
+            }
+        }) {
             EditProfileView()
         }
     }

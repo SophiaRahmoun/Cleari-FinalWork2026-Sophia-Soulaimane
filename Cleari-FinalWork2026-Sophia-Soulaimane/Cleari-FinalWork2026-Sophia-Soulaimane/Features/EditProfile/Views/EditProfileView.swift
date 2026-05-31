@@ -16,6 +16,8 @@ struct EditProfileView: View {
     @State private var pronouns = "she/her"
     @State private var skinType = "Dry, Sensitive"
     @State private var isLoading = false
+    @State private var successMessage: String?
+    @State private var errorMessage: String?
 
     var body: some View {
         ZStack {
@@ -33,14 +35,54 @@ struct EditProfileView: View {
 
                 Spacer()
                     .frame(height: 30)
+                
+                if let successMessage {
+                    Text(successMessage)
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(.green)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
 
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(.red)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                }
+                
                 PrimaryButton(title: "Done") {
+                    Task {
+                        do {
+                            let message = try await UserProfileService.shared.updateUsername(
+                                username: username
+                            )
+
+                            successMessage = message
+                            errorMessage = nil
+
+                            try await Task.sleep(nanoseconds: 800_000_000)
+                            dismiss()
+
+                        } catch {
+                            successMessage = nil
+
+                            if error.localizedDescription.contains("Username already exists") {
+                                errorMessage = "Username already taken"
+                            } else {
+                                errorMessage = "Could not update username"
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 34)
+                /*PrimaryButton(title: "Done") {
                     print("Profile saved")
                     print("Name:", fullName)
                     print("Username:", username)
                     print("Pronouns:", pronouns)
                     print("Skin type:", skinType)
                 }
+                 */
                 .padding(.horizontal, 34)
 
                 Button {
