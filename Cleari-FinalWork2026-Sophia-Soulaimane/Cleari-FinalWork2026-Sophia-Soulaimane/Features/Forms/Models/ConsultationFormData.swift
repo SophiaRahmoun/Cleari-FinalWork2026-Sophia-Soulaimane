@@ -22,6 +22,7 @@ struct ConsultationFormData: Codable {
     var wantsPhotoUpload: Bool?
     var consentShared: Bool?
     var stepCompleted: Int?
+    var pronouns: String?
 
     enum CodingKeys: String, CodingKey {
         case skinFeeling = "skin_feeling"
@@ -35,6 +36,7 @@ struct ConsultationFormData: Codable {
         case wantsPhotoUpload = "wants_photo_upload"
         case consentShared = "consent_shared"
         case stepCompleted = "step_completed"
+        case pronouns
     }
 
     init(
@@ -48,7 +50,8 @@ struct ConsultationFormData: Codable {
         mainConcern: String? = nil,
         wantsPhotoUpload: Bool? = nil,
         consentShared: Bool? = nil,
-        stepCompleted: Int? = nil
+        stepCompleted: Int? = nil,
+        pronouns: String? = nil,
     ) {
         self.skinFeeling = skinFeeling
         self.productReaction = productReaction
@@ -61,5 +64,6 @@ struct ConsultationFormData: Codable {
         self.wantsPhotoUpload = wantsPhotoUpload
         self.consentShared = consentShared
         self.stepCompleted = stepCompleted
+        self.pronouns = pronouns
     }
 }

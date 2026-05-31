@@ -18,6 +18,7 @@ struct CurrentUserProfile: Codable {
     let language: String?
     let createdAt: String
     let skinType: String?
+    let pronouns: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -30,5 +31,6 @@ struct CurrentUserProfile: Codable {
         case language
         case createdAt
         case skinType = "skin_type"
+        case pronouns
     }
 }
