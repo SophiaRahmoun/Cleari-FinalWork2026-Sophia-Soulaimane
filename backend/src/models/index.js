@@ -17,6 +17,7 @@ Conversation.hasMany(Message, {
 Message.belongsTo(Conversation, {
 	foreignKey: "conversationId",
 });
+const Subscription = require("./Subscription");
 
 User.hasOne(DermatologistProfile, {
 	foreignKey: "user_id",
@@ -71,6 +72,16 @@ Appointment.belongsTo(DermatologistProfile, {
 	as: "dermatologistProfile",
 });
 
+User.hasMany(Subscription, {
+	foreignKey: "user_id",
+	as: "subscriptions",
+});
+
+Subscription.belongsTo(User, {
+	foreignKey: "user_id",
+	as: "user",
+});
+
 module.exports = {
 	sequelize,
 	User,
@@ -79,5 +90,6 @@ module.exports = {
 	SkinFormAnswer,
 	Appointment,
 	Conversation,
-	Message,
+	Message,,
+  Subscription,
 };

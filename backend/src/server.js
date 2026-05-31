@@ -1,6 +1,6 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
 const skinScanRoutes = require("./routes/skinScanRoutes");
 const { sequelize } = require("./models");
 const skinFormRoutes = require("./routes/skinFormRoutes");
@@ -8,10 +8,17 @@ const authRoutes = require("./routes/authRoutes");
 const dermatologistRoutes = require("./routes/dermatologistRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
+const { handleStripeWebhook } = require("./controllers/paymentWebhookController");
 
 const app = express();
 
 app.use(cors());
+app.post(
+	"/api/payments/webhook",
+	express.raw({ type: "application/json" }),
+	handleStripeWebhook
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -29,6 +36,7 @@ const communityPostRoutes = require("./routes/communityPostRoutes");
 app.use("/uploads", express.static("uploads"));
 app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
+app.use("/api/payments", paymentRoutes);
 const PORT = process.env.PORT || 4000;
 
 const chatRoutes = require("./routes/chatRoutes");

@@ -13,6 +13,9 @@ struct FeedView: View {
     @State private var showCreatePost = false
     @State private var selectedPost: CommunityPost?
     @State private var showDebunkFeed = false
+    @State private var showLockedSheet = false
+    @State private var showPayementView = false
+    @State private var showProfile = false
 
     var body: some View {
 
@@ -28,9 +31,18 @@ struct FeedView: View {
 
                 LazyVStack(alignment: .leading, spacing: 16) {
 
-                    FeedTopBar {
-                        showDebunkFeed = true
-                    }
+                    FeedTopBar(
+                        onFakeTrendsTapped: {
+                            if TokenStorage.shared.hasFakeTrendAccess {
+                                showDebunkFeed = true
+                            } else {
+                                showLockedSheet = true
+                            }
+                        },
+                        onProfileTapped: {
+                            showProfile = true
+                        }
+                    )
 
                     if viewModel.isLoading {
 
@@ -82,9 +94,35 @@ struct FeedView: View {
                 )
                 .ignoresSafeArea(edges: .bottom)
             )
+            if showLockedSheet {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showLockedSheet = false
+                    }
+
+                FakeTrendLockedSheet {
+                    showLockedSheet = false
+                    showPayementView = true
+                } onNotNowTapped: {
+                    showLockedSheet = false
+                }
+                .padding(.horizontal, 28)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .task {
+
             await viewModel.fetchPosts()
+
+            do {
+
+                try await PayementService.shared.fetchSubscriptionStatus()
+
+            } catch {
+
+                print("Failed to fetch subscription status:", error)
+            }
         }
         .sheet(isPresented: $showCreatePost) {
             CreatePostView {
@@ -102,6 +140,12 @@ struct FeedView: View {
             DebunkFeedView(
                 isDermatologist: TokenStorage.shared.userRole == "dermatologist"
             )
+        }
+        .fullScreenCover(isPresented: $showPayementView) {
+            PayementView()
+        }
+        .fullScreenCover(isPresented: $showProfile) {
+            UserProfileView()
         }
     }
 }

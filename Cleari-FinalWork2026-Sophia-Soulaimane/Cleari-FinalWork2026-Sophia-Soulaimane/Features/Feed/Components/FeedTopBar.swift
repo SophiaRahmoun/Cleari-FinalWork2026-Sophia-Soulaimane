@@ -10,6 +10,7 @@ import SwiftUI
 struct FeedTopBar: View {
     var onExploreTapped: (() -> Void)? = nil
     var onFakeTrendsTapped: (() -> Void)? = nil
+    var onProfileTapped: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 16) {
@@ -25,9 +26,14 @@ struct FeedTopBar: View {
 
                 Spacer()
 
-                Image(systemName: "person")
-                    .font(.system(size: 20))
-                    .foregroundColor(.black)
+                Button {
+                    onProfileTapped?()
+                } label: {
+                    Image(systemName: "person")
+                        .font(.system(size: 20))
+                        .foregroundColor(.black)
+                }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 20)
 
