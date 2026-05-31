@@ -18,6 +18,7 @@ struct EditProfileView: View {
     @State private var isLoading = false
     @State private var successMessage: String?
     @State private var errorMessage: String?
+    @State private var showChangePasswordView = false
 
 
     var body: some View {
@@ -98,10 +99,13 @@ struct EditProfileView: View {
                 .padding(.bottom, 45)
             }
             .padding(.horizontal, 34)
-            .padding(.top, 95)
+            .padding(.top, 40)
         }
         .task {
             await loadProfile()
+        }
+        .fullScreenCover(isPresented: $showChangePasswordView) {
+            ChangePasswordView()
         }
     }
 
@@ -131,19 +135,18 @@ struct EditProfileView: View {
 
 extension EditProfileView {
     private var header: some View {
-        ZStack {
-            HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 34, weight: .regular))
-                        .foregroundColor(.white)
-                }
-
-                Spacer()
+        HStack {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.white)
             }
+
+            Spacer()
         }
+        .padding(.top, 20)
     }
 
     private var profilePictureSection: some View {
@@ -203,7 +206,7 @@ extension EditProfileView {
                 value: "",
                 showChevron: true
             ) {
-                print("Edit password tapped")
+                showChangePasswordView = true
             }
         }
     }
