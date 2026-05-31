@@ -6,6 +6,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const {
 	getCurrentUser,
 	updateUsername,
+    updatePassword,
 } = require("../controllers/userController");
 
 router.get(
@@ -18,6 +19,11 @@ router.put(
 	"/me/username",
 	authMiddleware,
 	updateUsername
+);
+router.put(
+	"/me/password",
+	authMiddleware,
+	updatePassword
 );
 
 module.exports = router;
