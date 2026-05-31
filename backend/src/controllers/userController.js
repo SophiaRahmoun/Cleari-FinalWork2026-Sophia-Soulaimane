@@ -15,6 +15,7 @@ exports.getCurrentUser = async (req, res) => {
                 "language",
                 "createdAt",
                 "skin_type",
+				"pronouns",
             ],
 		});
 

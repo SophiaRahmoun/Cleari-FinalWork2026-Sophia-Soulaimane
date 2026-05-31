@@ -39,6 +39,7 @@ const createSkinFormAnswer = async (req, res) => {
 			main_concern,
 			wants_photo_upload,
 			consent_shared,
+			pronouns,
 			step_completed,
 		} = req.body;
 
@@ -71,6 +72,7 @@ const createSkinFormAnswer = async (req, res) => {
 		await User.update(
 			{
 				skin_type: skinType,
+				pronouns,
 			},
 			{
 				where: {
