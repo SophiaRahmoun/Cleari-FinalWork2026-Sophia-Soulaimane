@@ -1,59 +1,97 @@
-const { SkinFormAnswer } = require("../models");
+const { SkinFormAnswer, User } = require("../models");
+
+const calculateSkinType = (skinFeeling, productReaction) => {
+	const feeling = skinFeeling?.toLowerCase() || "";
+	const reaction = productReaction?.toLowerCase() || "";
+
+	let baseSkinType = "Unknown";
+
+	if (feeling.includes("dry") || feeling.includes("tight")) {
+		baseSkinType = "Dry";
+	} else if (feeling.includes("comfortable")) {
+		baseSkinType = "Normal";
+	} else if (feeling.includes("t-zone") || feeling.includes("zone")) {
+		baseSkinType = "Combination";
+	} else if (feeling.includes("shiny") || feeling.includes("oily")) {
+		baseSkinType = "Oily";
+	}
+
+	const isSensitive =
+		reaction.includes("often") ||
+		reaction.includes("sometimes") ||
+		reaction.includes("react");
+
+	return isSensitive ? `${baseSkinType}, Sensitive` : baseSkinType;
+};
 
 const createSkinFormAnswer = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    //const userId = 1; TEST
+	try {
+		const userId = req.user.id;
 
+		const {
+			skin_feeling,
+			product_reaction,
+			flakiness,
+			diagnosed_condition,
+			has_allergies,
+			allergies_details,
+			has_skin_issues,
+			main_concern,
+			wants_photo_upload,
+			consent_shared,
+			step_completed,
+		} = req.body;
 
-    const {
-      skin_feeling,
-      product_reaction,
-      flakiness,
-      diagnosed_condition,
-      has_allergies,
-      allergies_details,
-      has_skin_issues,
-      main_concern,
-      wants_photo_upload,
-      consent_shared,
-      step_completed,
-    } = req.body;
+		if (!step_completed) {
+			return res.status(400).json({
+				message: "step_completed is required",
+			});
+		}
 
-    // Validate required step_completed field => 1,2,3
-    if (!step_completed) {
-      return res.status(400).json({
-        message: "step_completed is required",
-      });
-    }
+		const skinType = calculateSkinType(
+			skin_feeling,
+			product_reaction
+		);
 
-    const newAnswer = await SkinFormAnswer.create({
-      user_id: userId,
-      skin_feeling,
-      product_reaction,
-      flakiness,
-      diagnosed_condition,
-      has_allergies,
-      allergies_details,
-      has_skin_issues,
-      main_concern,
-      wants_photo_upload,
-      consent_shared,
-      step_completed,
-    });
+		const newAnswer = await SkinFormAnswer.create({
+			user_id: userId,
+			skin_feeling,
+			product_reaction,
+			flakiness,
+			diagnosed_condition,
+			has_allergies,
+			allergies_details,
+			has_skin_issues,
+			main_concern,
+			wants_photo_upload,
+			consent_shared,
+			step_completed,
+		});
 
-    res.status(201).json({
-      message: "Skin form saved successfully",
-      data: newAnswer,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Error saving skin form",
-    });
-  }
+		await User.update(
+			{
+				skin_type: skinType,
+			},
+			{
+				where: {
+					id: userId,
+				},
+			}
+		);
+
+		res.status(201).json({
+			message: "Skin form saved successfully",
+			skinType,
+			data: newAnswer,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({
+			message: "Error saving skin form",
+		});
+	}
 };
 
 module.exports = {
-  createSkinFormAnswer,
+	createSkinFormAnswer,
 };
