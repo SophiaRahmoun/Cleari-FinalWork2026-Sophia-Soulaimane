@@ -10,7 +10,14 @@ import SwiftUI
 struct MyAppointmentsView: View {
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var viewModel = AppointmentViewModel()
+    @StateObject private var viewModel: AppointmentViewModel
+       init(previewAppointments: [Appointment] = []) {
+           _viewModel = StateObject(
+               wrappedValue: AppointmentViewModel(
+                   appointments: previewAppointments
+               )
+           )
+       }
 
     var body: some View {
         ZStack {
@@ -36,7 +43,9 @@ struct MyAppointmentsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .task {
-            await viewModel.fetchMyAppointments()
+            if viewModel.appointments.isEmpty {
+                await viewModel.fetchMyAppointments()
+            }
         }
     }
 
@@ -140,15 +149,15 @@ struct MyAppointmentsView: View {
 
             Text(statusBadgeText(for: appointment.status))
                 .font(AppFont.gillSwiftUI(.regular, size: 12))
-                .foregroundColor(Color(hex: "4B0015"))
-                .padding(.horizontal, 14)
+                .foregroundColor(Color(hex: "1E141D"))
+                .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(Color.white.opacity(0.85))
                 .clipShape(Capsule())
         }
         .padding(22)
         .frame(maxWidth: .infinity)
-        .background(Color(hex: "4B0015").opacity(0.95))
+        .background(Color(hex: "1E141D").opacity(0.95))
         .cornerRadius(18)
     }
 
@@ -242,5 +251,52 @@ struct MyAppointmentsView: View {
 }
 
 #Preview {
-    MyAppointmentsView()
-}
+    MyAppointmentsView(
+            previewAppointments: [
+                Appointment(
+                    id: 1,
+                    userId: 1,
+                    dermatologistProfileId: 1,
+                    appointmentDate: "2026-08-07",
+                    appointmentTime: "10:00",
+                    reason: nil,
+                    status: "pending",
+                    createdAt: nil,
+                    updatedAt: nil,
+                    user: nil,
+                    dermatologistProfile: AppointmentDermatologistProfile(
+                        id: 1,
+                        userId: 2,
+                        user: AppointmentUser(
+                            id: 2,
+                            username: "Sarah Ben Ali",
+                            email: "sarah@example.com",
+                            profilePictureUrl: nil
+                        )
+                    )
+                ),
+                Appointment(
+                    id: 2,
+                    userId: 1,
+                    dermatologistProfileId: 2,
+                    appointmentDate: "2025-08-09",
+                    appointmentTime: "14:00",
+                    reason: nil,
+                    status: "completed",
+                    createdAt: nil,
+                    updatedAt: nil,
+                    user: nil,
+                    dermatologistProfile: AppointmentDermatologistProfile(
+                        id: 2,
+                        userId: 3,
+                        user: AppointmentUser(
+                            id: 3,
+                            username: "Halioui Said",
+                            email: "halioui@example.com",
+                            profilePictureUrl: nil
+                        )
+                    )
+                )
+            ]
+        )
+    }
