@@ -5,19 +5,15 @@ const Message = require("../models/Message");
 exports.createConversation = async (req, res) => {
 	try {
 		const { dermatologistId, scanId, formId, firstMessage } = req.body;
-
 		const userId = req.user.id;
 
 		if (!dermatologistId) {
 			return res.status(400).json({ message: "Dermatologist id is required." });
 		}
-
 		let conversation = await Conversation.findOne({
 			where: {
 				userId,
-
 				dermatologistId,
-
 				status: "open",
 			},
 		});
@@ -25,13 +21,9 @@ exports.createConversation = async (req, res) => {
 		if (!conversation) {
 			conversation = await Conversation.create({
 				userId,
-
 				dermatologistId,
-
 				scanId: scanId || null,
-
 				formId: formId || null,
-
 				lastMessageAt: new Date(),
 			});
 		}
@@ -74,7 +66,6 @@ exports.getMyConversations = async (req, res) => {
 			user.role === "dermatologist"
 				? { dermatologistId: user.id }
 				: { userId: user.id };
-
 		const conversations = await Conversation.findAll({
 			where: whereCondition,
 
@@ -94,9 +85,7 @@ exports.getMyConversations = async (req, res) => {
 exports.getConversationMessages = async (req, res) => {
 	try {
 		const { conversationId } = req.params;
-
 		const user = req.user;
-
 		const conversation = await Conversation.findByPk(conversationId);
 
 		if (!conversation) {

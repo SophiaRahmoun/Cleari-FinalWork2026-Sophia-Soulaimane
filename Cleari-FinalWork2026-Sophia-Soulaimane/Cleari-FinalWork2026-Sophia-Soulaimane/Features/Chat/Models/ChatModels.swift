@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Conversation: Codable, Identifiable {
+struct Conversation: Codable, Identifiable, Hashable {
     let id: Int
     let userId: Int
     let dermatologistId: Int
@@ -17,7 +17,7 @@ struct Conversation: Codable, Identifiable {
     let lastMessageAt: String?
 }
 
-struct ChatMessage: Codable, Identifiable {
+struct ChatMessage: Codable, Identifiable, Hashable {
     let id: Int
     let conversationId: Int
     let senderId: Int
@@ -41,4 +41,15 @@ struct SendMessageRequest: Codable {
 struct SendMessageResponse: Codable {
     let message: String
     let newMessage: ChatMessage
+}
+struct CreateConversationRequest: Codable {
+    let dermatologistId: Int
+    let scanId: Int?
+    let formId: Int?
+    let firstMessage: String?
+}
+
+struct CreateConversationResponse: Codable {
+    let message: String
+    let conversation: Conversation
 }
