@@ -5,18 +5,18 @@ exports.getCurrentUser = async (req, res) => {
 	try {
 		const user = await User.findByPk(req.user.id, {
 			attributes: [
-                "id",
-                "first_name",
-                "last_name",
-                "username",
-                "email",
-                "role",
-                "profile_picture_url",
-                "language",
-                "createdAt",
-                "skin_type",
+				"id",
+				"first_name",
+				"last_name",
+				"username",
+				"email",
+				"role",
+				"profile_picture_url",
+				"language",
+				"createdAt",
+				"skin_type",
 				"pronouns",
-            ],
+			],
 		});
 
 		if (!user) {
@@ -35,52 +35,49 @@ exports.getCurrentUser = async (req, res) => {
 };
 
 exports.updateUsername = async (req, res) => {
-    try {
-        const { username } = req.body;
+	try {
+		const { username } = req.body;
 
-        if (!username || username.trim() === "") {
-            return res.status(400).json({
-                message: "Username is required."
-            });
-        }
+		if (!username || username.trim() === "") {
+			return res.status(400).json({
+				message: "Username is required.",
+			});
+		}
 
-        const existingUser = await User.findOne({
-            where: { username }
-        });
+		const existingUser = await User.findOne({
+			where: { username },
+		});
 
-        if (
-            existingUser &&
-            existingUser.id !== req.user.id
-        ) {
-            return res.status(400).json({
-                message: "Username already exists."
-            });
-        }
+		if (existingUser && existingUser.id !== req.user.id) {
+			return res.status(400).json({
+				message: "Username already exists.",
+			});
+		}
 
-        const user = await User.findByPk(req.user.id);
+		const user = await User.findByPk(req.user.id);
 
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found."
-            });
-        }
+		if (!user) {
+			return res.status(404).json({
+				message: "User not found.",
+			});
+		}
 
-        user.username = username;
+		user.username = username;
 
-        await user.save();
+		await user.save();
 
-        res.json({
-            message: "Username updated successfully.",
-            username: user.username
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Error updating username.",
-            error: error.message
-        });
-    }
+		res.json({
+			message: "Username updated successfully.",
+			username: user.username,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error updating username.",
+			error: error.message,
+		});
+	}
 };
+
 exports.updatePassword = async (req, res) => {
 	try {
 		const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -123,53 +120,55 @@ exports.updatePassword = async (req, res) => {
 		}
 
 		user.password = await bcrypt.hash(newPassword, 10);
+
 		await user.save();
 
 		res.json({
 			message: "Password updated successfully.",
 		});
-
-		exports.updatePronouns = async (req, res) => {
-			try {
-				const { pronouns } = req.body;
-		
-				if (!pronouns) {
-					return res.status(400).json({
-						message: "Pronouns are required.",
-					});
-				}
-		
-				if (!["she/her", "he/him"].includes(pronouns)) {
-					return res.status(400).json({
-						message: "Invalid pronouns value.",
-					});
-				}
-		
-				const user = await User.findByPk(req.user.id);
-		
-				if (!user) {
-					return res.status(404).json({
-						message: "User not found.",
-					});
-				}
-		
-				user.pronouns = pronouns;
-				await user.save();
-		
-				res.json({
-					message: "Pronouns updated successfully.",
-					pronouns: user.pronouns,
-				});
-			} catch (error) {
-				res.status(500).json({
-					message: "Error updating pronouns.",
-					error: error.message,
-				});
-			}
-		};
 	} catch (error) {
 		res.status(500).json({
 			message: "Error updating password.",
+			error: error.message,
+		});
+	}
+};
+
+exports.updatePronouns = async (req, res) => {
+	try {
+		const { pronouns } = req.body;
+
+		if (!pronouns) {
+			return res.status(400).json({
+				message: "Pronouns are required.",
+			});
+		}
+
+		if (!["she/her", "he/him"].includes(pronouns)) {
+			return res.status(400).json({
+				message: "Invalid pronouns value.",
+			});
+		}
+
+		const user = await User.findByPk(req.user.id);
+
+		if (!user) {
+			return res.status(404).json({
+				message: "User not found.",
+			});
+		}
+
+		user.pronouns = pronouns;
+
+		await user.save();
+
+		res.json({
+			message: "Pronouns updated successfully.",
+			pronouns: user.pronouns,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error updating pronouns.",
 			error: error.message,
 		});
 	}
