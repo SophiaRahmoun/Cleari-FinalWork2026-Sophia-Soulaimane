@@ -1,0 +1,246 @@
+//
+//  MyAppointmentsView.swift
+//  Cleari-FinalWork2026-Sophia-Soulaimane
+//
+//  Created by admin on 30/05/2026.
+//
+
+import SwiftUI
+
+struct MyAppointmentsView: View {
+
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = AppointmentViewModel()
+
+    var body: some View {
+        ZStack {
+            LinearGradientBackground(
+                startHex: "FFFFFF",
+                endHex: "F9BDB9"
+            )
+            .ignoresSafeArea()
+
+            VStack(alignment: .leading, spacing: 0) {
+                header
+                    .padding(.top, 45)
+
+                content
+                    .padding(.top, 95)
+
+                previousSection
+                    .padding(.top, 85)
+
+                Spacer()
+            }
+            .padding(.horizontal, 28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        }
+        .task {
+            await viewModel.fetchMyAppointments()
+        }
+    }
+
+    private var header: some View {
+        HStack(spacing: 18) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 30, weight: .regular))
+                    .foregroundColor(.black)
+            }
+
+            TypographyLabel(
+                text: "Appointments",
+                style: .h1,
+                color: .black
+            )
+
+            Spacer()
+        }
+    }
+
+    private var content: some View {
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            } else if let appointment = currentAppointment {
+                VStack(alignment: .leading, spacing: 18) {
+                    AppointmentStatusStepper(status: appointment.status)
+
+                    TypographyLabel(
+                        text: statusTitle(for: appointment.status),
+                        style: .h2,
+                        color: .black
+                    )
+
+                    TypographyLabel(
+                        text: statusMessage(for: appointment.status),
+                        style: .body,
+                        color: .black
+                    )
+
+                    currentAppointmentCard(appointment)
+                        .padding(.top, 18)
+                }
+            } else {
+                AppointmentEmptyMessage(
+                    title: "No upcoming appointment",
+                    message: "You currently have no appointment waiting for a dermatologist response."
+                )
+            }
+        }
+    }
+
+    private var previousSection: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            TypographyLabel(
+                text: "Previous appointments",
+                style: .h2,
+                color: .black
+            )
+
+            if previousAppointments.isEmpty {
+                AppointmentEmptyMessage(
+                    title: "No previous appointments",
+                    message: "Your past appointments will appear here once they are completed or cancelled."
+                )
+            } else {
+                VStack(spacing: 16) {
+                    ForEach(previousAppointments) { appointment in
+                        previousAppointmentRow(appointment)
+                    }
+                }
+            }
+        }
+    }
+
+    private func currentAppointmentCard(_ appointment: Appointment) -> some View {
+        HStack(spacing: 20) {
+            Circle()
+                .fill(Color.white.opacity(0.35))
+                .frame(width: 76, height: 76)
+
+            VStack(alignment: .leading, spacing: 6) {
+                TypographyLabel(
+                    text: "Dr. \(appointment.dermatologistProfile?.user?.username ?? "Dermatologist")",
+                    style: .body,
+                    color: .white
+                )
+
+                TypographyLabel(
+                    text: "\(formatDate(appointment.appointmentDate)) • \(appointment.appointmentTime)",
+                    style: .caption,
+                    color: .white.opacity(0.8)
+                )
+            }
+
+            Spacer()
+
+            Text(statusBadgeText(for: appointment.status))
+                .font(AppFont.gillSwiftUI(.regular, size: 12))
+                .foregroundColor(Color(hex: "4B0015"))
+                .padding(.horizontal, 14)
+                .padding(.vertical, 6)
+                .background(Color.white.opacity(0.85))
+                .clipShape(Capsule())
+        }
+        .padding(22)
+        .frame(maxWidth: .infinity)
+        .background(Color(hex: "4B0015").opacity(0.95))
+        .cornerRadius(18)
+    }
+
+    private func previousAppointmentRow(_ appointment: Appointment) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            TypographyLabel(
+                text: formatDate(appointment.appointmentDate),
+                style: .body,
+                color: .black
+            )
+
+            TypographyLabel(
+                text: "Dr. \(appointment.dermatologistProfile?.user?.username ?? "Dermatologist")",
+                style: .caption,
+                color: .black.opacity(0.7)
+            )
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var currentAppointment: Appointment? {
+        viewModel.appointments.first {
+            $0.status == "pending" || $0.status == "confirmed"
+        }
+    }
+
+    private var previousAppointments: [Appointment] {
+        viewModel.appointments.filter {
+            $0.status == "completed" || $0.status == "cancelled"
+        }
+    }
+
+    private func statusTitle(for status: String) -> String {
+        switch status {
+        case "pending":
+            return "Awaiting response"
+        case "confirmed":
+            return "Appointment confirmed"
+        case "cancelled":
+            return "Appointment declined"
+        case "completed":
+            return "Appointment completed"
+        default:
+            return "Appointment status"
+        }
+    }
+
+    private func statusMessage(for status: String) -> String {
+        switch status {
+        case "pending":
+            return "Your request has been sent. We will keep you informed as soon as the dermatologist responds."
+        case "confirmed":
+            return "Your appointment has been accepted by the dermatologist."
+        case "cancelled":
+            return "This appointment request has been declined or cancelled."
+        case "completed":
+            return "This appointment has been completed."
+        default:
+            return ""
+        }
+    }
+
+    private func statusBadgeText(for status: String) -> String {
+        switch status {
+        case "pending":
+            return "Processing..."
+        case "confirmed":
+            return "Confirmed"
+        case "cancelled":
+            return "Cancelled"
+        case "completed":
+            return "Completed"
+        default:
+            return status
+        }
+    }
+
+    private func formatDate(_ value: String) -> String {
+        let input = DateFormatter()
+        input.dateFormat = "yyyy-MM-dd"
+
+        let output = DateFormatter()
+        output.dateFormat = "d MMMM yyyy"
+
+        guard let date = input.date(from: value) else {
+            return value
+        }
+
+        return output.string(from: date)
+    }
+}
+
+#Preview {
+    MyAppointmentsView()
+}
