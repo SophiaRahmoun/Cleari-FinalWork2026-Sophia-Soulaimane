@@ -90,6 +90,6 @@ module.exports = {
 	SkinFormAnswer,
 	Appointment,
 	Conversation,
-	Message,,
+	Message,
   Subscription,
 };

@@ -53,3 +53,8 @@ struct CreateConversationResponse: Codable {
     let message: String
     let conversation: Conversation
 }
+
+struct AppointmentSuggestionResponse: Codable {
+    let message: String
+    let appointmentMessage: ChatMessage
+}

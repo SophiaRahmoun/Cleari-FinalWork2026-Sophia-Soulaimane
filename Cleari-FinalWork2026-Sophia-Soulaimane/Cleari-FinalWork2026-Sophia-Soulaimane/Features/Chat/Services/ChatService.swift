@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 final class ChatService {
     static let shared = ChatService()
 
@@ -78,5 +79,23 @@ final class ChatService {
 
         let decodedResponse = try JSONDecoder().decode(CreateConversationResponse.self, from: data)
         return decodedResponse.conversation
+    }
+    func requestAppointment(conversationId: Int) async throws -> ChatMessage {
+        guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/request-appointment") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        if let httpResponse = response as? HTTPURLResponse,
+           !(200...299).contains(httpResponse.statusCode) {
+            throw URLError(.badServerResponse)
+        }
+
+        let decodedResponse = try JSONDecoder().decode(AppointmentSuggestionResponse.self, from: data)
+        return decodedResponse.appointmentMessage
     }
 }

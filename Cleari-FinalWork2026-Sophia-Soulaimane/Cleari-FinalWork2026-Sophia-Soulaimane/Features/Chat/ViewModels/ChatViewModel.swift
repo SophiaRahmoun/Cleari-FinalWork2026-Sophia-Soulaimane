@@ -70,4 +70,15 @@ final class ChatViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+    func requestAppointment() async {
+        do {
+            let message = try await ChatService.shared.requestAppointment(
+                conversationId: conversationId
+            )
+
+            messages.append(message)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }

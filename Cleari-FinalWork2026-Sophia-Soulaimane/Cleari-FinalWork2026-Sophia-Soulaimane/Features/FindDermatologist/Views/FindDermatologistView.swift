@@ -75,6 +75,7 @@ struct FindDermatologistView: View {
                     ChatDetailView(
                         conversationId: conversation.id,
                         currentUserId: currentUser.id,
+                        currentUserRole: currentUser.role,
                         dermatologistName: viewModel.selectedDermatologist?.name ?? "Dermatologist",
                         currentUserProfileImage: "ProfileSample",
                         dermatologistProfileImage: viewModel.selectedDermatologist?.profileImage ?? "ProfileSample"

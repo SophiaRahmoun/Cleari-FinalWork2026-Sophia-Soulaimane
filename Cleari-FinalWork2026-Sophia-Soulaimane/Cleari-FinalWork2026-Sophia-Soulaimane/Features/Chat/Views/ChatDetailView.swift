@@ -14,6 +14,8 @@ struct ChatDetailView: View {
 
     @State private var showImagePicker = false
     @State private var showDocumentPicker = false
+    
+    let currentUserRole: String
 
     let dermatologistName: String
     let currentUserProfileImage: String
@@ -26,6 +28,7 @@ struct ChatDetailView: View {
     init(
         conversationId: Int,
         currentUserId: Int,
+        currentUserRole: String = "user",
         dermatologistName: String = "Dr. Sarah Ben Ali",
         currentUserProfileImage: String = "user-profile",
         dermatologistProfileImage: String = "dermato-profile"
@@ -37,6 +40,7 @@ struct ChatDetailView: View {
             )
         )
 
+        self.currentUserRole = currentUserRole
         self.dermatologistName = dermatologistName
         self.currentUserProfileImage = currentUserProfileImage
         self.dermatologistProfileImage = dermatologistProfileImage
@@ -106,6 +110,33 @@ struct ChatDetailView: View {
             )
 
             Spacer()
+
+            if currentUserRole == "dermatologist" {
+                Menu {
+                    Button {
+                        openSkinScan()
+                    } label: {
+                        Label("View skin scan", systemImage: "camera.viewfinder")
+                    }
+
+                    Button {
+                        openSkinForm()
+                    } label: {
+                        Label("View skin form", systemImage: "doc.text")
+                    }
+
+                    Button {
+                        requestAppointment()
+                    } label: {
+                        Label("Suggest appointment", systemImage: "calendar.badge.plus")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(darkBrown)
+                        .padding(8)
+                }
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 18)
@@ -227,6 +258,31 @@ struct ChatDetailView: View {
     private func openProfile(for role: String) {
         print("Navigate to profile page for: \(role)")
     }
+
+    private func openSkinScan() {
+        guard let scanId = viewModel.conversation?.scanId else {
+            print("No skin scan linked to this conversation")
+            return
+        }
+
+        print("Navigate to skin scan detail: \(scanId)")
+    }
+
+    private func openSkinForm() {
+        guard let formId = viewModel.conversation?.formId else {
+            print("No skin form linked to this conversation")
+            return
+        }
+
+        print("Navigate to skin form detail: \(formId)")
+    }
+
+    private func requestAppointment() {
+        Task {
+            await viewModel.requestAppointment()
+        }
+    }
+    
 }
 
 #Preview {
@@ -406,5 +462,6 @@ private struct ChatDetailPreviewView: View {
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
         .background(beige)
+    
     }
 }
