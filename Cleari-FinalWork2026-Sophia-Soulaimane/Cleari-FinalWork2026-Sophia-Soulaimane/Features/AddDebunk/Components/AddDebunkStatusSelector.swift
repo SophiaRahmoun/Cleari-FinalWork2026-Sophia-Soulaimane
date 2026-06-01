@@ -11,20 +11,32 @@ struct AddDebunkStatusSelector: View {
     @Binding var selectedStatus: String?
 
     var body: some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 10) {
-                statusButton("xmark", "Not recommend")
-                statusButton("exclamationmark.triangle.fill", "Use with caution")
-            }
+        HStack(spacing: 10) {
+            statusButton(
+                icon: "xmark",
+                title: "Not recommend",
+                color: Color(hex: "B8322A")
+            )
 
-            statusButton("checkmark", "True")
+            statusButton(
+                icon: "exclamationmark.triangle.fill",
+                title: "Use with caution",
+                color: Color(hex: "F2B92F")
+            )
+
+            statusButton(
+                icon: "checkmark",
+                title: "True",
+                color: Color(hex: "2F7D3C")
+            )
         }
     }
 
-    private func statusButton(_ icon: String, _ title: String) -> some View {
+    private func statusButton(icon: String, title: String, color: Color) -> some View {
         AddDebunkStatusButton(
             icon: icon,
             title: title,
+            iconColor: color,
             isSelected: selectedStatus == title
         ) {
             selectedStatus = title
