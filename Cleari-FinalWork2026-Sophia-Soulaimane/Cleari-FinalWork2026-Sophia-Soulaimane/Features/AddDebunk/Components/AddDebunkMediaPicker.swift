@@ -13,13 +13,13 @@ struct AddDebunkMediaPicker: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: "photo")
-                .font(.system(size: 34))
-                .foregroundColor(Color("AccentColor"))
+                .font(.system(size: 30, weight: .regular))
+                .foregroundColor(Color(hex: "C66F8C"))
                 .frame(maxWidth: .infinity)
-                .frame(height: 74)
+                .frame(height: 64)
                 .background(Color("AccentColor"))
                 .clipShape(RoundedRectangle(cornerRadius: 18))
-                .shadow(color: .black.opacity(0.14), radius: 9, x: 0, y: 6)
+                .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 5)
         }
         .buttonStyle(.plain)
     }
