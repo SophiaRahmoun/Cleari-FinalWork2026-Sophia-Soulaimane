@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ProfileAvatarView: View {
-    let imageName: String
+    var imageName: String? = nil
+    var imageUrl: String? = nil
     let size: CGFloat
     let action: () -> Void
 
@@ -17,17 +18,38 @@ struct ProfileAvatarView: View {
 
     var body: some View {
         Button(action: action) {
-            Image(imageName)
-                .resizable()
-                .scaledToFill()
-                .frame(width: size, height: size)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .stroke(beige, lineWidth: 2)
-                )
-                .shadow(color: darkBrown.opacity(0.18), radius: 4, x: 0, y: 2)
+            Group {
+                if let urlString = imageUrl, let url = URL(string: urlString) {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .success(let image):
+                            image.resizable().scaledToFill()
+                        default:
+                            placeholderView
+                        }
+                    }
+                } else if let imageName {
+                    Image(imageName)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    placeholderView
+                }
+            }
+            .frame(width: size, height: size)
+            .clipShape(Circle())
+            .overlay(Circle().stroke(beige, lineWidth: 2))
+            .shadow(color: darkBrown.opacity(0.18), radius: 4, x: 0, y: 2)
         }
         .buttonStyle(.plain)
+    }
+
+    private var placeholderView: some View {
+        Circle()
+            .fill(darkBrown)
+            .overlay(
+                Image(systemName: "person.fill")
+                    .foregroundColor(beige)
+            )
     }
 }
