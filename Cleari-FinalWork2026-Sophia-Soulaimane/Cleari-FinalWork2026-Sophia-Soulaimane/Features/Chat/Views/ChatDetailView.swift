@@ -285,11 +285,18 @@ struct ChatDetailView: View {
     
 }
 
-#Preview {
-    ChatDetailPreviewView()
+#Preview("Chat Detail - User") {
+    ChatDetailPreviewView(currentUserRole: "user")
+}
+
+
+#Preview("Chat Detail - Dermatologist") {
+    ChatDetailPreviewView(currentUserRole: "dermatologist")
 }
 
 private struct ChatDetailPreviewView: View {
+    let currentUserRole: String
+
     private let beige = Color(hex: "FDF3EB")
     private let pink = Color(hex: "C66F8C")
     private let darkBrown = Color(hex: "1E141D")
@@ -320,8 +327,8 @@ private struct ChatDetailPreviewView: View {
             conversationId: 1,
             senderId: 1,
             senderRole: "user",
-            content: "Should I stop using my exfoliating serum for now?",
-            messageType: "text",
+            content: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+            messageType: "image",
             isRead: true,
             createdAt: nil
         ),
@@ -330,18 +337,8 @@ private struct ChatDetailPreviewView: View {
             conversationId: 1,
             senderId: 2,
             senderRole: "dermatologist",
-            content: "Yes, pause exfoliation for a few days and focus on hydration. If it gets worse, I recommend booking an appointment.",
+            content: "I suggest booking an appointment so we can review this properly.",
             messageType: "appointment_request",
-            isRead: false,
-            createdAt: nil
-        ),
-        ChatMessage(
-            id: 5,
-            conversationId: 1,
-            senderId: 1,
-            senderRole: "user",
-            content: "Okay, thank you. I also added a picture from today so you can compare.",
-            messageType: "text",
             isRead: false,
             createdAt: nil
         )
@@ -356,6 +353,7 @@ private struct ChatDetailPreviewView: View {
 
                 ScrollView {
                     VStack(spacing: 16) {
+                        consultationContext
 
                         ForEach(messages) { message in
                             MessageBubble(
@@ -382,13 +380,11 @@ private struct ChatDetailPreviewView: View {
                 .font(.system(size: 24, weight: .medium))
                 .foregroundColor(darkBrown)
 
-            Circle()
-                .fill(darkBrown)
-                .frame(width: 46, height: 46)
-                .overlay(
-                    Image(systemName: "person.fill")
-                        .foregroundColor(beige)
-                )
+            ProfileAvatarView(
+                imageName: "dermato-profile",
+                size: 46,
+                action: {}
+            )
 
             TypographyLabel(
                 text: "Dr. Sarah Ben Ali",
@@ -397,6 +393,13 @@ private struct ChatDetailPreviewView: View {
             )
 
             Spacer()
+
+            if currentUserRole == "dermatologist" {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(darkBrown)
+                    .padding(8)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 18)
@@ -462,6 +465,5 @@ private struct ChatDetailPreviewView: View {
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
         .background(beige)
-    
     }
 }

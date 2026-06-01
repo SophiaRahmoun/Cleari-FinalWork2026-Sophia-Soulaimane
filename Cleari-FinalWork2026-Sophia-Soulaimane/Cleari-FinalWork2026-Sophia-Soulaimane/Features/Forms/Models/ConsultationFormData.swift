@@ -51,7 +51,7 @@ struct ConsultationFormData: Codable {
         wantsPhotoUpload: Bool? = nil,
         consentShared: Bool? = nil,
         stepCompleted: Int? = nil,
-        pronouns: String? = nil,
+        pronouns: String? = nil
     ) {
         self.skinFeeling = skinFeeling
         self.productReaction = productReaction

@@ -46,12 +46,3 @@ struct SkinInsight: Codable, Identifiable {
     let shortText: String
     let tip: String
 }
-
-imageUrl: {
-  type: String,
-  required: true,
-},
-
-imagePublicId: {
-  type: String,
-},
