@@ -75,7 +75,10 @@ struct UserProfileView: View {
                             ProfileMenuSection(title: "My skin")
 
                             ProfileMenuRow(title: "Skin goals")
+                            ProfileMenuRow(title: "My routines")
+
                             ProfileMenuRow(title: "My skin scans")
+                            
 
                             ProfileMenuRow(title: "Appointments")
                             Button {
