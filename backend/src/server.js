@@ -11,6 +11,7 @@ const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const { handleStripeWebhook } = require("./controllers/paymentWebhookController");
 const userRoutes = require("./routes/userRoutes");
+const skinGoalRoutes = require("./routes/skinGoalRoutes");
 
 const app = express();
 
@@ -43,6 +44,7 @@ app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/skin-goals", skinGoalRoutes);
 const PORT = process.env.PORT || 4000;
 
 const chatRoutes = require("./routes/chatRoutes");
