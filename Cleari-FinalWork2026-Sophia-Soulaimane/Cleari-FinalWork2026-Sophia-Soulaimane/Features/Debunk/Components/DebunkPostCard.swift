@@ -35,8 +35,10 @@ struct DebunkPostCard: View {
 
             } else if let tiktokUrl = post.tiktokUrl, !tiktokUrl.isEmpty {
 
-                TikTokLinkPreviewView(urlString: tiktokUrl)
-
+                TikTokLinkPreviewView(
+                    urlString: tiktokUrl,
+                    title: post.trendName
+                )
             } else {
 
                 RoundedRectangle(cornerRadius: 18)
