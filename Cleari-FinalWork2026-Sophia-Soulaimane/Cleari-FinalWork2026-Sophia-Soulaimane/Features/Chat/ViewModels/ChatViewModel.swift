@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 @MainActor
 final class ChatViewModel: ObservableObject {
@@ -57,14 +58,13 @@ final class ChatViewModel: ObservableObject {
         }
     }
 
-    func sendAttachmentMessage(fileName: String) async {
+    func sendImageMessage(image: UIImage) async {
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return }
         do {
-            let sentMessage = try await ChatService.shared.sendMessage(
+            let sentMessage = try await ChatService.shared.sendImageMessage(
                 conversationId: conversationId,
-                content: fileName,
-                messageType: "text"
+                imageData: imageData
             )
-
             messages.append(sentMessage)
         } catch {
             errorMessage = error.localizedDescription

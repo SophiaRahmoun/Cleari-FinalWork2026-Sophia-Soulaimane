@@ -28,16 +28,8 @@ struct MessageBubble: View {
                 )
             }
 
-            TypographyLabel(
-                text: message.content,
-                style: .body,
-                color: isCurrentUser ? beige : beige
-            )
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(isCurrentUser ? pink.opacity(0.9) : darkBrown.opacity(0.95))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .frame(maxWidth: 260, alignment: isCurrentUser ? .trailing : .leading)
+            bubbleContent
+                .frame(maxWidth: 260, alignment: isCurrentUser ? .trailing : .leading)
 
             if isCurrentUser {
                 ProfileAvatarView(
@@ -49,5 +41,41 @@ struct MessageBubble: View {
         }
         .frame(maxWidth: .infinity, alignment: isCurrentUser ? .trailing : .leading)
         .padding(.horizontal, 18)
+    }
+
+    @ViewBuilder
+    private var bubbleContent: some View {
+        if message.messageType == "image", let url = URL(string: message.content) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image.resizable().scaledToFill()
+                default:
+                    Color.gray.opacity(0.3)
+                }
+            }
+            .frame(width: 200, height: 200)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        } else if message.messageType == "appointment_request" {
+            HStack(spacing: 8) {
+                Image(systemName: "calendar.badge.plus")
+                    .foregroundColor(beige)
+                TypographyLabel(text: message.content, style: .body, color: beige)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(darkBrown.opacity(0.95))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        } else {
+            TypographyLabel(
+                text: message.content,
+                style: .body,
+                color: beige
+            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(isCurrentUser ? pink.opacity(0.9) : darkBrown.opacity(0.95))
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
     }
 }

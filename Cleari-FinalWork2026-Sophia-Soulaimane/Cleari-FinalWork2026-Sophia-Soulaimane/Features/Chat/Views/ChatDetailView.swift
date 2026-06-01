@@ -72,7 +72,7 @@ struct ChatDetailView: View {
         .sheet(isPresented: $showImagePicker) {
             ImagePicker { image in
                 Task {
-                    await viewModel.sendAttachmentMessage(fileName: "Image selected from gallery")
+                    await viewModel.sendImageMessage(image: image)
                 }
             }
         }

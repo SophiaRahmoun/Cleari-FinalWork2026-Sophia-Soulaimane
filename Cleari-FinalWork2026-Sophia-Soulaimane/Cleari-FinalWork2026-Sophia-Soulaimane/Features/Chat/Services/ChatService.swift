@@ -7,6 +7,7 @@
 
 
 import Foundation
+import UIKit
 
 
 final class ChatService {
@@ -80,6 +81,30 @@ final class ChatService {
         let decodedResponse = try JSONDecoder().decode(CreateConversationResponse.self, from: data)
         return decodedResponse.conversation
     }
+    func sendImageMessage(conversationId: Int, imageData: Data) async throws -> ChatMessage {
+        guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/messages/image") else {
+            throw URLError(.badURL)
+        }
+
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"chat.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(SendMessageResponse.self, from: data)
+        return response.newMessage
+    }
+
     func requestAppointment(conversationId: Int) async throws -> ChatMessage {
         guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/request-appointment") else {
             throw URLError(.badURL)
