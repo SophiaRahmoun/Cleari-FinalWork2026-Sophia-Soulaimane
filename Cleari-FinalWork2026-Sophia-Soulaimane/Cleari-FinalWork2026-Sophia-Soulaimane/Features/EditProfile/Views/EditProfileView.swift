@@ -19,6 +19,9 @@ struct EditProfileView: View {
     @State private var successMessage: String?
     @State private var errorMessage: String?
     @State private var showChangePasswordView = false
+    @State private var showImagePicker = false
+    @State private var profileImageUrl: String?
+    @State private var selectedImage: UIImage?
 
 
     var body: some View {
@@ -113,6 +116,20 @@ struct EditProfileView: View {
         .fullScreenCover(isPresented: $showChangePasswordView) {
             ChangePasswordView()
         }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker { image in
+                selectedImage = image
+                Task {
+                    guard let data = image.jpegData(compressionQuality: 0.8) else { return }
+                    do {
+                        let newUrl = try await UserProfileService.shared.updateProfilePicture(imageData: data)
+                        profileImageUrl = newUrl
+                    } catch {
+                        errorMessage = "Could not upload profile picture"
+                    }
+                }
+            }
+        }
     }
 
     private func loadProfile() async {
@@ -126,6 +143,7 @@ struct EditProfileView: View {
 
             skinType = user.skinType ?? ""
             pronouns = user.pronouns ?? ""
+            profileImageUrl = user.profilePictureUrl
 
             fullName = "\(firstName) \(lastName)"
                 .trimmingCharacters(in: .whitespaces)
@@ -159,12 +177,18 @@ extension EditProfileView {
 
     private var profilePictureSection: some View {
         VStack(spacing: 22) {
-            Circle()
-                .fill(Color.white.opacity(0.35))
-                .frame(width: 155, height: 155)
+            if let selected = selectedImage {
+                Image(uiImage: selected)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 155, height: 155)
+                    .clipShape(Circle())
+            } else {
+                AvatarView(imageUrl: profileImageUrl, size: 155)
+            }
 
             Button {
-                print("Edit picture tapped")
+                showImagePicker = true
             } label: {
                 Text("Edit picture")
                     .font(AppFont.gillSwiftUI(.bold, size: 24))
