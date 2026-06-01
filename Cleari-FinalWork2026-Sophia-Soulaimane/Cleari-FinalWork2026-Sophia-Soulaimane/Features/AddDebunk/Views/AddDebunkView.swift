@@ -11,107 +11,84 @@ struct AddDebunkView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = AddDebunkViewModel()
 
-    @State private var title: String = ""
-    @State private var trendName: String = ""
-    @State private var description: String = ""
-    @State private var trendLink: String = ""
+    @State private var title = ""
+    @State private var trendName = ""
+    @State private var description = ""
+    @State private var trendLink = ""
     @State private var selectedStatus: String?
-    @State private var message: String = ""
+    @State private var message = ""
 
     var body: some View {
         ZStack {
             LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
                 .ignoresSafeArea()
 
-            VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 24) {
 
-                AddDebunkHeader {
-                    dismiss()
-                }
-
-                ScrollView(showsIndicators: false) {
-
-                    VStack(alignment: .leading, spacing: 18) {
-
-                        AddDebunkSectionTitle("Select trend debunk")
-
-                        AddDebunkInputField(
-                            placeholder: "Debunk title...",
-                            text: $title
-                        )
-                        .frame(height: 55)
-
-                        AddDebunkInputField(
-                            placeholder: "Trend name...",
-                            text: $trendName
-                        )
-                        .frame(height: 55)
-
-                        AddDebunkInputField(
-                            placeholder: "Short description...",
-                            text: $description
-                        )
-                        .frame(height: 55)
-
-                        AddDebunkInputField(
-                            placeholder: "Put your link...",
-                            text: $trendLink
-                        )
-                        .frame(height: 55)
-
-                        AddDebunkStatusSelector(
-                            selectedStatus: $selectedStatus
-                        )
-
-                        AddDebunkSectionTitle("Add your message")
-
-                        AddDebunkMessageCardCompact(
-                            message: $message,
-                            imageName: "ProfileSample",
-                            name: "Dr. Sarah Ben Ali",
-                            role: "Dermatologist"
-                        )
-
-                        AddDebunkSectionTitle("Media")
-
-                        AddDebunkMediaPicker {
-                            print("Pick media tapped")
-                        }
-                        .frame(height: 70)
+                    AddDebunkHeader {
+                        dismiss()
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
-                    .padding(.bottom, 120)
-                }
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .font(AppFont.gillSwiftUI(.regular, size: 13))
-                        .foregroundColor(.red)
-                        .padding(.horizontal, 24)
-                }
-                AddDebunkActionsBar {
+                    .padding(.bottom, 22)
 
-                    dismiss()
+                    AddDebunkSectionTitle("Select trend debunk")
 
-                } onPost: {
+                    VStack(spacing: 12) {
+                        AddDebunkInputField(placeholder: "Debunk title...", text: $title)
+                        AddDebunkInputField(placeholder: "Trend name...", text: $trendName)
+                        AddDebunkInputField(placeholder: "Short description...", text: $description)
+                        AddDebunkInputField(placeholder: "Put your link...", text: $trendLink)
+                    }
 
-                    Task {
+                    AddDebunkStatusSelector(selectedStatus: $selectedStatus)
+                        .padding(.top, 8)
 
-                        let success = await viewModel.createDebunkPost(
-                            title: title,
-                            trendName: trendName,
-                            description: description,
-                            debunkExplanation: message,
-                            tiktokUrl: trendLink,
-                            status: selectedStatus
-                        )
-                        print("POST SUCCESS:", success)
+                    AddDebunkSectionTitle("Add your message")
+                        .padding(.top, 8)
 
-                        if success {
-                            dismiss()
+                    AddDebunkMessageCard(
+                        message: $message,
+                        imageName: "ProfileSample",
+                        name: "Dr. Sarah Ben Ali",
+                        role: "Dermatologist"
+                    )
+
+                    AddDebunkSectionTitle("Add a picture or video")
+                        .padding(.top, 8)
+
+                    AddDebunkMediaPicker {
+                        print("Pick media tapped")
+                    }
+
+                    if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                            .font(AppFont.gillSwiftUI(.regular, size: 13))
+                            .foregroundColor(.red)
+                    }
+
+                    AddDebunkActionsBar {
+                        dismiss()
+                    } onPost: {
+                        Task {
+                            let success = await viewModel.createDebunkPost(
+                                title: title,
+                                trendName: trendName,
+                                description: description,
+                                debunkExplanation: message,
+                                tiktokUrl: trendLink,
+                                status: selectedStatus
+                            )
+
+                            if success {
+                                dismiss()
+                            }
                         }
                     }
+                    .padding(.top, 12)
                 }
+                .padding(.horizontal, 34)
+                .padding(.top, 45)
+                .padding(.bottom, 45)
             }
         }
     }
