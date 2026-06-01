@@ -8,53 +8,93 @@
 import SwiftUI
 
 struct FeedTopBar: View {
+    var onFakeTrendsTapped: (() -> Void)? = nil
+    var onProfileTapped: (() -> Void)? = nil
+
+    @State private var activeTab: Tab = .explore
+
+    enum Tab { case explore, fakeTrends }
+
+    private let dark = Color(hex: "1A1018")
+    private let accent = Color(hex: "F2E53E") // yellow highlight from Figma
+
     var body: some View {
-        VStack(spacing: 16) {
-            HStack {
+        VStack(spacing: 14) {
+            // ── Top row: logo + profile icon ──
+            HStack(alignment: .center) {
                 Spacer()
-                
-                TypographyLabel(
-                    text: "cleari",
-                    style: .h2,
-                    color: .white,
-                    alignment: .center
-                )
-                
+
+                Text("cleari")
+                    .font(AppFont.gillSwiftUI(.regular, size: 28))
+                    .foregroundColor(dark)
+
                 Spacer()
-                
-                Image(systemName: "person")
-                    .font(.system(size: 20))
-                    .foregroundColor(.black)
+
+                Button {
+                    onProfileTapped?()
+                } label: {
+                    Image(systemName: "person")
+                        .font(.system(size: 22, weight: .regular))
+                        .foregroundColor(dark)
+                }
+                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 20)
-            
-            HStack {
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
+
+            // ── Tab row: explore | fake trends ──
+            HStack(spacing: 0) {
                 Spacer()
-                
-                TypographyLabel(
-                    text: "explore",
-                    style: .button,
-                    color: .black,
-                    alignment: .center
-                )
-                .underline()
-                
+
+                // Explore tab
+                Button {
+                    activeTab = .explore
+                } label: {
+                    Text("explore")
+                        .font(AppFont.gillSwiftUI(.regular, size: 16))
+                        .foregroundColor(dark)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(
+                            activeTab == .explore
+                                ? accent
+                                : Color.clear
+                        )
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+
                 Spacer()
-                
-                TypographyLabel(
-                    text: "fake trends",
-                    style: .button,
-                    color: .black,
-                    alignment: .center
-                )
-                
+
+                // Fake trends tab
+                Button {
+                    activeTab = .fakeTrends
+                    onFakeTrendsTapped?()
+                } label: {
+                    Text("fake trends")
+                        .font(AppFont.gillSwiftUI(.regular, size: 16))
+                        .foregroundColor(dark)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 6)
+                        .background(
+                            activeTab == .fakeTrends
+                                ? accent
+                                : Color.clear
+                        )
+                        .clipShape(Capsule())
+                }
+                .buttonStyle(.plain)
+
                 Spacer()
             }
         }
-        .padding(.top, 10)
     }
 }
 
 #Preview {
-    FeedTopBar()
+    ZStack {
+        LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
+            .ignoresSafeArea()
+        FeedTopBar()
+    }
 }

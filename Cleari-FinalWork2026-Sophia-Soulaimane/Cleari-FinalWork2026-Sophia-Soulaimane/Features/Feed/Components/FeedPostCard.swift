@@ -8,45 +8,97 @@
 import SwiftUI
 
 struct FeedPostCard: View {
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image("dr_naak")
-                //Image(systemName: "person.circle.fill")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .foregroundColor(.gray)
+    let doctorName: String
+    let doctorAvatarUrl: String?
+    let replyText: String
+    var isVerified: Bool = true
 
+    private let dark  = Color(hex: "1A1018")
+    private let beige = Color(hex: "FDF3EB")
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+
+            // ── Doctor header ──
+            HStack(spacing: 12) {
+                // Avatar
+                Group {
+                    if let url = doctorAvatarUrl.flatMap(URL.init) {
+                        AsyncImage(url: url) { phase in
+                            if case .success(let img) = phase {
+                                img.resizable().scaledToFill()
+                            } else {
+                                avatarPlaceholder
+                            }
+                        }
+                    } else {
+                        avatarPlaceholder
+                    }
+                }
+                .frame(width: 42, height: 42)
+                .clipShape(Circle())
+
+                // Name + role
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Dr. Naak Mouloud")
-                        .font(.headline)
+                    HStack(spacing: 6) {
+                        Text(doctorName)
+                            .font(AppFont.gillSwiftUI(.bold, size: 15))
+                            .foregroundColor(dark)
+
+                        if isVerified {
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 13))
+                                .foregroundColor(Color(hex: "6BC7A8"))
+                        }
+                    }
 
                     Text("Dermatologist")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
+                        .font(AppFont.gillSwiftUI(.regular, size: 13))
+                        .foregroundColor(dark.opacity(0.5))
                 }
 
                 Spacer()
-
-                Image(systemName: "checkmark.seal")
-                    .foregroundColor(Color.bonni)
             }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 16)
 
-            Divider()
+            // ── Divider ──
+            Rectangle()
+                .fill(dark.opacity(0.08))
+                .frame(height: 1)
+                .padding(.horizontal, 18)
 
-            Text("No applying heat like ironing won't reduce wrinkles. In fact, it can irritate the skin and lead to burns or damage.")
-                .font(.body)
+            // ── Reply text ──
+            Text(replyText)
+                .font(AppFont.gillSwiftUI(.regular, size: 15))
+                .foregroundColor(dark)
+                .lineSpacing(4)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 16)
         }
-        .padding()
-        .frame(minHeight: 200)
-        .background(Color.accentColor)
-        .cornerRadius(20)
-        .shadow(radius: 4)
-        .padding(.vertical, 24)
-        .padding(.horizontal, 20)
-      }
+        .background(beige)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .padding(.horizontal, 24)
+    }
+
+    private var avatarPlaceholder: some View {
+        Circle()
+            .fill(dark.opacity(0.12))
+            .overlay(
+                Image(systemName: "person.fill")
+                    .foregroundColor(dark.opacity(0.4))
+                    .font(.system(size: 18))
+            )
+    }
 }
 
 #Preview {
-    FeedPostCard()
+    ZStack {
+        LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9").ignoresSafeArea()
+        FeedPostCard(
+            doctorName: "Dr. Naak Mouloud",
+            doctorAvatarUrl: nil,
+            replyText: "No applying heat like ironing, won't reduce wrinkles. In fact, it can irritate the skin and lead to burns or damage. Stick to proven skincare methods for anti-aging!"
+        )
+    }
 }
