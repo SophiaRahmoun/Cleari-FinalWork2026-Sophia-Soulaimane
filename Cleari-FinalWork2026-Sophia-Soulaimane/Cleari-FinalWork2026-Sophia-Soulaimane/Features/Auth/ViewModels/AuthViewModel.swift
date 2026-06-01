@@ -45,7 +45,13 @@ final class AuthViewModel: ObservableObject {
            defer { isLoading = false }
            do {
                let username = "\(firstName) \(lastName)"
-               let response = try await AuthAPIService.shared.registerUser(username: username, email: email, password: password)
+               let response = try await AuthAPIService.shared.registerUser(
+                   firstName: firstName,
+                   lastName: lastName,
+                   username: username,
+                   email: email,
+                   password: password
+               )
                TokenStorage.shared.token = response.token
                TokenStorage.shared.userRole = response.user.role
                currentUser = response.user

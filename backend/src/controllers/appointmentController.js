@@ -80,7 +80,7 @@ exports.createAppointment = async (req, res) => {
 		await availability.save();
 
 		return res.status(201).json({
-			message: "Appointment created successfully.",
+			message: "Appointment request created successfully.",
 			appointment,
 		});
 	} catch (error) {
@@ -108,10 +108,7 @@ exports.getMyAppointments = async (req, res) => {
 					],
 				},
 			],
-			order: [
-				["appointment_date", "ASC"],
-				["appointment_time", "ASC"],
-			],
+			order: [["createdAt", "DESC"]],
 		});
 
 		return res.status(200).json({ appointments });
@@ -123,7 +120,7 @@ exports.getMyAppointments = async (req, res) => {
 	}
 };
 
-exports.getDermatologistAppointments = async (req, res) => {
+exports.getDermatologistAppointmentsRequests = async (req, res) => {
 	try {
 		const dermatologistProfile = await DermatologistProfile.findOne({
 			where: { user_id: req.user.id },
@@ -144,10 +141,7 @@ exports.getDermatologistAppointments = async (req, res) => {
 					attributes: ["id", "username", "email", "profile_picture_url"],
 				},
 			],
-			order: [
-				["appointment_date", "ASC"],
-				["appointment_time", "ASC"],
-			],
+			order: [["createdAt", "DESC"]],
 		});
 
 		return res.status(200).json({ appointments });
@@ -163,7 +157,7 @@ exports.updateAppointmentStatus = async (req, res) => {
 	try {
 		const { status } = req.body;
 
-		if (!["pending", "confirmed", "cancelled", "completed"].includes(status)) {
+		if (!["approved", "declined", "cancelled", "completed"].includes(status)) {
 			return res.status(400).json({
 				message: "Invalid appointment status.",
 			});
@@ -171,6 +165,7 @@ exports.updateAppointmentStatus = async (req, res) => {
 		const dermatologistProfile = await DermatologistProfile.findOne({
 			where: { user_id: req.user.id },
 		});
+
 		if (!dermatologistProfile) {
 			return res.status(404).json({
 				message: "Dermatologist profile not found.",

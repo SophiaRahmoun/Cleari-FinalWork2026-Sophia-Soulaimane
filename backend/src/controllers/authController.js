@@ -19,6 +19,8 @@ const generateToken = (user) => {
 const sanitizeUser = (user) => {
 	return {
 		id: user.id,
+		first_name: user.first_name,
+		last_name: user.last_name,
 		username: user.username,
 		email: user.email,
 		role: user.role,
@@ -29,7 +31,7 @@ const sanitizeUser = (user) => {
 
 exports.registerUser = async (req, res) => {
 	try {
-		const { username, email, password, language } = req.body;
+		const { first_name, last_name, email, password, language } = req.body;
 
 		if (!username || !email || !password) {
 			return res.status(400).json({
@@ -48,6 +50,8 @@ exports.registerUser = async (req, res) => {
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		const user = await User.create({
+			first_name: first_name || null,
+			last_name: last_name || null,
 			username,
 			email,
 			password: hashedPassword,

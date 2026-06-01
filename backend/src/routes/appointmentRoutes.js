@@ -20,10 +20,10 @@ router.get(
 );
 
 router.get(
-  "/dermatologist/me",
+  "/dermatologist/requests",
   authMiddleware,
   roleMiddleware("dermatologist"),
-  appointmentController.getDermatologistAppointments
+  appointmentController.getDermatologistAppointmentsRequests
 );
 
 router.patch(

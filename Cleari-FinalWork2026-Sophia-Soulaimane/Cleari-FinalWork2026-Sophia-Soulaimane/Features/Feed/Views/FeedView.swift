@@ -154,7 +154,11 @@ struct FeedView: View {
         .fullScreenCover(isPresented: $showPayementView) {
             PayementView()
         }
-        .fullScreenCover(isPresented: $showProfile) {
+        .fullScreenCover(isPresented: $showProfile, onDismiss: {
+            Task {
+                await viewModel.fetchPosts()
+            }
+        }) {
             UserProfileView()
         }
     }

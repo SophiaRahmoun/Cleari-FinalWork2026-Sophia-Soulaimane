@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct ProfileHeader: View {
-    let imageName: String
+    var imageUrl: String? = nil
     let fullName: String
     let username: String
     let memberSince: String
 
     var body: some View {
         VStack(spacing: 14) {
-            AvatarView(size: 110)
+            AvatarView(imageUrl: imageUrl, size: 110)
 
             Text(fullName)
                 .font(AppFont.gillSwiftUI(.bold, size: 32))
@@ -37,7 +37,7 @@ struct ProfileHeader: View {
                 ProfileStat(number: "1", label: "Dermatologist")
             }
             .padding(.top, 10)
-            .padding(.horizontal, 40) 
+            .padding(.horizontal, 40)
             .padding(.top, 8)
             .padding(.horizontal, 28)
         }

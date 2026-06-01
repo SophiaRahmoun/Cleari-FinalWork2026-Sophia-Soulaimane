@@ -1,6 +1,13 @@
-const fs = require("fs");
-const path = require("path");
 const FakeTrendPost = require("../models/FakeTrendPost");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
+const cloudinary = require("../config/cloudinary");
+
+function getCloudinaryPublicId(url) {
+	const parts = url.split("/upload/");
+	if (parts.length < 2) return null;
+	const afterUpload = parts[1].replace(/^v\d+\//, "");
+	return afterUpload.replace(/\.[^.]+$/, "");
+}
 const User = require("../models/User");
 
 const FakeTrendLike = require("../models/FakeTrendLike");
@@ -69,9 +76,11 @@ exports.createFakeTrendPost = async (req, res) => {
 				});
 			}
 		}
-		const mediaUrl = req.file
-			? `/uploads/fake-trends/${req.file.filename}`
-			: null;
+		let mediaUrl = null;
+		if (req.file) {
+			const result = await uploadToCloudinary(req.file.buffer, "fake-trends");
+			mediaUrl = result.secure_url;
+		}
 		const post = await FakeTrendPost.create({
 			title,
 			trendName,
@@ -198,16 +207,11 @@ exports.updateFakeTrendPost = async (req, res) => {
 		}
 		if (req.file) {
 			if (post.imageUrl) {
-				const oldImagePath = path.join(
-					__dirname,
-					"../../",
-					post.imageUrl.replace(/^\/+/, "")
-				);
-				if (fs.existsSync(oldImagePath)) {
-					fs.unlinkSync(oldImagePath);
-				}
+				const publicId = getCloudinaryPublicId(post.imageUrl);
+				if (publicId) await cloudinary.uploader.destroy(publicId);
 			}
-			post.imageUrl = `/uploads/fake-trends/${req.file.filename}`;
+			const result = await uploadToCloudinary(req.file.buffer, "fake-trends");
+			post.imageUrl = result.secure_url;
 		}
 		post.title = title || post.title;
 		post.trendName = trendName || post.trendName;
@@ -241,14 +245,8 @@ exports.deleteFakeTrendPost = async (req, res) => {
 			});
 		}
 		if (post.imageUrl) {
-			const imagePath = path.join(
-				__dirname,
-				"../../",
-				post.imageUrl.replace(/^\/+/, "")
-			);
-			if (fs.existsSync(imagePath)) {
-				fs.unlinkSync(imagePath);
-			}
+			const publicId = getCloudinaryPublicId(post.imageUrl);
+			if (publicId) await cloudinary.uploader.destroy(publicId);
 		}
 		await post.destroy();
 		res.json({ message: "Fake trend post deleted successfully" });

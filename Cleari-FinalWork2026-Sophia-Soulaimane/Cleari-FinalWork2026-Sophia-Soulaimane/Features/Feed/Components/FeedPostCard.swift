@@ -38,13 +38,15 @@ struct FeedPostCard: View {
                         .foregroundColor(Color(hex: "1A1018"))
                         .lineSpacing(4)
                     
-                    if let imageUrl = post.imageUrl {
-                        AsyncImage(url: URL(string: "http://localhost:4000\(imageUrl)")) { image in
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } placeholder: {
-                            Color.white.opacity(0.25)
+                    if let imageUrl = post.imageUrl,
+                       let url = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "http://localhost:4000\(imageUrl)") {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable().scaledToFill()
+                            default:
+                                Color.white.opacity(0.25)
+                            }
                         }
                         .frame(height: 190)
                         .clipShape(RoundedRectangle(cornerRadius: 18))
