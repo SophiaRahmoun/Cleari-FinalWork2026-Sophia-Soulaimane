@@ -10,8 +10,8 @@ import SwiftUI
 struct MessageBubble: View {
     let message: ChatMessage
     let isCurrentUser: Bool
-    let currentUserProfileImage: String
-    let otherUserProfileImage: String
+    let currentUserProfileImageUrl: String?
+    let otherUserProfileImageUrl: String?
     let onProfileTap: () -> Void
 
     private let beige = Color(hex: "FDF3EB")
@@ -22,7 +22,7 @@ struct MessageBubble: View {
         HStack(alignment: .bottom, spacing: 8) {
             if !isCurrentUser {
                 ProfileAvatarView(
-                    imageName: otherUserProfileImage,
+                    imageUrl: otherUserProfileImageUrl,
                     size: 38,
                     action: onProfileTap
                 )
@@ -33,7 +33,7 @@ struct MessageBubble: View {
 
             if isCurrentUser {
                 ProfileAvatarView(
-                    imageName: currentUserProfileImage,
+                    imageUrl: currentUserProfileImageUrl,
                     size: 38,
                     action: onProfileTap
                 )

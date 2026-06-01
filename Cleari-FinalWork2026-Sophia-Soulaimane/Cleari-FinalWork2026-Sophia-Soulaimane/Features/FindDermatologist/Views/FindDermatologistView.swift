@@ -4,12 +4,13 @@
 //
 //  Created by Soulaimane Saadi on 29/04/2026.
 //
+
 import SwiftUI
 
 struct FindDermatologistView: View {
     @StateObject private var viewModel = FindDermatologistViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -17,30 +18,37 @@ struct FindDermatologistView: View {
                     startHex: "C66F8C",
                     endHex: "F9BDB9"
                 )
-                
+
                 VStack(spacing: 0) {
                     Spacer()
-                    
+
                     VStack(alignment: .leading, spacing: 26) {
                         Text("Recommended\ndermatologist")
                             .font(AppFont.gillSwiftUI(.regular, size: 42))
                             .foregroundColor(Color(hex: "1A1018"))
                             .lineSpacing(4)
-                        
+
                         HStack(spacing: 8) {
                             DermatologistFilterLabel(title: "Any", isSelected: true)
                             DermatologistFilterLabel(title: "Male")
                             DermatologistFilterLabel(title: "Female")
                             DermatologistFilterLabel(title: "On my location")
                         }
-                        
+
                         Text("Top matches for you")
                             .font(AppFont.gillSwiftUI(.regular, size: 18))
                             .foregroundColor(Color(hex: "1A1018"))
-                        
+
                         if viewModel.isLoading {
                             ProgressView()
                                 .tint(Color(hex: "1A1018"))
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.top, 20)
+                        } else if viewModel.dermatologists.isEmpty {
+                            Text("No dermatologists available yet.")
+                                .font(AppFont.gillSwiftUI(.regular, size: 16))
+                                .foregroundColor(Color(hex: "1A1018").opacity(0.7))
+                                .padding(.top, 20)
                         } else {
                             VStack(spacing: 20) {
                                 ForEach(viewModel.dermatologists) { dermatologist in
@@ -53,7 +61,7 @@ struct FindDermatologistView: View {
                                 }
                             }
                         }
-                        
+
                         if let errorMessage = viewModel.errorMessage {
                             Text(errorMessage)
                                 .font(AppFont.gillSwiftUI(.regular, size: 14))
@@ -61,9 +69,9 @@ struct FindDermatologistView: View {
                         }
                     }
                     .padding(.horizontal, 34)
-                    
+
                     Spacer()
-                    
+
                     ScanBottomBar()
                 }
             }
@@ -76,9 +84,9 @@ struct FindDermatologistView: View {
                         conversationId: conversation.id,
                         currentUserId: currentUser.id,
                         currentUserRole: currentUser.role,
-                        dermatologistName: viewModel.selectedDermatologist?.name ?? "Dermatologist",
-                        currentUserProfileImage: "ProfileSample",
-                        dermatologistProfileImage: viewModel.selectedDermatologist?.profileImage ?? "ProfileSample"
+                        dermatologistName: viewModel.selectedDermatologist?.displayName ?? "Dermatologist",
+                        currentUserProfileImageUrl: TokenStorage.shared.profilePictureUrl,
+                        dermatologistProfileImageUrl: viewModel.selectedDermatologist?.profileImageUrl
                     )
                 }
             }

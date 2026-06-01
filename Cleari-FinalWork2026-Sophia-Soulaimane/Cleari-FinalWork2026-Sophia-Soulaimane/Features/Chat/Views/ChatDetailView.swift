@@ -16,10 +16,9 @@ struct ChatDetailView: View {
     @State private var showDocumentPicker = false
     
     let currentUserRole: String
-
     let dermatologistName: String
-    let currentUserProfileImage: String
-    let dermatologistProfileImage: String
+    let currentUserProfileImageUrl: String?
+    let dermatologistProfileImageUrl: String?
 
     private let beige = Color(hex: "FDF3EB")
     private let pink = Color(hex: "C66F8C")
@@ -29,9 +28,9 @@ struct ChatDetailView: View {
         conversationId: Int,
         currentUserId: Int,
         currentUserRole: String = "user",
-        dermatologistName: String = "Dr. Sarah Ben Ali",
-        currentUserProfileImage: String = "user-profile",
-        dermatologistProfileImage: String = "dermato-profile"
+        dermatologistName: String = "Dermatologist",
+        currentUserProfileImageUrl: String? = nil,
+        dermatologistProfileImageUrl: String? = nil
     ) {
         _viewModel = StateObject(
             wrappedValue: ChatViewModel(
@@ -42,8 +41,8 @@ struct ChatDetailView: View {
 
         self.currentUserRole = currentUserRole
         self.dermatologistName = dermatologistName
-        self.currentUserProfileImage = currentUserProfileImage
-        self.dermatologistProfileImage = dermatologistProfileImage
+        self.currentUserProfileImageUrl = currentUserProfileImageUrl
+        self.dermatologistProfileImageUrl = dermatologistProfileImageUrl
     }
 
     var body: some View {
@@ -96,7 +95,7 @@ struct ChatDetailView: View {
             }
 
             ProfileAvatarView(
-                imageName: dermatologistProfileImage,
+                imageUrl: dermatologistProfileImageUrl,
                 size: 46,
                 action: {
                     openProfile(for: "dermatologist")
@@ -155,8 +154,8 @@ struct ChatDetailView: View {
                         MessageBubble(
                             message: message,
                             isCurrentUser: message.senderId == viewModel.currentUserId,
-                            currentUserProfileImage: currentUserProfileImage,
-                            otherUserProfileImage: dermatologistProfileImage,
+                            currentUserProfileImageUrl: currentUserProfileImageUrl,
+                            otherUserProfileImageUrl: dermatologistProfileImageUrl,
                             onProfileTap: {
                                 openProfile(for: message.senderRole)
                             }
@@ -359,8 +358,8 @@ private struct ChatDetailPreviewView: View {
                             MessageBubble(
                                 message: message,
                                 isCurrentUser: message.senderId == 1,
-                                currentUserProfileImage: "user-profile",
-                                otherUserProfileImage: "dermato-profile",
+                                currentUserProfileImageUrl: nil,
+                                otherUserProfileImageUrl: nil,
                                 onProfileTap: {}
                             )
                         }
