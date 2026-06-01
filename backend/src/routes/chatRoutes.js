@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const chatController = require("../controllers/chatController");
 const authMiddleware = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
 router.post(
 	"/conversations",
@@ -21,6 +22,13 @@ router.post(
 	"/conversations/:conversationId/messages",
 	authMiddleware,
 	chatController.sendMessage
+);
+
+router.post(
+	"/conversations/:conversationId/messages/image",
+	authMiddleware,
+	upload.single("image"),
+	chatController.sendImageMessage
 );
 
 router.post(

@@ -1,6 +1,6 @@
 const Conversation = require("../models/Conversation");
-
 const Message = require("../models/Message");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 exports.createConversation = async (req, res) => {
 	try {
@@ -173,6 +173,45 @@ exports.sendMessage = async (req, res) => {
 
 			error: error.message,
 		});
+	}
+};
+
+exports.sendImageMessage = async (req, res) => {
+	try {
+		const { conversationId } = req.params;
+		const user = req.user;
+
+		if (!req.file) {
+			return res.status(400).json({ message: "No image file provided." });
+		}
+
+		const conversation = await Conversation.findByPk(conversationId);
+		if (!conversation) {
+			return res.status(404).json({ message: "Conversation not found." });
+		}
+
+		const isAllowed =
+			conversation.userId === user.id || conversation.dermatologistId === user.id;
+		if (!isAllowed) {
+			return res.status(403).json({ message: "Access denied." });
+		}
+
+		const result = await uploadToCloudinary(req.file.buffer, "chat-images");
+
+		const newMessage = await Message.create({
+			conversationId,
+			senderId: user.id,
+			senderRole: user.role,
+			content: result.secure_url,
+			messageType: "image",
+		});
+
+		conversation.lastMessageAt = new Date();
+		await conversation.save();
+
+		res.status(201).json({ message: "Image sent.", newMessage });
+	} catch (error) {
+		res.status(500).json({ message: "Error sending image.", error: error.message });
 	}
 };
 
