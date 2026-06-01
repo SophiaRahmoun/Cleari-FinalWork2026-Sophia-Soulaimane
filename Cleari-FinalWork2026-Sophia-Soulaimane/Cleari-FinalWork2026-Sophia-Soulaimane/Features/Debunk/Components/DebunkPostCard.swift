@@ -20,16 +20,16 @@ struct DebunkPostCard: View {
                 .foregroundColor(Color(hex: "1A1018"))
                 .lineLimit(2)
 
-            if let imageUrl = post.imageUrl {
+            if let imageUrl = post.imageUrl,
+               let resolvedUrl = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "http://localhost:4000\(imageUrl)") {
 
-                AsyncImage(url: URL(string: "http://localhost:4000\(imageUrl)")) { image in
-
-                    image
-                        .resizable()
-                        .scaledToFill()
-
-                } placeholder: {
-                    Color.white.opacity(0.25)
+                AsyncImage(url: resolvedUrl) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image.resizable().scaledToFill()
+                    default:
+                        Color.white.opacity(0.25)
+                    }
                 }
                 .frame(height: 220)
                 .frame(maxWidth: .infinity)
