@@ -352,8 +352,8 @@ private struct ChatDetailPreviewView: View {
                             MessageBubble(
                                 message: message,
                                 isCurrentUser: message.senderId == 1,
-                                currentUserProfileImage: "user-profile",
-                                otherUserProfileImage: "dermato-profile",
+                                currentUserProfileImageUrl: nil,
+                                otherUserProfileImageUrl: nil,
                                 onProfileTap: {}
                             )
                         }

@@ -11,6 +11,13 @@ struct FindDermatologistView: View {
     @StateObject private var viewModel = FindDermatologistViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
 
+    @State private var selectedGender = "Any"
+
+    // Gender filter is UI-only for now — backend doesn't expose gender field
+    private var filteredDermatologists: [Dermatologist] {
+        viewModel.dermatologists
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -18,65 +25,68 @@ struct FindDermatologistView: View {
                     startHex: "C66F8C",
                     endHex: "F9BDB9"
                 )
+                .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    Spacer()
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 26) {
+                            Text("Recommended\ndermatologist")
+                                .font(AppFont.gillSwiftUI(.regular, size: 42))
+                                .foregroundColor(Color(hex: "1A1018"))
+                                .lineSpacing(4)
 
-                    VStack(alignment: .leading, spacing: 26) {
-                        Text("Recommended\ndermatologist")
-                            .font(AppFont.gillSwiftUI(.regular, size: 42))
-                            .foregroundColor(Color(hex: "1A1018"))
-                            .lineSpacing(4)
+                            HStack(spacing: 8) {
+                                filterButton("Any")
+                                filterButton("Male")
+                                filterButton("Female")
+                                DermatologistFilterLabel(title: "Location")
+                            }
 
-                        HStack(spacing: 8) {
-                            DermatologistFilterLabel(title: "Any", isSelected: true)
-                            DermatologistFilterLabel(title: "Male")
-                            DermatologistFilterLabel(title: "Female")
-                            DermatologistFilterLabel(title: "On my location")
-                        }
+                            Text("Top matches for you")
+                                .font(AppFont.gillSwiftUI(.regular, size: 18))
+                                .foregroundColor(Color(hex: "1A1018"))
 
-                        Text("Top matches for you")
-                            .font(AppFont.gillSwiftUI(.regular, size: 18))
-                            .foregroundColor(Color(hex: "1A1018"))
-
-                        if viewModel.isLoading {
-                            ProgressView()
-                                .tint(Color(hex: "1A1018"))
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .padding(.top, 20)
-                        } else if viewModel.dermatologists.isEmpty {
-                            Text("No dermatologists available yet.")
-                                .font(AppFont.gillSwiftUI(.regular, size: 16))
-                                .foregroundColor(Color(hex: "1A1018").opacity(0.7))
-                                .padding(.top, 20)
-                        } else {
-                            VStack(spacing: 20) {
-                                ForEach(viewModel.dermatologists) { dermatologist in
-                                    DermatologistCard(dermatologist: dermatologist)
-                                        .onTapGesture {
-                                            Task {
-                                                await viewModel.startChat(with: dermatologist)
+                            if viewModel.isLoading {
+                                ProgressView()
+                                    .tint(Color(hex: "1A1018"))
+                                    .frame(maxWidth: .infinity, alignment: .center)
+                                    .padding(.top, 20)
+                            } else if filteredDermatologists.isEmpty {
+                                Text("No dermatologists available yet.")
+                                    .font(AppFont.gillSwiftUI(.regular, size: 16))
+                                    .foregroundColor(Color(hex: "1A1018").opacity(0.7))
+                                    .padding(.top, 20)
+                            } else {
+                                VStack(spacing: 20) {
+                                    ForEach(filteredDermatologists) { dermatologist in
+                                        DermatologistCard(dermatologist: dermatologist)
+                                            .onTapGesture {
+                                                Task {
+                                                    await viewModel.startChat(with: dermatologist)
+                                                }
                                             }
-                                        }
+                                    }
                                 }
                             }
-                        }
 
-                        if let errorMessage = viewModel.errorMessage {
-                            Text(errorMessage)
-                                .font(AppFont.gillSwiftUI(.regular, size: 14))
-                                .foregroundColor(Color(hex: "1A1018"))
+                            if let errorMessage = viewModel.errorMessage {
+                                Text(errorMessage)
+                                    .font(AppFont.gillSwiftUI(.regular, size: 14))
+                                    .foregroundColor(Color(hex: "1A1018"))
+                            }
                         }
+                        .padding(.horizontal, 34)
+                        .padding(.top, 70)
+                        .padding(.bottom, 120)
                     }
-                    .padding(.horizontal, 34)
-
-                    Spacer()
 
                     ScanBottomBar()
                 }
             }
             .task {
-                await viewModel.loadDermatologists()
+                if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                    await viewModel.loadDermatologists()
+                }
             }
             .navigationDestination(item: $viewModel.selectedConversation) { conversation in
                 if let currentUser = authViewModel.currentUser {
@@ -92,4 +102,21 @@ struct FindDermatologistView: View {
             }
         }
     }
+
+    private func filterButton(_ gender: String) -> some View {
+        Button {
+            selectedGender = gender
+        } label: {
+            DermatologistFilterLabel(
+                title: gender,
+                isSelected: selectedGender == gender
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+#Preview("Find Dermatologist") {
+    FindDermatologistView()
+        .environmentObject(AuthViewModel())
 }
