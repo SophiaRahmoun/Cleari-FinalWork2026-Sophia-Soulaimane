@@ -111,7 +111,7 @@ struct UserProfileView: View {
                         showLogoutSheet = false
                     }
 
-                LogoutConfirmationSheet {
+                LogoutConfirmationView {
 
                     showLogoutSheet = false
 
