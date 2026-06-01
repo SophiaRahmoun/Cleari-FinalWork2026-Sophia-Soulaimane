@@ -29,7 +29,7 @@ struct TikTokLinkPreviewView: View {
             VStack(spacing: 0) {
 
                 TikTokWebView(url: url)
-                    .frame(height: 260)
+                    .frame(height: 400)
                     .clipShape(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 18,
@@ -84,14 +84,27 @@ struct TikTokWebView: UIViewRepresentable {
         webView.scrollView.bounces = false
         webView.backgroundColor = .clear
         webView.isOpaque = false
-        webView.load(URLRequest(url: url))
+
+        loadTikTok(url, in: webView)
+        
         return webView
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
         if webView.url != url {
-            webView.load(URLRequest(url: url))
+            loadTikTok(url, in: webView)
         }
+    }
+
+    private func loadTikTok(_ url: URL, in webView: WKWebView) {
+        var request = URLRequest(url: url)
+
+        request.setValue(
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 18_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Mobile/15E148 Safari/604.1",
+            forHTTPHeaderField: "User-Agent"
+        )
+
+        webView.load(request)
     }
 }
 
