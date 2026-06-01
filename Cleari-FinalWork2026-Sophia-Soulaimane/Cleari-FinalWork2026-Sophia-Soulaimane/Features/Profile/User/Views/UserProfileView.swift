@@ -36,7 +36,7 @@ struct UserProfileView: View {
                     VStack(spacing: 32) {
 
                         ProfileHeader(
-                            imageName: "ProfileSample",
+                            imageUrl: viewModel.profilePictureUrl,
                             fullName: viewModel.fullName,
                             username: viewModel.username,
                             memberSince: viewModel.memberSince

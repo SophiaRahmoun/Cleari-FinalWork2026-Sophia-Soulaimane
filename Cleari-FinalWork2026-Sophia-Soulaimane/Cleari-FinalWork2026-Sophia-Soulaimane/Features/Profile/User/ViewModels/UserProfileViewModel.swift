@@ -43,6 +43,10 @@ final class UserProfileViewModel: ObservableObject {
             : realName
     }
 
+    var profilePictureUrl: String? {
+        user?.profilePictureUrl
+    }
+
     var memberSince: String {
         guard let createdAt = user?.createdAt else {
             return "Unknown"
