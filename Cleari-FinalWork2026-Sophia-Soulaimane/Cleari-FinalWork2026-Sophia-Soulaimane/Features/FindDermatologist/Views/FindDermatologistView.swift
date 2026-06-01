@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct FindDermatologistView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = FindDermatologistViewModel()
-    @EnvironmentObject var authViewModel: AuthViewModel
 
     @State private var selectedGender = "Any"
 
-    // Gender filter is UI-only for now — backend doesn't expose gender field
+    // Gender filter is UI-only — backend doesn't expose gender field yet
     private var filteredDermatologists: [Dermatologist] {
         viewModel.dermatologists
     }
@@ -28,6 +28,18 @@ struct FindDermatologistView: View {
                 .ignoresSafeArea()
 
                 VStack(spacing: 0) {
+                    // Back button
+                    HStack {
+                        Button { dismiss() } label: {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(Color(hex: "1A1018"))
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 34)
+                    .padding(.top, 60)
+
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 26) {
                             Text("Recommended\ndermatologist")
@@ -52,7 +64,7 @@ struct FindDermatologistView: View {
                                     .frame(maxWidth: .infinity, alignment: .center)
                                     .padding(.top, 20)
                             } else if filteredDermatologists.isEmpty {
-                                Text("No dermatologists available yet.")
+                                Text("No verified dermatologists available yet.")
                                     .font(AppFont.gillSwiftUI(.regular, size: 16))
                                     .foregroundColor(Color(hex: "1A1018").opacity(0.7))
                                     .padding(.top, 20)
@@ -73,32 +85,32 @@ struct FindDermatologistView: View {
                                 Text(errorMessage)
                                     .font(AppFont.gillSwiftUI(.regular, size: 14))
                                     .foregroundColor(Color(hex: "1A1018"))
+                                    .padding(.top, 8)
                             }
                         }
                         .padding(.horizontal, 34)
-                        .padding(.top, 70)
+                        .padding(.top, 26)
                         .padding(.bottom, 120)
                     }
-
-                    ScanBottomBar()
                 }
             }
             .task {
-                if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
-                    await viewModel.loadDermatologists()
-                }
+                await viewModel.loadDermatologists()
             }
+            // Navigate to ChatDetailView once conversation is created
             .navigationDestination(item: $viewModel.selectedConversation) { conversation in
-                if let currentUser = authViewModel.currentUser {
-                    ChatDetailView(
-                        conversationId: conversation.id,
-                        currentUserId: currentUser.id,
-                        currentUserRole: currentUser.role,
-                        dermatologistName: viewModel.selectedDermatologist?.displayName ?? "Dermatologist",
-                        currentUserProfileImageUrl: TokenStorage.shared.profilePictureUrl,
-                        dermatologistProfileImageUrl: viewModel.selectedDermatologist?.profileImageUrl
-                    )
-                }
+                // Use TokenStorage — always available, no risk of nil unlike authViewModel.currentUser
+                let currentUserId = TokenStorage.shared.userId ?? 0
+                let currentUserRole = TokenStorage.shared.userRole ?? "user"
+
+                ChatDetailView(
+                    conversationId: conversation.id,
+                    currentUserId: currentUserId,
+                    currentUserRole: currentUserRole,
+                    dermatologistName: viewModel.selectedDermatologist?.displayName ?? "Dermatologist",
+                    currentUserProfileImageUrl: TokenStorage.shared.profilePictureUrl,
+                    dermatologistProfileImageUrl: viewModel.selectedDermatologist?.profileImageUrl
+                )
             }
         }
     }
@@ -116,7 +128,6 @@ struct FindDermatologistView: View {
     }
 }
 
-#Preview("Find Dermatologist") {
+#Preview {
     FindDermatologistView()
-        .environmentObject(AuthViewModel())
 }

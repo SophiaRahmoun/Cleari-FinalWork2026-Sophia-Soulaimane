@@ -16,10 +16,11 @@ final class TokenStorage {
     static let shared = TokenStorage()
     private init() {}
 
-    private let tokenKey = "cleari_auth_token"
-    private let roleKey = "cleari_user_role"
+    private let tokenKey             = "cleari_auth_token"
+    private let roleKey              = "cleari_user_role"
+    private let userIdKey            = "cleari_user_id"
     private let subscriptionStatusKey = "cleari_subscription_status"
-    private let profilePictureKey = "cleari_profile_picture_url"
+    private let profilePictureKey    = "cleari_profile_picture_url"
 
     var token: String? {
         get { UserDefaults.standard.string(forKey: tokenKey) }
@@ -29,6 +30,14 @@ final class TokenStorage {
     var userRole: String? {
         get { UserDefaults.standard.string(forKey: roleKey) }
         set { UserDefaults.standard.set(newValue, forKey: roleKey) }
+    }
+
+    var userId: Int? {
+        get {
+            let v = UserDefaults.standard.integer(forKey: userIdKey)
+            return v == 0 ? nil : v
+        }
+        set { UserDefaults.standard.set(newValue, forKey: userIdKey) }
     }
 
     var profilePictureUrl: String? {
@@ -52,6 +61,7 @@ final class TokenStorage {
     func clear() {
         UserDefaults.standard.removeObject(forKey: tokenKey)
         UserDefaults.standard.removeObject(forKey: roleKey)
+        UserDefaults.standard.removeObject(forKey: userIdKey)
         UserDefaults.standard.removeObject(forKey: subscriptionStatusKey)
         UserDefaults.standard.removeObject(forKey: profilePictureKey)
 

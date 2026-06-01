@@ -8,20 +8,37 @@
 import SwiftUI
 
 struct ScanBottomBar: View {
+    var onHomeTapped: (() -> Void)?
+    var onFindDermatologistTapped: (() -> Void)?
+    var onScanTapped: (() -> Void)?
+    var onCalendarTapped: (() -> Void)?
+
     var body: some View {
         HStack {
-            Image(systemName: "house")
+            tabButton(icon: "house", action: onHomeTapped)
             Spacer()
-            Image(systemName: "magnifyingglass")
+            tabButton(icon: "magnifyingglass", action: onFindDermatologistTapped)
             Spacer()
-            Image(systemName: "cross.case")
+            tabButton(icon: "cross.case", action: onScanTapped)
             Spacer()
-            Image(systemName: "calendar")
+            tabButton(icon: "calendar", action: onCalendarTapped)
         }
         .font(.system(size: 28, weight: .regular))
         .foregroundColor(.black)
         .padding(.horizontal, 38)
         .padding(.top, 14)
         .padding(.bottom, 26)
+    }
+
+    @ViewBuilder
+    private func tabButton(icon: String, action: (() -> Void)?) -> some View {
+        if let action {
+            Button { action() } label: {
+                Image(systemName: icon)
+            }
+            .buttonStyle(.plain)
+        } else {
+            Image(systemName: icon)
+        }
     }
 }

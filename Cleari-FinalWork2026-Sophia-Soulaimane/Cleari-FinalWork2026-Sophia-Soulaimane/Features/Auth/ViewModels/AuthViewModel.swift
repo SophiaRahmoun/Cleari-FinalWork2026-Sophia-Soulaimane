@@ -38,6 +38,7 @@ final class AuthViewModel: ObservableObject {
 
             TokenStorage.shared.token = response.token
             TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
 
             currentUser = response.user
             isLoggedIn = true
@@ -75,6 +76,7 @@ final class AuthViewModel: ObservableObject {
 
             TokenStorage.shared.token = response.token
             TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
 
             currentUser = response.user
             isLoggedIn = true
@@ -113,6 +115,7 @@ final class AuthViewModel: ObservableObject {
 
             TokenStorage.shared.token = response.token
             TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
 
             currentUser = response.user
             isLoggedIn = true

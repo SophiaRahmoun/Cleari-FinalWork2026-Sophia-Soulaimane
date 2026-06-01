@@ -19,6 +19,7 @@ enum AppRoute: Hashable {
 }
 
 struct AppFlowView: View {
+    @StateObject private var authViewModel = AuthViewModel()
     @State private var path = NavigationPath()
 
     var body: some View {
@@ -85,6 +86,7 @@ struct AppFlowView: View {
 
                 case .userHome:
                     UserHomeShellView()
+                        .environmentObject(authViewModel)
 
                 case .scan:
                     CameraCaptureView()
