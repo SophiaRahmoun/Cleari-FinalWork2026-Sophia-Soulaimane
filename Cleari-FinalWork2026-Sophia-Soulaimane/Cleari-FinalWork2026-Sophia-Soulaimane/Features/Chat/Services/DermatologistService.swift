@@ -5,18 +5,14 @@
 //  Created by admin on 31/05/2026.
 //
 
-
 import Foundation
 
 final class DermatologistService {
     static let shared = DermatologistService()
-
-    private let baseURL = "\(APIConfig.baseURL)/dermatologists"
-
     private init() {}
 
     func fetchDermatologists() async throws -> [Dermatologist] {
-        guard let url = URL(string: baseURL) else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/dermatologists/verified") else {
             throw URLError(.badURL)
         }
 
@@ -31,6 +27,8 @@ final class DermatologistService {
             throw URLError(.badServerResponse)
         }
 
-        return try JSONDecoder().decode([Dermatologist].self, from: data)
+        // Backend returns { "dermatologists": [...] }
+        let decoded = try JSONDecoder().decode(DermatologistsResponse.self, from: data)
+        return decoded.dermatologists
     }
 }

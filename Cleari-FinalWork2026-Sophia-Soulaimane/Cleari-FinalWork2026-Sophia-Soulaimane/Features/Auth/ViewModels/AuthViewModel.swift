@@ -15,12 +15,12 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     var isPendingDermatologist: Bool {
-           currentUser?.role == "dermatologist" && currentUser?.verificationStatus == "pending"
-       }
+        currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "pending"
+    }
 
-       var isApprovedDermatologist: Bool {
-           currentUser?.role == "dermatologist" && currentUser?.verificationStatus == "approved"
-       }
+    var isApprovedDermatologist: Bool {
+        currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "approved"
+    }
     
     func login(email: String, password: String) async {
         isLoading = true

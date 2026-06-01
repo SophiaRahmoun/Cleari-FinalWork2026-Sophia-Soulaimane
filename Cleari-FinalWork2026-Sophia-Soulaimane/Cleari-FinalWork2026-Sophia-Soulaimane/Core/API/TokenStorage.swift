@@ -19,6 +19,7 @@ final class TokenStorage {
     private let tokenKey = "cleari_auth_token"
     private let roleKey = "cleari_user_role"
     private let subscriptionStatusKey = "cleari_subscription_status"
+    private let profilePictureKey = "cleari_profile_picture_url"
 
     var token: String? {
         get { UserDefaults.standard.string(forKey: tokenKey) }
@@ -28,6 +29,11 @@ final class TokenStorage {
     var userRole: String? {
         get { UserDefaults.standard.string(forKey: roleKey) }
         set { UserDefaults.standard.set(newValue, forKey: roleKey) }
+    }
+
+    var profilePictureUrl: String? {
+        get { UserDefaults.standard.string(forKey: profilePictureKey) }
+        set { UserDefaults.standard.set(newValue, forKey: profilePictureKey) }
     }
 
     var subscriptionStatus: String? {
@@ -47,6 +53,7 @@ final class TokenStorage {
         UserDefaults.standard.removeObject(forKey: tokenKey)
         UserDefaults.standard.removeObject(forKey: roleKey)
         UserDefaults.standard.removeObject(forKey: subscriptionStatusKey)
+        UserDefaults.standard.removeObject(forKey: profilePictureKey)
 
         NotificationCenter.default.post(name: .didLogout, object: nil)
     }

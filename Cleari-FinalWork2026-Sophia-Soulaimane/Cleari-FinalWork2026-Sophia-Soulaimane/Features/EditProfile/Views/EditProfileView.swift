@@ -279,3 +279,184 @@ extension EditProfileView {
         .buttonStyle(.plain)
     }
 }
+
+#Preview("Chat Detail - User") {
+    ChatDetailPreviewView(currentUserRole: "user")
+}
+
+#Preview("Chat Detail - Dermatologist") {
+    ChatDetailPreviewView(currentUserRole: "dermatologist")
+}
+
+private struct ChatDetailPreviewView: View {
+    let currentUserRole: String
+
+    private let beige = Color(hex: "FDF3EB")
+    private let pink = Color(hex: "C66F8C")
+    private let darkBrown = Color(hex: "1E141D")
+
+    private let messages: [ChatMessage] = [
+        ChatMessage(
+            id: 1,
+            conversationId: 1,
+            senderId: 1,
+            senderRole: "user",
+            content: "Hi Doctor, I uploaded my skin scan. I have redness around my cheeks and I’m not sure if it’s irritation or acne.",
+            messageType: "text",
+            isRead: true,
+            createdAt: nil
+        ),
+        ChatMessage(
+            id: 2,
+            conversationId: 1,
+            senderId: 2,
+            senderRole: "dermatologist",
+            content: "Hi Sophia, I checked your scan and your form. The redness looks more like irritation than active acne.",
+            messageType: "text",
+            isRead: true,
+            createdAt: nil
+        ),
+        ChatMessage(
+            id: 3,
+            conversationId: 1,
+            senderId: 1,
+            senderRole: "user",
+            content: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
+            messageType: "image",
+            isRead: true,
+            createdAt: nil
+        ),
+        ChatMessage(
+            id: 4,
+            conversationId: 1,
+            senderId: 2,
+            senderRole: "dermatologist",
+            content: "I suggest booking an appointment so we can review this properly.",
+            messageType: "appointment_request",
+            isRead: false,
+            createdAt: nil
+        )
+    ]
+
+    var body: some View {
+        ZStack {
+            beige.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                header
+
+                ScrollView {
+                    VStack(spacing: 16) {
+
+                        ForEach(messages) { message in
+                            MessageBubble(
+                                message: message,
+                                isCurrentUser: message.senderId == 1,
+                                currentUserProfileImageUrl: nil,
+                                otherUserProfileImageUrl: nil,
+                                onProfileTap: {}
+                            )
+                        }
+                    }
+                    .padding(.top, 10)
+                    .padding(.bottom, 20)
+                }
+
+                messageInput
+            }
+        }
+    }
+
+    private var header: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 24, weight: .medium))
+                .foregroundColor(darkBrown)
+
+            ProfileAvatarView(
+                imageName: "dermato-profile",
+                size: 46,
+                action: {}
+            )
+
+            TypographyLabel(
+                text: "Dr. Sarah Ben Ali",
+                style: .h2,
+                color: darkBrown
+            )
+
+            Spacer()
+
+            if currentUserRole == "dermatologist" {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(darkBrown)
+                    .padding(8)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 18)
+        .padding(.bottom, 14)
+    }
+
+    private var consultationContext: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            TypographyLabel(
+                text: "Consultation context",
+                style: .button,
+                color: beige
+            )
+
+            TypographyLabel(
+                text: "Skin scan linked • ID 1",
+                style: .caption,
+                color: beige.opacity(0.85)
+            )
+
+            TypographyLabel(
+                text: "Skin form linked • ID 1",
+                style: .caption,
+                color: beige.opacity(0.85)
+            )
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(darkBrown)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 28)
+    }
+
+    private var messageInput: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "camera")
+                .font(.system(size: 22))
+                .foregroundColor(darkBrown)
+
+            Image(systemName: "link")
+                .font(.system(size: 22))
+                .foregroundColor(darkBrown)
+
+            TypographyLabel(
+                text: "Write message...",
+                style: .body,
+                color: beige.opacity(0.7)
+            )
+            .padding(.horizontal, 16)
+            .padding(.vertical, 11)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(darkBrown)
+            .clipShape(Capsule())
+
+            Image(systemName: "paperplane.fill")
+                .font(.system(size: 17, weight: .bold))
+                .foregroundColor(beige)
+                .padding(11)
+                .background(pink)
+                .clipShape(Circle())
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 14)
+        .background(beige)
+    }
+}
