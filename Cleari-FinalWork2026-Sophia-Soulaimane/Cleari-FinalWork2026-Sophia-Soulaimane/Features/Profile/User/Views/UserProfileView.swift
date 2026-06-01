@@ -11,21 +11,28 @@ struct UserProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showPayementView = false
     @State private var showEditProfileView = false
+    @State private var showLogoutSheet = false
+
     @StateObject private var viewModel = UserProfileViewModel()
-    
+
     var body: some View {
+
         ZStack {
+
             DarkBackground()
+
             VStack(spacing: 0) {
+
                 HStack {
+
                     Button {
                         dismiss()
                     } label: {
-
                         Image(systemName: "chevron.left")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.white)
                     }
+
                     Spacer()
                 }
                 .padding(.horizontal, 28)
@@ -45,12 +52,14 @@ struct UserProfileView: View {
                         VStack(spacing: 10) {
 
                             ProfileMenuSection(title: "Account")
+
                             Button {
                                 showEditProfileView = true
                             } label: {
                                 ProfileMenuRow(title: "Edit profile")
                             }
                             .buttonStyle(.plain)
+
                             Button {
 
                                 if TokenStorage.shared.userRole != "dermatologist" {
@@ -58,33 +67,64 @@ struct UserProfileView: View {
                                 }
 
                             } label: {
-
                                 ProfileMenuRow(title: "Subscription")
                             }
                             .buttonStyle(.plain)
 
                             ProfileMenuSection(title: "My skin")
+
                             ProfileMenuRow(title: "Skin goals")
                             ProfileMenuRow(title: "My skin scans")
+
                             ProfileMenuSection(title: "Settings")
+
                             ProfileMenuRow(title: "Appointments")
                             ProfileMenuRow(title: "Privacy  & security")
                             ProfileMenuRow(title: "Help & support")
                             ProfileMenuRow(title: "Language")
                             ProfileMenuRow(title: "Notifications")
-                            ProfileMenuRow(
-                                title: "Log out",
-                                isDestructive: true
-                            )
+
+                            Button {
+                                showLogoutSheet = true
+                            } label: {
+                                ProfileMenuRow(
+                                    title: "Log out",
+                                    isDestructive: true
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
                         .padding(.horizontal, 32)
                     }
                     .padding(.top, 25)
                     .padding(.bottom, 35)
                 }
+
                 ScanBottomBar()
             }
-            
+
+            if showLogoutSheet {
+
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showLogoutSheet = false
+                    }
+
+                LogoutConfirmationView {
+
+                    showLogoutSheet = false
+
+                    TokenStorage.shared.clear()
+
+                    dismiss()
+
+                } onCancelTapped: {
+
+                    showLogoutSheet = false
+                }
+                .padding(.horizontal, 28)
+            }
         }
         .task {
             await viewModel.fetchCurrentUser()
@@ -94,10 +134,13 @@ struct UserProfileView: View {
             PayementView()
         }
         .fullScreenCover(isPresented: $showEditProfileView, onDismiss: {
+
             Task {
                 await viewModel.fetchCurrentUser()
             }
+
         }) {
+
             EditProfileView()
         }
     }

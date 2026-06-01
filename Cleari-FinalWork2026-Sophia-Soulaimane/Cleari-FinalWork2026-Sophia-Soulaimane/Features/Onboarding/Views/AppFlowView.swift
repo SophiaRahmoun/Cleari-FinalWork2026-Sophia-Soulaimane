@@ -82,6 +82,9 @@ struct AppFlowView: View {
                     CameraCaptureView()
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .didLogout)) { _ in
+                path = NavigationPath()
+            }
         }
     }
 }
