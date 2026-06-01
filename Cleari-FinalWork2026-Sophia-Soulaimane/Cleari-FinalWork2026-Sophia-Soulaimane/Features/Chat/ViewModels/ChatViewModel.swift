@@ -40,19 +40,19 @@ final class ChatViewModel: ObservableObject {
         isLoading = false
     }
 
-    func sendMessage() async {
-        let trimmed = newMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+    func sendMessage(overrideContent: String? = nil) async {
+        let content = overrideContent ?? newMessage.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        guard !trimmed.isEmpty else { return }
+        guard !content.isEmpty else { return }
 
         do {
             let sentMessage = try await ChatService.shared.sendMessage(
                 conversationId: conversationId,
-                content: trimmed
+                content: content
             )
 
             messages.append(sentMessage)
-            newMessage = ""
+            if overrideContent == nil { newMessage = "" }
         } catch {
             errorMessage = error.localizedDescription
         }

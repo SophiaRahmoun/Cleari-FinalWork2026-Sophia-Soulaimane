@@ -79,7 +79,7 @@ struct ChatDetailView: View {
         .sheet(isPresented: $showDocumentPicker) {
             DocumentPicker { url in
                 Task {
-                    await viewModel.sendAttachmentMessage(fileName: url.lastPathComponent)
+                    await viewModel.sendMessage(overrideContent: url.lastPathComponent)
                 }
             }
         }
