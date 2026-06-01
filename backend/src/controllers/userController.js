@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { User } = require("../models");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 exports.getCurrentUser = async (req, res) => {
 	try {
@@ -169,6 +170,33 @@ exports.updatePronouns = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({
 			message: "Error updating pronouns.",
+			error: error.message,
+		});
+	}
+};
+
+exports.updateProfilePicture = async (req, res) => {
+	try {
+		if (!req.file) {
+			return res.status(400).json({ message: "No image file provided." });
+		}
+
+		const user = await User.findByPk(req.user.id);
+		if (!user) {
+			return res.status(404).json({ message: "User not found." });
+		}
+
+		const result = await uploadToCloudinary(req.file.buffer, "profile-pictures");
+		user.profile_picture_url = result.secure_url;
+		await user.save();
+
+		res.json({
+			message: "Profile picture updated successfully.",
+			profilePictureUrl: result.secure_url,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error updating profile picture.",
 			error: error.message,
 		});
 	}
