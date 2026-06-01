@@ -7,6 +7,10 @@
 
 import Foundation
 
+extension Notification.Name {
+    static let didLogout = Notification.Name("didLogout")
+}
+
 final class TokenStorage {
 
     static let shared = TokenStorage()
@@ -17,23 +21,21 @@ final class TokenStorage {
     private let subscriptionStatusKey = "cleari_subscription_status"
 
     var token: String? {
-        get {
-            UserDefaults.standard.string(forKey: tokenKey)}
-        set {UserDefaults.standard.set(newValue, forKey: tokenKey)}
+        get { UserDefaults.standard.string(forKey: tokenKey) }
+        set { UserDefaults.standard.set(newValue, forKey: tokenKey) }
     }
 
     var userRole: String? {
-        get {UserDefaults.standard.string(forKey: roleKey)}
-        set {UserDefaults.standard.set(newValue, forKey: roleKey)}
+        get { UserDefaults.standard.string(forKey: roleKey) }
+        set { UserDefaults.standard.set(newValue, forKey: roleKey) }
     }
 
     var subscriptionStatus: String? {
-        get {UserDefaults.standard.string(forKey: subscriptionStatusKey)}
-        set {UserDefaults.standard.set(newValue, forKey: subscriptionStatusKey)}
+        get { UserDefaults.standard.string(forKey: subscriptionStatusKey) }
+        set { UserDefaults.standard.set(newValue, forKey: subscriptionStatusKey) }
     }
 
     var hasFakeTrendAccess: Bool {
-
         if userRole == "dermatologist" {
             return true
         }
@@ -42,9 +44,10 @@ final class TokenStorage {
     }
 
     func clear() {
-
         UserDefaults.standard.removeObject(forKey: tokenKey)
         UserDefaults.standard.removeObject(forKey: roleKey)
         UserDefaults.standard.removeObject(forKey: subscriptionStatusKey)
+
+        NotificationCenter.default.post(name: .didLogout, object: nil)
     }
 }
