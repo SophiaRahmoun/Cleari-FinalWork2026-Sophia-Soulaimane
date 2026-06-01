@@ -58,13 +58,15 @@ struct UserRegisterView: View {
                               }
 
                               .padding(.horizontal, 8)
-                              PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
+                              PrimaryButton(title: viewModel.isLoading ?    "LOADING..." : "NEXT STEP") {
                                   Task {
                                       await viewModel.registerUser(
                                           firstName: firstName,
                                           lastName: lastName,
+                                          username: username,
                                           email: email,
-                                          password: password)
+                                          password: password
+                                      )
                                       if viewModel.isLoggedIn {
                                                   onSuccess()
                                     }
