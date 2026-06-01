@@ -38,6 +38,7 @@ struct AddDebunkView: View {
                         AddDebunkInputField(placeholder: "Trend name...", text: $trendName)
                         AddDebunkInputField(placeholder: "Short description...", text: $description)
                         AddDebunkInputField(placeholder: "Put your link...", text: $trendLink)
+                        TikTokLinkPreviewView(urlString: trendLink)
                     }
 
                     AddDebunkStatusSelector(selectedStatus: $selectedStatus)

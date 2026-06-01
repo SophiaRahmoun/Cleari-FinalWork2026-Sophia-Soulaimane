@@ -23,11 +23,9 @@ struct DebunkPostCard: View {
             if let imageUrl = post.imageUrl {
 
                 AsyncImage(url: URL(string: "http://localhost:4000\(imageUrl)")) { image in
-
                     image
                         .resizable()
                         .scaledToFill()
-
                 } placeholder: {
                     Color.white.opacity(0.25)
                 }
@@ -35,13 +33,16 @@ struct DebunkPostCard: View {
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
 
+            } else if let tiktokUrl = post.tiktokUrl, !tiktokUrl.isEmpty {
+
+                TikTokLinkPreviewView(urlString: tiktokUrl)
+
             } else {
 
                 RoundedRectangle(cornerRadius: 18)
                     .fill(Color.white.opacity(0.25))
                     .frame(height: 220)
                     .overlay {
-
                         Text(post.trendName)
                             .font(AppFont.gillSwiftUI(.bold, size: 22))
                             .foregroundColor(Color(hex: "1A1018"))
@@ -60,11 +61,8 @@ struct DebunkPostCard: View {
                 Button {
                     onLikeTapped()
                 } label: {
-
                     HStack(spacing: 6) {
-
                         Image(systemName: (post.isLikedByCurrentUser ?? false) ? "heart.fill" : "heart")
-
                         Text("\(post.likesCount ?? 0)")
                     }
                 }
