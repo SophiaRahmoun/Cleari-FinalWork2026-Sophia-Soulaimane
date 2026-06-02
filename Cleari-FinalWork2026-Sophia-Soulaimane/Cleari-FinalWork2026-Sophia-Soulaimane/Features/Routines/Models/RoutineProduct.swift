@@ -8,17 +8,27 @@
 import Foundation
 
 struct RoutineProduct: Identifiable, Codable {
-    let id: UUID
+    let id: Int
     var name: String
     var imageData: Data?
+    var imageUrl: String?
 
     init(
-        id: UUID = UUID(),
+        id: Int,
         name: String = "",
-        imageData: Data? = nil
+        imageData: Data? = nil,
+        imageUrl: String? = nil
     ) {
         self.id = id
         self.name = name
         self.imageData = imageData
+        self.imageUrl = imageUrl
+    }
+
+    init(dto: RoutineDTO) {
+        self.id = dto.id
+        self.name = dto.productName
+        self.imageData = nil
+        self.imageUrl = dto.productImageUrl
     }
 }
