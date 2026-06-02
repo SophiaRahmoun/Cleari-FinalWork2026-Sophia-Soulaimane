@@ -5,6 +5,7 @@ const DermatologistProfile = require("./DermatologistProfile");
 const SkinAnalysis = require("./SkinAnalysis");
 const SkinFormAnswer = require("./SkinFormAnswer");
 const Appointment = require("./Appointment");
+const SkinGoal = require("./SkinGoal");
 
 const Conversation = require("./Conversation");
 const Message = require("./Message");
@@ -82,6 +83,16 @@ Subscription.belongsTo(User, {
 	foreignKey: "user_id",
 	as: "user",
 });
+User.hasOne(SkinGoal, {
+	foreignKey: "user_id",
+	as: "skinGoal",
+	onDelete: "CASCADE",
+});
+
+SkinGoal.belongsTo(User, {
+	foreignKey: "user_id",
+	as: "user",
+});
 
 module.exports = {
 	sequelize,
@@ -94,4 +105,5 @@ module.exports = {
 	Conversation,
 	Message,
 	Subscription,
+	SkinGoal,
 };

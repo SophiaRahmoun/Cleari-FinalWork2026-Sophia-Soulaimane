@@ -13,6 +13,7 @@ struct UserProfileView: View {
     @State private var showEditProfileView = false
     @State private var showLogoutSheet = false
     @State private var showPrivacyView = false
+    @State private var showSkinGoalsView = false
 
     @StateObject private var viewModel = UserProfileViewModel()
 
@@ -74,7 +75,13 @@ struct UserProfileView: View {
 
                             ProfileMenuSection(title: "My skin")
 
-                            ProfileMenuRow(title: "Skin goals")
+                            Button {
+                                showSkinGoalsView = true
+                            } label: {
+                                ProfileMenuRow(title: "Skin goals")
+                            }
+                            .buttonStyle(.plain)
+                            
                             ProfileMenuRow(title: "My routines")
 
                             ProfileMenuRow(title: "My skin scans")
@@ -155,6 +162,9 @@ struct UserProfileView: View {
         .fullScreenCover(isPresented: $showPrivacyView) {
 
             PrivacyView()
+        }
+        .fullScreenCover(isPresented: $showSkinGoalsView) {
+            SkinGoalView()
         }
     }
 }
