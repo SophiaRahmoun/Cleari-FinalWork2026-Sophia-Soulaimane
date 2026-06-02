@@ -1,8 +1,10 @@
 require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const skinScanRoutes = require("./routes/skinScanRoutes");
 const { sequelize } = require("./models");
+
 const skinFormRoutes = require("./routes/skinFormRoutes");
 const authRoutes = require("./routes/authRoutes");
 const dermatologistRoutes = require("./routes/dermatologistRoutes");
@@ -14,6 +16,7 @@ const userRoutes = require("./routes/userRoutes");
 const skinGoalRoutes = require("./routes/skinGoalRoutes");
 
 const app = express();
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.post(
@@ -45,7 +48,6 @@ app.use("/api/fake-trends", fakeTrendPostRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/skin-goals", skinGoalRoutes);
-const PORT = process.env.PORT || 4000;
 
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api/chat", chatRoutes);
@@ -59,7 +61,7 @@ const startServer = async () => {
 		await sequelize.sync();
 		console.log("Database synced successfully.");
 
-		app.listen(PORT, () => {
+		app.listen(PORT, "0.0.0.0", () => {
 			console.log(`Server running on port ${PORT}`);
 		});
 	} catch (error) {
