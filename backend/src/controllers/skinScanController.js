@@ -1,4 +1,5 @@
-const { SkinAnalysis } = require("../models");
+const { Op } = require("sequelize");
+const { SkinAnalysis, Subscription } = require("../models");
 const { analyzeWithYouCam } = require("../services/youcamService");
 const { buildSkinInsights } = require("../utils/skinInsightsBuilder");
 const uploadToCloudinary = require("../utils/uploadToCloudinary");
@@ -10,6 +11,41 @@ async function createSkinScan(req, res) {
 				success: false,
 				message: "No image uploaded",
 			});
+		}
+
+		// ── Scan limit: 1 per week ────────────────────────────────────
+		const oneWeekAgo = new Date();
+		oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+		const recentScan = await SkinAnalysis.findOne({
+			where: {
+				user_id: req.user.id,
+				createdAt: { [Op.gte]: oneWeekAgo },
+			},
+		});
+
+		if (recentScan) {
+			return res.status(429).json({
+				success: false,
+				message: "You can only scan once per week.",
+			});
+		}
+
+		const totalScans = await SkinAnalysis.count({
+			where: { user_id: req.user.id },
+		});
+
+		if (totalScans >= 1) {
+			const activeSubscription = await Subscription.findOne({
+				where: { user_id: req.user.id, status: "active" },
+			});
+
+			if (!activeSubscription) {
+				return res.status(403).json({
+					success: false,
+					message: "You have used your free scan. Subscribe to unlock more scans.",
+				});
+			}
 		}
 
 		const cloudinaryResult = await uploadToCloudinary(req.file.buffer, "skin-scans");
