@@ -10,30 +10,47 @@ import Foundation
 final class RoutineViewModel: ObservableObject {
     @Published var products: [RoutineProduct] = []
     @Published var errorMessage: String?
+    @Published var showError: Bool = false
 
     private let apiService = RoutineAPIService.shared
+    private let storage = RoutineStorageService()
 
     init() {
         loadRoutines()
     }
 
     func loadRoutines() {
+        // Load local cache immediately so the UI is responsive
+        products = storage.load()
+
         Task {
             do {
                 let routines = try await apiService.fetchRoutines()
 
                 await MainActor.run {
                     self.products = routines.map { RoutineProduct(dto: $0) }
+                    self.storage.save(products: self.products)
                 }
             } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                }
+                // Keep local data visible, just log the error silently
+                print("[Routine] fetchRoutines failed: \(error.localizedDescription)")
             }
         }
     }
 
     func addProduct(imageData: Data? = nil) {
+        // Optimistic local insert with a temp negative id
+        let tempId = -(Int(Date().timeIntervalSince1970))
+        let tempProduct = RoutineProduct(
+            id: tempId,
+            name: "Product name",
+            imageData: imageData,
+            imageUrl: nil
+        )
+
+        products.insert(tempProduct, at: 0)
+        storage.save(products: products)
+
         Task {
             do {
                 let request = CreateRoutineRequest(
@@ -46,27 +63,39 @@ final class RoutineViewModel: ObservableObject {
                 let dto = try await apiService.createRoutine(request)
 
                 await MainActor.run {
-                    self.products.insert(RoutineProduct(dto: dto), at: 0)
+                    // Replace temp entry with the real one from server
+                    if let index = self.products.firstIndex(where: { $0.id == tempId }) {
+                        self.products[index] = RoutineProduct(dto: dto)
+                    }
+                    self.storage.save(products: self.products)
                 }
             } catch {
                 await MainActor.run {
-                    self.errorMessage = error.localizedDescription
+                    // Keep the local product visible but show the error
+                    self.errorMessage = "Could not sync with server: \(error.localizedDescription)"
+                    self.showError = true
                 }
             }
         }
     }
 
     func deleteProduct(_ product: RoutineProduct) {
+        // Optimistic local delete
+        products.removeAll { $0.id == product.id }
+        storage.save(products: products)
+
+        guard product.id > 0 else { return } // temp product, no server call needed
+
         Task {
             do {
                 try await apiService.deleteRoutine(id: product.id)
-
-                await MainActor.run {
-                    self.products.removeAll { $0.id == product.id }
-                }
             } catch {
                 await MainActor.run {
-                    self.errorMessage = error.localizedDescription
+                    // Restore the product if delete failed
+                    self.products.append(product)
+                    self.storage.save(products: self.products)
+                    self.errorMessage = "Could not delete: \(error.localizedDescription)"
+                    self.showError = true
                 }
             }
         }
@@ -78,6 +107,9 @@ final class RoutineViewModel: ObservableObject {
         }
 
         products[index].name = name
+        storage.save(products: products)
+
+        guard product.id > 0 else { return } // temp product
 
         Task {
             do {
@@ -93,14 +125,20 @@ final class RoutineViewModel: ObservableObject {
                     requestBody: request
                 )
             } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                }
+                print("[Routine] updateProductName failed: \(error.localizedDescription)")
             }
         }
     }
 
     func updateProductImage(for product: RoutineProduct, imageData: Data?) {
+        // Optimistic local update
+        if let index = products.firstIndex(where: { $0.id == product.id }) {
+            products[index].imageData = imageData
+            storage.save(products: products)
+        }
+
+        guard product.id > 0 else { return } // temp product
+
         Task {
             do {
                 let request = UpdateRoutineRequest(
@@ -116,16 +154,13 @@ final class RoutineViewModel: ObservableObject {
                 )
 
                 await MainActor.run {
-                    guard let index = self.products.firstIndex(where: { $0.id == product.id }) else {
-                        return
+                    if let index = self.products.firstIndex(where: { $0.id == product.id }) {
+                        self.products[index] = RoutineProduct(dto: dto)
+                        self.storage.save(products: self.products)
                     }
-
-                    self.products[index] = RoutineProduct(dto: dto)
                 }
             } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                }
+                print("[Routine] updateProductImage failed: \(error.localizedDescription)")
             }
         }
     }
