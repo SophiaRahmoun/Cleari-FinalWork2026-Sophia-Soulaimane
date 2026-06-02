@@ -7,10 +7,8 @@ const { createSkinScan, getLatestScan, getScanHistory } = require("../controller
 const router = express.Router();
 
 const upload = multer({
-  dest: "uploads/",
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 router.post(

@@ -7,8 +7,8 @@
 
 import UIKit
 
-extension UIImage: Identifiable {
-    public var id: String {
-        UUID().uuidString
+extension UIImage: @retroactive Identifiable {
+    public var id: ObjectIdentifier {
+        ObjectIdentifier(self)
     }
 }

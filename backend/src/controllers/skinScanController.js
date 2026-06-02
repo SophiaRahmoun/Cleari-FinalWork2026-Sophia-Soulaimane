@@ -1,16 +1,21 @@
 const { SkinAnalysis } = require("../models");
 const { analyzeWithYouCam } = require("../services/youcamService");
-
 const { buildSkinInsights } = require("../utils/skinInsightsBuilder");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 async function createSkinScan(req, res) {
 	try {
+		console.log("SCAN FILE RECEIVED:", !!req.file, req.file?.originalname);
+
 		if (!req.file) {
 			return res.status(400).json({
 				success: false,
 				message: "No image uploaded",
 			});
 		}
+
+		const cloudinaryResult = await uploadToCloudinary(req.file.buffer, "cleari/skin-scans");
+		console.log("CLOUDINARY SCAN URL:", cloudinaryResult.secure_url);
 
 		const analysis = await analyzeWithYouCam(req.file);
 
@@ -19,10 +24,11 @@ async function createSkinScan(req, res) {
 
 		const savedAnalysis = await SkinAnalysis.create({
 			user_id: req.user.id,
-			image_url: req.file.path,
+			image_url: cloudinaryResult.secure_url,
 			result: JSON.stringify(analysis.simplified),
 			raw_result_json: JSON.stringify(analysis.raw),
 		});
+		console.log("SCAN SAVED IMAGE URL:", savedAnalysis.image_url);
 
 		return res.status(201).json({
 			success: true,
