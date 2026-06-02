@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ScanResultView: View {
+    @StateObject private var viewModel = SkinScanViewModel()
     let scanImage: UIImage
     @Environment(\.dismiss) private var dismiss
 
@@ -20,15 +21,39 @@ struct ScanResultView: View {
                     VStack(alignment: .leading, spacing: 28) {
                         header
 
-                        Text("Scanned 2 min ago")
+                        Text("Scanned just now")
                             .font(AppFont.gillSwiftUI(.regular, size: 14))
                             .foregroundColor(.black)
 
                         ScanResultImage(image: scanImage)
 
-                        chips
+                        if viewModel.isLoading {
+                            VStack(spacing: 12) {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .scaleEffect(1.5)
+                                    Text("Analyzing your skin...")
+                                        .font(AppFont.gillSwiftUI(.regular, size: 18))
+                                        .foregroundColor(.black)
+                                }
+                            }
+                        
+                        if let error = viewModel.errorMessage {
+                                           Text(error)
+                                               .font(.caption)
+                                               .foregroundColor(.red)
+                        }
 
-                        insights
+                       if let result = viewModel.scanResult {
+                           resultChips(result)
+                              resultInsights(result)
+                              Text("Scan completed successfully")
+                                  .foregroundColor(.green)
+                                  .font(.caption)
+                                  .padding(.top, 8)
+                          }
+                                            
+                                               
 
                         PrimaryButton(title: "confirm") {
                             dismiss()
@@ -43,6 +68,10 @@ struct ScanResultView: View {
 
                 ScanBottomBar()
             }
+        }
+        .task {
+            viewModel.selectedImage = scanImage
+            await viewModel.analyzeSelectedImage()
         }
     }
 
@@ -65,42 +94,51 @@ struct ScanResultView: View {
         }
     }
 
-    private var chips: some View {
+    private func resultChips(_ result: SkinScan) -> some View {
         VStack(spacing: 10) {
             HStack(spacing: 8) {
-                ScanResultChip(title: "Hydration", value: "Low")
-                ScanResultChip(title: "Redness", value: "High")
-                ScanResultChip(title: "Oil Level", value: "Medium")
+                ScanResultChip(title: "Hydration", value: result.insights?.first(where: { $0.key == "moisture" })?.level ?? "-")
+                ScanResultChip(title: "Redness", value: result.insights?.first(where: { $0.key == "redness" })?.level ?? "-")
+                ScanResultChip(title: "Oil Level", value: result.insights?.first(where: { $0.key == "oiliness" })?.level ?? "-")
             }
 
-            ScanResultChip(title: "Sensitivity", value: "Medium")
+            ScanResultChip(title: "Skin Type", value: result.recommendation.skinTypeEstimate ?? "-")
         }
         .frame(maxWidth: .infinity)
     }
 
-    private var insights: some View {
+    private func resultInsights(_ result: SkinScan)-> some View {
         VStack(alignment: .leading, spacing: 28) {
-            Text("Detailes insights")
+            Text("Detailed insights")
                 .font(AppFont.gillSwiftUI(.italic, size: 26))
                 .foregroundColor(.black)
+            if let advice = result.recommendation.shortAdvice {
+                           Text(advice)
+                               .font(AppFont.gillSwiftUI(.regular, size: 16))
+                               .foregroundColor(.black)
+                       }
+                       ForEach(result.insights ?? []) { insight in
+                           ScanInsightRow(
+                               icon: iconForInsight(insight.key),
+                               title: insight.title,
+                               description: "\(insight.level): \(insight.shortText)\n\(insight.tip)"
+                           )
+                       }
 
-            ScanInsightRow(
-                icon: "drop",
-                title: "Hydration",
-                description: "Low : Your skin needs moisture.\nDon’t forget to drink some water"
-            )
+                       Text("This scan is only guidance and not a medical diagnosis.")
+                           .font(.caption)
+                           .foregroundColor(.black.opacity(0.6))
+                   }
+               }
 
-            ScanInsightRow(
-                icon: "flame.fill",
-                title: "Redness",
-                description: "High: Possible irritation or\ninflammation"
-            )
-
-            ScanInsightRow(
-                icon: "sparkles",
-                title: "Oil Production",
-                description: "High: Possible irritation or\ninflammation"
-            )
-        }
-    }
-}
+               private func iconForInsight(_ key: String) -> String {
+                   switch key {
+                   case "moisture": return "drop"
+                   case "redness": return "flame.fill"
+                   case "oiliness": return "sparkles"
+                   case "acne": return "face.smiling"
+                   case "texture": return "circle.grid.2x2"
+                   default: return "info.circle"
+                   }
+               }
+           }

@@ -5,3 +5,72 @@
 //  Created by Soulaimane Saadi on 15/02/2026.
 //
 
+import Foundation
+
+@MainActor
+final class ConsultationFormViewModel: ObservableObject {
+    @Published var formData = ConsultationFormData()
+    @Published var currentStep: Int = 1
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+
+    func goToNextStep() {
+        if currentStep < 3 {
+            currentStep += 1
+        }
+    }
+
+    func goToPreviousStep() {
+        if currentStep > 1 {
+            currentStep -= 1
+        }
+    }
+
+    var canGoNextFromStepOne: Bool {
+        formData.skinFeeling != nil &&
+        formData.productReaction != nil &&
+        formData.flakiness != nil
+    }
+
+    var canGoNextFromStepTwo: Bool {
+        formData.diagnosedCondition != nil &&
+        formData.hasAllergies != nil &&
+        formData.hasSkinIssues != nil
+    }
+
+    var canSubmit: Bool {
+        formData.mainConcern != nil &&
+        formData.wantsPhotoUpload != nil &&
+        formData.pronouns != nil &&
+        formData.consentShared == true
+    }
+
+    func submitForm() async {
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            formData.stepCompleted = 3
+
+            guard let token = TokenStorage.shared.token else {
+                throw NSError(
+                    domain: "",
+                    code: 401,
+                    userInfo: [NSLocalizedDescriptionKey: "No token found"]
+                )
+            }
+
+            try await SkinFormService.shared.submitSkinForm(
+                formData: formData,
+                token: token
+            )
+
+            print("Skin form saved successfully")
+            isLoading = false
+        } catch {
+            errorMessage = error.localizedDescription
+            print("Error:", error.localizedDescription)
+            isLoading = false
+        }
+    }
+}

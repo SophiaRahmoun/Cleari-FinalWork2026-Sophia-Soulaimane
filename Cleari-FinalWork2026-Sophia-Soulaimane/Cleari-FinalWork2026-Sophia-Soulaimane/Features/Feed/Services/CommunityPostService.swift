@@ -1,0 +1,162 @@
+//
+//  CommunityPostService.swift
+//  Cleari-FinalWork2026-Sophia-Soulaimane
+//
+//  Created by Soulaimane Saadi on 17/05/2026.
+//
+
+import Foundation
+import UIKit
+
+final class CommunityPostService {
+    static let shared = CommunityPostService()
+    private init() {}
+
+    func fetchPosts() async throws -> [CommunityPost] {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts") else {
+            throw URLError(.badURL)
+        }
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode([CommunityPost].self, from: data)
+    }
+
+    func createPost(content: String, image: UIImage? = nil) async throws {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        let boundary = UUID().uuidString
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var body = Data()
+        body.append("--\(boundary)\r\n")
+        body.append("Content-Disposition: form-data; name=\"content\"\r\n\r\n")
+        body.append("\(content)\r\n")
+
+        if let image, let imageData = image.jpegData(compressionQuality: 0.8) {
+            body.append("--\(boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"image\"; filename=\"post.jpg\"\r\n")
+            body.append("Content-Type: image/jpeg\r\n\r\n")
+            body.append(imageData)
+            body.append("\r\n")
+        }
+
+        body.append("--\(boundary)--\r\n")
+        request.httpBody = body
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 201 else {
+            throw URLError(.badServerResponse)
+        }
+    }
+
+    func likePost(postId: Int) async throws -> LikeResponse {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/like") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 201 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(LikeResponse.self, from: data)
+    }
+
+    func unlikePost(postId: Int) async throws -> LikeResponse {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/like") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(LikeResponse.self, from: data)
+    }
+
+    func fetchComments(postId: Int) async throws -> [CommunityPostComment] {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/comments") else {
+            throw URLError(.badURL)
+        }
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode([CommunityPostComment].self, from: data)
+    }
+
+    func createComment(postId: Int, content: String) async throws {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/comments") else {
+            throw URLError(.badURL)
+        }
+
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let body = ["content": content]
+        request.httpBody = try JSONEncoder().encode(body)
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 201 else {
+            throw URLError(.badServerResponse)
+        }
+    }
+}
+
+extension Data {
+    mutating func append(_ string: String) {
+        if let data = string.data(using: .utf8) {
+            append(data)
+        }
+    }
+}

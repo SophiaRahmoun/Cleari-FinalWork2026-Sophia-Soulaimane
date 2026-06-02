@@ -2,3 +2,8 @@
 *.sqlite
 node_modules/
 .env
+*.xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+xcuserdata/
+Cleari-FinalWork2026-Sophia-Soulaimane/Cleari-FinalWork2026-Sophia-Soulaimane.xcodeproj/project.pbxproj

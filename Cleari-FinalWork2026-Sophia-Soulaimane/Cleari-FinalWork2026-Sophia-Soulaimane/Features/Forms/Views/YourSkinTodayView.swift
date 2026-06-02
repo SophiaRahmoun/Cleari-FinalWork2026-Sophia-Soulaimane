@@ -1,0 +1,177 @@
+//
+//  YourSkinTodayView.swift
+//  Cleari-FinalWork2026-Sophia-Soulaimane
+//
+//  Created by Soulaimane Saadi on 29/04/2026.
+//
+
+import SwiftUI
+
+struct YourSkinTodayView: View {
+    @ObservedObject var viewModel: ConsultationFormViewModel
+    let onFinished: () -> Void
+
+    var body: some View {
+        ZStack {
+            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                header
+
+                VStack(alignment: .leading, spacing: 58) {
+                    questionEight
+                    questionNine
+                    pronounsQuestion
+                    privacyChecks
+                }
+                .padding(.horizontal, 42)
+                .padding(.top, 65)
+
+                Spacer()
+
+                SecondaryButton(title: viewModel.isLoading ? "SAVING..." : "CONFIRM") {
+                    Task {
+                        await viewModel.submitForm()
+
+                        if viewModel.errorMessage == nil {
+                            onFinished()
+                        }
+                    }
+                }
+                .disabled(!viewModel.canSubmit || viewModel.isLoading)
+                .opacity(viewModel.canSubmit ? 1 : 0.5)
+                .padding(.horizontal, 100)
+                .padding(.bottom, 42)
+            }
+        }
+    }
+}
+
+extension YourSkinTodayView {
+    private var header: some View {
+        VStack(spacing: 12) {
+            Text("Your skin today")
+                .font(AppFont.gillSwiftUI(.regular, size: 36))
+                .foregroundColor(Color(hex: "1A1018"))
+
+            HStack(spacing: 6) {
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+                Capsule().fill(Color(hex: "1A1018")).frame(width: 78, height: 6)
+            }
+
+            Text("Help us understand your current situation better.")
+                .font(AppFont.gillSwiftUI(.bold, size: 13))
+                .foregroundColor(Color(hex: "1A1018"))
+                .multilineTextAlignment(.center)
+        }
+        .padding(.top, 55)
+    }
+}
+
+extension YourSkinTodayView {
+    private var questionEight: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("8)   What is your main concern today?")
+                .font(AppFont.gillSwiftUI(.regular, size: 15))
+                .foregroundColor(Color(hex: "1A1018"))
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 10) {
+                    concernButton("Pimple / Acne")
+                    concernButton("Redness/Sensitivity")
+                }
+
+                HStack(spacing: 10) {
+                    concernButton("Dryness / Tightness")
+                    concernButton("Uneven tone / Dark spots")
+                }
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    private func concernButton(_ title: String) -> some View {
+        Button {
+            viewModel.formData.mainConcern = title
+        } label: {
+            FormChoicePill(
+                title: title,
+                isSelected: viewModel.formData.mainConcern == title
+            )
+        }
+    }
+}
+
+extension YourSkinTodayView {
+    private var questionNine: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("9)   Would you like to upload photos\nof your skin?")
+                .font(AppFont.gillSwiftUI(.regular, size: 15))
+                .foregroundColor(Color(hex: "1A1018"))
+
+            Button {
+                viewModel.formData.wantsPhotoUpload = true
+            } label: {
+                FormCheckbox(
+                    title: "Yes",
+                    isSelected: viewModel.formData.wantsPhotoUpload == true
+                )
+            }
+
+            Button {
+                viewModel.formData.wantsPhotoUpload = false
+            } label: {
+                FormCheckbox(
+                    title: "Not sure",
+                    isSelected: viewModel.formData.wantsPhotoUpload == false
+                )
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+extension YourSkinTodayView {
+    private var pronounsQuestion: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("10)   How would you like to be referred to?")
+                .font(AppFont.gillSwiftUI(.regular, size: 15))
+                .foregroundColor(Color(hex: "1A1018"))
+
+            HStack(spacing: 12) {
+                pronounButton("she/her")
+                pronounButton("he/him")
+            }
+        }
+    }
+
+    private func pronounButton(_ value: String) -> some View {
+        Button {
+            viewModel.formData.pronouns = value
+        } label: {
+            FormChoicePill(
+                title: value,
+                isSelected: viewModel.formData.pronouns == value
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+extension YourSkinTodayView {
+    private var privacyChecks: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            Button {
+                viewModel.formData.consentShared = !(viewModel.formData.consentShared ?? false)
+            } label: {
+                FormCheckbox(
+                    title: "I agree to share this information only with\ncertified dermatologists for consultation\npurposes",
+                    isSelected: viewModel.formData.consentShared == true
+                )
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
