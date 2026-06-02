@@ -11,6 +11,9 @@ import PhotosUI
 struct RoutineView: View {
     @StateObject private var viewModel = RoutineViewModel()
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showCameraPicker = false
+    @Environment(\.dismiss) private var dismiss
+    @State private var showAddOptions = false
 
     private let columns = [
         GridItem(.flexible()),
@@ -23,23 +26,14 @@ struct RoutineView: View {
                 .ignoresSafeArea()
 
             VStack {
-                RoutineHeader {
-                    // Add is handled by PhotosPicker
-                }
-                .overlay(alignment: .trailing) {
-                    PhotosPicker(
-                        selection: $selectedPhoto,
-                        matching: .images
-                    ) {
-                        Text("Add")
-                            .font(.system(size: 18, weight: .semibold))
-                            .italic()
-                            .underline()
-                            .foregroundColor(.black)
-                            .padding(.trailing, 28)
-                            .padding(.top, 40)
+                RoutineHeader(
+                    onAddTapped: {
+                        showAddOptions = true
+                    },
+                    onBackTapped: {
+                        dismiss()
                     }
-                }
+                )
 
                 if viewModel.products.isEmpty {
                     EmptyRoutineMessage()
@@ -74,6 +68,34 @@ struct RoutineView: View {
 
                 Spacer()
             }
+        }
+        .sheet(isPresented: $showCameraPicker) {
+            CameraPicker(
+                onImagePicked: { imageData in
+                    viewModel.addProduct(imageData: imageData)
+                },
+                onDismiss: {
+                    showCameraPicker = false
+                }
+            )
+        }
+        .confirmationDialog(
+            "Add product photo",
+            isPresented: $showAddOptions,
+            titleVisibility: .visible
+        ) {
+            Button("Take photo") {
+                showCameraPicker = true
+            }
+
+            PhotosPicker(
+                selection: $selectedPhoto,
+                matching: .images
+            ) {
+                Text("Choose from library")
+            }
+
+            Button("Cancel", role: .cancel) {}
         }
         .onChange(of: selectedPhoto) { newPhoto in
             Task {
