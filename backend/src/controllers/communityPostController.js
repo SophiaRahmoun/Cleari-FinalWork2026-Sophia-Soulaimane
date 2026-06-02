@@ -3,20 +3,29 @@ const CommunityPost = require("../models/CommunityPost");
 const User = require("../models/User");
 const CommunityPostLike = require("../models/CommunityPostLike");
 const { Op } = require("sequelize");
-const fs = require("fs");
-const path = require("path");
 
 const CommunityPostSave = require("../models/CommunityPostSave");
 const CommunityPostComment = require("../models/CommunityPostComment");
 const SkinFormAnswer = require("../models/SkinFormAnswer");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
+const cloudinary = require("../config/cloudinary");
+
+function getCloudinaryPublicId(url) {
+	const parts = url.split("/upload/");
+	if (parts.length < 2) return null;
+	const afterUpload = parts[1].replace(/^v\d+\//, "");
+	return afterUpload.replace(/\.[^.]+$/, "");
+}
 
 exports.createPost = async (req, res) => {
 	try {
 		const { content } = req.body;
 
-		const imageUrl = req.file
-			? `/uploads/community/${req.file.filename}`
-			: null;
+		let imageUrl = null;
+		if (req.file) {
+			const result = await uploadToCloudinary(req.file.buffer, "community-posts");
+			imageUrl = result.secure_url;
+		}
 
 		const post = await CommunityPost.create({
 			content,
@@ -44,18 +53,25 @@ exports.getAllPosts = async (req, res) => {
 				const likesCount = await CommunityPostLike.count({
 					where: { postId: post.id },
 				});
+
+				const commentsCount = await CommunityPostComment.count({
+					where: { postId: post.id },
+				});
+
 				return {
 					...post.toJSON(),
 					likesCount,
+					commentsCount,
 				};
 			})
 		);
 
-		res.json(posts);
+		res.json(postsWithLikes);
 	} catch (error) {
-		res
-			.status(500)
-			.json({ message: "Error fetching posts", error: error.message });
+		res.status(500).json({
+			message: "Error fetching posts",
+			error: error.message,
+		});
 	}
 };
 
@@ -88,7 +104,8 @@ exports.updatePost = async (req, res) => {
 		post.content = req.body.content || post.content;
 
 		if (req.file) {
-			post.imageUrl = `/uploads/community/${req.file.filename}`;
+			const result = await uploadToCloudinary(req.file.buffer, "community-posts");
+			post.imageUrl = result.secure_url;
 		}
 
 		await post.save();
@@ -112,11 +129,8 @@ exports.deletePost = async (req, res) => {
 		}
 
         if (post.imageUrl) {
-            const imagePath = path.join(__dirname, "../../", post.imageUrl.replace(/^\/+/, ""));
-            
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
+			const publicId = getCloudinaryPublicId(post.imageUrl);
+			if (publicId) await cloudinary.uploader.destroy(publicId);
         }
 		await post.destroy();
 		res.json({ message: "Post deleted successfully" });

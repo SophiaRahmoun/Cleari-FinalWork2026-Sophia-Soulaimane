@@ -1,4 +1,4 @@
-const { Appointment, DermatologistProfile, User } = require("../models");
+const { Appointment, DermatologistProfile, User, DermatologistAvailability } = require("../models");
 const { Op } = require("sequelize");
 
 exports.createAppointment = async (req, res) => {
@@ -53,6 +53,20 @@ exports.createAppointment = async (req, res) => {
 				message: "This appointment slot is already booked.",
 			});
 		}
+		const availability = await DermatologistAvailability.findOne({
+			where: {
+				dermatologist_profile_id,
+				available_date: appointment_date,
+				start_time: appointment_time,
+				is_booked: false,
+			},
+		});
+
+		if (!availability) {
+			return res.status(400).json({
+				message: "This dermatologist is not available at this time.",
+			});
+		}
 
 		const appointment = await Appointment.create({
 			user_id: req.user.id,
@@ -62,9 +76,11 @@ exports.createAppointment = async (req, res) => {
 			reason: reason || null,
 			status: "pending",
 		});
+		availability.is_booked = true;
+		await availability.save();
 
 		return res.status(201).json({
-			message: "Appointment created successfully.",
+			message: "Appointment request created successfully.",
 			appointment,
 		});
 	} catch (error) {
@@ -92,10 +108,7 @@ exports.getMyAppointments = async (req, res) => {
 					],
 				},
 			],
-			order: [
-				["appointment_date", "ASC"],
-				["appointment_time", "ASC"],
-			],
+			order: [["createdAt", "DESC"]],
 		});
 
 		return res.status(200).json({ appointments });
@@ -107,7 +120,7 @@ exports.getMyAppointments = async (req, res) => {
 	}
 };
 
-exports.getDermatologistAppointments = async (req, res) => {
+exports.getDermatologistAppointmentsRequests = async (req, res) => {
 	try {
 		const dermatologistProfile = await DermatologistProfile.findOne({
 			where: { user_id: req.user.id },
@@ -128,10 +141,7 @@ exports.getDermatologistAppointments = async (req, res) => {
 					attributes: ["id", "username", "email", "profile_picture_url"],
 				},
 			],
-			order: [
-				["appointment_date", "ASC"],
-				["appointment_time", "ASC"],
-			],
+			order: [["createdAt", "DESC"]],
 		});
 
 		return res.status(200).json({ appointments });
@@ -147,18 +157,27 @@ exports.updateAppointmentStatus = async (req, res) => {
 	try {
 		const { status } = req.body;
 
-		if (!["pending", "confirmed", "cancelled", "completed"].includes(status)) {
+		if (!["approved", "declined", "cancelled", "completed"].includes(status)) {
 			return res.status(400).json({
 				message: "Invalid appointment status.",
 			});
 		}
+		const dermatologistProfile = await DermatologistProfile.findOne({
+			where: { user_id: req.user.id },
+		});
+
+		if (!dermatologistProfile) {
+			return res.status(404).json({
+				message: "Dermatologist profile not found.",
+			});
+		}
 
 		const appointment = await Appointment.findOne({
-      where: {
-        id: req.params.id,
-        dermatologist_profile_id: dermatologistProfile.id,
-      }
-    });
+			where: {
+				id: req.params.id,
+				dermatologist_profile_id: dermatologistProfile.id,
+			},
+		});
 
 		if (!appointment) {
 			return res.status(404).json({

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct DermatologistRegisterView: View {
+    @State private var showPendingPopup = false
     @StateObject private var viewModel = AuthViewModel()
     var onSuccess: () -> Void = {}
     
@@ -78,11 +79,9 @@ struct DermatologistRegisterView: View {
                                 firstName: firstName,
                                 lastName: lastName,
                                 email: email,
-                                password: password
-                            )
-
+                                password: password)
                             if viewModel.isLoggedIn {
-                                onSuccess()
+                                showPendingPopup = true
                             }
                         }
                     }
@@ -101,6 +100,13 @@ struct DermatologistRegisterView: View {
                 }
                 .padding(.horizontal, 32)
             }
+        }
+        .alert("Thank You!", isPresented: $showPendingPopup) {
+            Button("OK") {
+                onSuccess()
+            }
+        } message: {
+            Text("We will now verify your dermatologist credentials. You’ll receive a confirmation message within 2 days if your profile is approved.")
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

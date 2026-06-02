@@ -19,6 +19,7 @@ enum AppRoute: Hashable {
 }
 
 struct AppFlowView: View {
+    @StateObject private var authViewModel = AuthViewModel()
     @State private var path = NavigationPath()
 
     var body: some View {
@@ -30,6 +31,7 @@ struct AppFlowView: View {
             }
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
+
                 case .welcome:
                     WelcomeView {
                         path.append(AppRoute.login)
@@ -39,7 +41,12 @@ struct AppFlowView: View {
 
                 case .login:
                     LoginView {
-                        path.append(AppRoute.consultationForm)
+                        if TokenStorage.shared.userRole == "dermatologist" {
+                            path = NavigationPath()
+                            path.append(AppRoute.userHome)
+                        } else {
+                            path.append(AppRoute.consultationForm)
+                        }
                     } onRegister: {
                         path.append(AppRoute.rolePicker)
                     }
@@ -57,7 +64,7 @@ struct AppFlowView: View {
 
                 case .userRegister:
                     UserRegisterView {
-                        print("REGISTER SUCCESS → GO TO FORM")
+                        print("USER REGISTER SUCCESS → GO TO FORM")
                         path = NavigationPath()
                         path.append(AppRoute.consultationForm)
                     } onBack: {
@@ -66,7 +73,9 @@ struct AppFlowView: View {
 
                 case .dermatologistRegister:
                     DermatologistRegisterView {
-                        path.append(AppRoute.scan)
+                        print("DERMATOLOGIST REGISTER SUCCESS → GO TO FEED")
+                        path = NavigationPath()
+                        path.append(AppRoute.userHome)
                     }
 
                 case .consultationForm:
@@ -77,11 +86,15 @@ struct AppFlowView: View {
 
                 case .userHome:
                     UserHomeShellView()
+                        .environmentObject(authViewModel)
 
                 case .scan:
                     CameraCaptureView()
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .didLogout)) { _ in
+                path = NavigationPath()
+            }
         }
     }
-}
+}   

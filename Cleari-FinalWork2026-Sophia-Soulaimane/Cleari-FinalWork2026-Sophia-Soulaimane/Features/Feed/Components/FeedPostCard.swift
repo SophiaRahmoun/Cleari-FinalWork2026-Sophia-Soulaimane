@@ -8,97 +8,65 @@
 import SwiftUI
 
 struct FeedPostCard: View {
-    let doctorName: String
-    let doctorAvatarUrl: String?
-    let replyText: String
-    var isVerified: Bool = true
+    let post: CommunityPost
+    let onLikeTapped: () -> Void
+    let onCommentTapped: () -> Void
 
     private let dark  = Color(hex: "1A1018")
     private let beige = Color(hex: "FDF3EB")
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "person.circle.fill")
+                    .resizable()
+                    .frame(width: 44, height: 44)
+                    .foregroundColor(.gray)
 
-            // ── Doctor header ──
-            HStack(spacing: 12) {
-                // Avatar
-                Group {
-                    if let url = doctorAvatarUrl.flatMap(URL.init) {
-                        AsyncImage(url: url) { phase in
-                            if case .success(let img) = phase {
-                                img.resizable().scaledToFill()
-                            } else {
-                                avatarPlaceholder
-                            }
-                        }
-                    } else {
-                        avatarPlaceholder
-                    }
-                }
-                .frame(width: 42, height: 42)
-                .clipShape(Circle())
-
-                // Name + role
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack(spacing: 6) {
-                        Text(doctorName)
-                            .font(AppFont.gillSwiftUI(.bold, size: 15))
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(post.User.username)
+                            .font(AppFont.gillSwiftUI(.bold, size: 18))
                             .foregroundColor(dark)
 
-                        if isVerified {
-                            Image(systemName: "checkmark.seal.fill")
-                                .font(.system(size: 13))
-                                .foregroundColor(Color(hex: "6BC7A8"))
-                        }
+                        Text("· now")
+                            .font(AppFont.gillSwiftUI(.regular, size: 15))
+                            .foregroundColor(.gray)
+
+                        Spacer()
                     }
 
-                    Text("Dermatologist")
-                        .font(AppFont.gillSwiftUI(.regular, size: 13))
-                        .foregroundColor(dark.opacity(0.5))
+                    Text(post.content)
+                        .font(AppFont.gillSwiftUI(.regular, size: 18))
+                        .foregroundColor(dark)
+                        .lineSpacing(4)
+
+                    if let imageUrl = post.imageUrl,
+                       let url = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "http://localhost:4000\(imageUrl)") {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable().scaledToFill()
+                            default:
+                                Color.white.opacity(0.25)
+                            }
+                        }
+                        .frame(height: 190)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                    }
+
+                    PostActionsRow(
+                        likesCount: post.likesCount ?? 0,
+                        isLiked: post.isLikedByCurrentUser ?? false,
+                        onLikeTapped: onLikeTapped,
+                        commentsCount: post.commentsCount ?? 0,
+                        onCommentTapped: onCommentTapped
+                    )
+                    .padding(.top, 6)
                 }
-
-                Spacer()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 18)
             }
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
-
-            // ── Divider ──
-            Rectangle()
-                .fill(dark.opacity(0.08))
-                .frame(height: 1)
-                .padding(.horizontal, 18)
-
-            // ── Reply text ──
-            Text(replyText)
-                .font(AppFont.gillSwiftUI(.regular, size: 15))
-                .foregroundColor(dark)
-                .lineSpacing(4)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 16)
         }
-        .background(beige)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .padding(.horizontal, 24)
-    }
-
-    private var avatarPlaceholder: some View {
-        Circle()
-            .fill(dark.opacity(0.12))
-            .overlay(
-                Image(systemName: "person.fill")
-                    .foregroundColor(dark.opacity(0.4))
-                    .font(.system(size: 18))
-            )
-    }
-}
-
-#Preview {
-    ZStack {
-        LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9").ignoresSafeArea()
-        FeedPostCard(
-            doctorName: "Dr. Naak Mouloud",
-            doctorAvatarUrl: nil,
-            replyText: "No applying heat like ironing, won't reduce wrinkles. In fact, it can irritate the skin and lead to burns or damage. Stick to proven skincare methods for anti-aging!"
-        )
     }
 }

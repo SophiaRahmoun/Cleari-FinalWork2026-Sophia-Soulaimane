@@ -3,6 +3,7 @@ const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
+const dermatologistOnlyMiddleware = require("../middleware/dermatoloOnlyMiddleware");
 
 const {
 	createPost,
@@ -13,6 +14,11 @@ const {
 	deletePost,
 	getPersonalizedFeed,
 } = require("../controllers/communityPostController");
+
+const {
+	reportCommunityPost,
+	getCommunityPostReports,
+} = require("../controllers/communityPostReportController");
 
 const {
 	savePost,
@@ -52,4 +58,17 @@ router.get("/posts/:postId/comments", getCommentsByPost);
 router.put("/comments/:commentId", authMiddleware, updateComment);
 router.delete("/comments/:commentId", authMiddleware, deleteComment);
 
+router.post(
+	"/posts/:postId/report",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	reportCommunityPost
+);
+
+router.get(
+	"/reports",
+	authMiddleware,
+	dermatologistOnlyMiddleware,
+	getCommunityPostReports
+);
 module.exports = router;

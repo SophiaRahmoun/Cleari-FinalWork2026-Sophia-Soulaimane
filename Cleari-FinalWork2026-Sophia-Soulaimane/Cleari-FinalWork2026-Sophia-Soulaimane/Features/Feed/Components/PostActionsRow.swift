@@ -8,66 +8,49 @@
 import SwiftUI
 
 struct PostActionsRow: View {
-    var likesCount: Int = 0
-    var commentsCount: Int = 0
-    var sharesCount: Int = 0
-    var isLiked: Bool = false
-    var onLikeTapped: (() -> Void)? = nil
-    var onCommentTapped: (() -> Void)? = nil
+    let likesCount: Int
+    let isLiked: Bool
+    let onLikeTapped: () -> Void
+    let commentsCount: Int
+    let onCommentTapped: () -> Void
 
     private let dark = Color(hex: "1A1018")
+    private let pink = Color(hex: "C66F8C")
 
     var body: some View {
-        HStack(spacing: 28) {
-            // Like
+        HStack(spacing: 32) {
             Button {
-                onLikeTapped?()
+                onLikeTapped()
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
-                        .font(.system(size: 18))
-                        .foregroundColor(isLiked ? Color(hex: "C66F8C") : dark)
+                        .foregroundColor(isLiked ? pink : dark)
                     Text("\(likesCount)")
-                        .font(AppFont.gillSwiftUI(.regular, size: 15))
                         .foregroundColor(dark)
                 }
             }
             .buttonStyle(.plain)
 
-            // Comment
             Button {
-                onCommentTapped?()
+                onCommentTapped()
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "bubble.right")
-                        .font(.system(size: 17))
-                        .foregroundColor(dark)
                     Text("\(commentsCount)")
-                        .font(AppFont.gillSwiftUI(.regular, size: 15))
-                        .foregroundColor(dark)
                 }
+                .foregroundColor(dark)
             }
             .buttonStyle(.plain)
 
-            // Share
             HStack(spacing: 6) {
                 Image(systemName: "arrowshape.turn.up.right")
-                    .font(.system(size: 17))
-                    .foregroundColor(dark)
-                Text("\(sharesCount)")
-                    .font(AppFont.gillSwiftUI(.regular, size: 15))
-                    .foregroundColor(dark)
+                Text("0")
             }
+            .foregroundColor(dark)
 
             Spacer()
         }
-        .padding(.horizontal, 24)
-    }
-}
-
-#Preview {
-    ZStack {
-        LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9").ignoresSafeArea()
-        PostActionsRow(likesCount: 30, commentsCount: 14, sharesCount: 1)
+        .font(.subheadline)
+        .padding(.horizontal, 16)
     }
 }
