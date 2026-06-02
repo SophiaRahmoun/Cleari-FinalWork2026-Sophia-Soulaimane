@@ -11,7 +11,9 @@ const dermatologistRoutes = require("./routes/dermatologistRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const fakeTrendPostRoutes = require("./routes/fakeTrPostRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-const { handleStripeWebhook } = require("./controllers/paymentWebhookController");
+const {
+	handleStripeWebhook,
+} = require("./controllers/paymentWebhookController");
 const userRoutes = require("./routes/userRoutes");
 const skinGoalRoutes = require("./routes/skinGoalRoutes");
 
@@ -52,9 +54,13 @@ app.use("/api/skin-goals", skinGoalRoutes);
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api/chat", chatRoutes);
 
-
 const startServer = async () => {
 	try {
+		console.log("Starting server...");
+		console.log("PORT:", PORT);
+		console.log("DB_HOST:", process.env.DB_HOST);
+		console.log("DB_NAME:", process.env.DB_NAME);
+
 		await sequelize.authenticate();
 		console.log("Database connected successfully.");
 
@@ -65,7 +71,11 @@ const startServer = async () => {
 			console.log(`Server running on port ${PORT}`);
 		});
 	} catch (error) {
-		console.error("Unable to start server:", error);
+		console.error("Unable to start server");
+		console.error("Error name:", error.name);
+		console.error("Error message:", error.message);
+		console.error(error);
+		process.exit(1);
 	}
 };
 
