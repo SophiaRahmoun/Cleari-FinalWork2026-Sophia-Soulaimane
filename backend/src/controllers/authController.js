@@ -27,6 +27,7 @@ const sanitizeUser = (user) => {
 		role: user.role,
 		profile_picture_url: user.profile_picture_url,
 		language: user.language,
+		skin_type: user.skin_type ?? null,
 	};
 };
 

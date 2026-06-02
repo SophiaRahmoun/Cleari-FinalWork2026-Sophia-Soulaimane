@@ -80,7 +80,7 @@ struct PayementView: View {
         .onAppear {
             refreshSubscriptionStatus()
         }
-        .onChange(of: scenePhase) { newPhase in
+        .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active && didOpenStripeCheckout {
                 refreshSubscriptionStatus()
             }

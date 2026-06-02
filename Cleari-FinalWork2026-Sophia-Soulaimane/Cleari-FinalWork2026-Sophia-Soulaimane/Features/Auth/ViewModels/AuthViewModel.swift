@@ -22,6 +22,39 @@ final class AuthViewModel: ObservableObject {
         currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "approved"
     }
     
+    // Called on app launch when a token already exists in storage.
+    // Returns the AppRoute to navigate to, or nil if token is invalid.
+    func validateSession() async -> AppRoute? {
+        guard TokenStorage.shared.token != nil else { return nil }
+
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let user = try await AuthAPIService.shared.fetchMe()
+            currentUser = user
+            isLoggedIn = true
+
+            TokenStorage.shared.userRole = user.role
+            TokenStorage.shared.userId = user.id
+            TokenStorage.shared.hasCompletedSkinForm = user.hasCompletedSkinForm
+
+            if user.role == "dermatologist" {
+                TokenStorage.shared.dermVerificationStatus = user.dermatologistProfile?.verificationStatus
+                let status = user.dermatologistProfile?.verificationStatus ?? "pending"
+                return status == "approved" ? .userHome : .dermPending
+            } else {
+                return user.hasCompletedSkinForm ? .userHome : .consultationForm
+            }
+        } catch {
+            // Token expired or invalid — clear and force re-login
+            TokenStorage.shared.clear()
+            isLoggedIn = false
+            currentUser = nil
+            return nil
+        }
+    }
+
     func login(email: String, password: String) async {
         isLoading = true
         errorMessage = nil
@@ -40,6 +73,7 @@ final class AuthViewModel: ObservableObject {
             TokenStorage.shared.userRole = response.user.role
             TokenStorage.shared.userId = response.user.id
             TokenStorage.shared.dermVerificationStatus = response.user.dermatologistProfile?.verificationStatus
+            TokenStorage.shared.hasCompletedSkinForm = response.user.hasCompletedSkinForm
 
             currentUser = response.user
             isLoggedIn = true
@@ -78,6 +112,7 @@ final class AuthViewModel: ObservableObject {
             TokenStorage.shared.token = response.token
             TokenStorage.shared.userRole = response.user.role
             TokenStorage.shared.userId = response.user.id
+            TokenStorage.shared.hasCompletedSkinForm = false
 
             currentUser = response.user
             isLoggedIn = true
