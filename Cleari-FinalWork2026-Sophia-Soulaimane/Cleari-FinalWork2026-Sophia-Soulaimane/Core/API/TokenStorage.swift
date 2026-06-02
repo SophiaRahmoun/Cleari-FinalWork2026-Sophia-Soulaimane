@@ -22,6 +22,7 @@ final class TokenStorage {
     private let subscriptionStatusKey      = "cleari_subscription_status"
     private let profilePictureKey          = "cleari_profile_picture_url"
     private let dermVerificationStatusKey  = "cleari_derm_verification_status"
+    private let skinFormCompletedKey       = "cleari_skin_form_completed"
 
     var token: String? {
         get { UserDefaults.standard.string(forKey: tokenKey) }
@@ -56,6 +57,11 @@ final class TokenStorage {
         set { UserDefaults.standard.set(newValue, forKey: dermVerificationStatusKey) }
     }
 
+    var hasCompletedSkinForm: Bool {
+        get { UserDefaults.standard.bool(forKey: skinFormCompletedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: skinFormCompletedKey) }
+    }
+
     var hasFakeTrendAccess: Bool {
         if userRole == "dermatologist" {
             return true
@@ -71,6 +77,7 @@ final class TokenStorage {
         UserDefaults.standard.removeObject(forKey: subscriptionStatusKey)
         UserDefaults.standard.removeObject(forKey: profilePictureKey)
         UserDefaults.standard.removeObject(forKey: dermVerificationStatusKey)
+        UserDefaults.standard.removeObject(forKey: skinFormCompletedKey)
 
         NotificationCenter.default.post(name: .didLogout, object: nil)
     }

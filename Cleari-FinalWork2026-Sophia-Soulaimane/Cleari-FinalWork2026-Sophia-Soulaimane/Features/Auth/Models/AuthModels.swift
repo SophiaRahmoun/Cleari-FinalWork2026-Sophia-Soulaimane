@@ -17,14 +17,23 @@ struct AuthUser: Codable, Identifiable {
     let username: String
     let email: String
     let role: String
+    let skinType: String?
     let dermatologistProfile: AuthDermatologistProfile?
-        enum CodingKeys: String, CodingKey {
-            case id
-            case username
-            case email
-            case role
-            case dermatologistProfile
-        }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case email
+        case role
+        case skinType = "skin_type"
+        case dermatologistProfile
+    }
+
+    var hasCompletedSkinForm: Bool { skinType != nil }
+}
+
+struct MeResponse: Codable {
+    let user: AuthUser
 }
 struct AuthDermatologistProfile: Codable {
     let id: Int?

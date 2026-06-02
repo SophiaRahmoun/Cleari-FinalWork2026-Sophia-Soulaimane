@@ -62,6 +62,29 @@ final class AuthAPIService {
         )
     }
 
+    func fetchMe() async throws -> AuthUser {
+        guard let token = TokenStorage.shared.token else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        guard let url = URL(string: baseURL + "/auth/me") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        guard http.statusCode != 401 else {
+            throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Session expired"])
+        }
+        guard 200..<300 ~= http.statusCode else {
+            throw URLError(.badServerResponse)
+        }
+        let me = try JSONDecoder().decode(MeResponse.self, from: data)
+        return me.user
+    }
+
         private func post<T: Encodable, U: Decodable>(endpoint: String, body: T) async throws -> U {
 
             guard let url = URL(string: baseURL + endpoint) else {
