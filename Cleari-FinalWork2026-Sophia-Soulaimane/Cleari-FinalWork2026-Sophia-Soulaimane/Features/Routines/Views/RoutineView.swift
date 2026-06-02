@@ -105,5 +105,10 @@ struct RoutineView: View {
                 }
             )
         }
+        .alert("Sync Error", isPresented: $viewModel.showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.errorMessage ?? "An error occurred.")
+        }
     }
 }
