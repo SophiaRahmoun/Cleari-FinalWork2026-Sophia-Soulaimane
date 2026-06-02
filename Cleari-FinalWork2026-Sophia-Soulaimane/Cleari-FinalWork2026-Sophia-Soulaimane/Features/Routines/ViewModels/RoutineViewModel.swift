@@ -6,63 +6,133 @@
 //
 
 import Foundation
-import SwiftUI
 
 final class RoutineViewModel: ObservableObject {
-
     @Published var products: [RoutineProduct] = []
+    @Published var errorMessage: String?
 
-    private let storageService = RoutineStorageService()
+    private let apiService = RoutineAPIService.shared
 
     init() {
-        self.products = storageService.load()
+        loadRoutines()
+    }
+
+    func loadRoutines() {
+        Task {
+            do {
+                let routines = try await apiService.fetchRoutines()
+
+                await MainActor.run {
+                    self.products = routines.map { RoutineProduct(dto: $0) }
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
     }
 
     func addProduct(imageData: Data? = nil) {
-        let newProduct = RoutineProduct(
-            imageData: imageData
-        )
+        Task {
+            do {
+                let request = CreateRoutineRequest(
+                    productName: "Product name",
+                    imageBase64: imageData?.toBase64ImageString(),
+                    usageTime: nil,
+                    notes: nil
+                )
 
-        products.append(newProduct)
+                let dto = try await apiService.createRoutine(request)
 
-        storageService.save(products: products)
+                await MainActor.run {
+                    self.products.insert(RoutineProduct(dto: dto), at: 0)
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
     }
 
     func deleteProduct(_ product: RoutineProduct) {
-        products.removeAll {
-            $0.id == product.id
-        }
+        Task {
+            do {
+                try await apiService.deleteRoutine(id: product.id)
 
-        storageService.save(products: products)
+                await MainActor.run {
+                    self.products.removeAll { $0.id == product.id }
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
     }
 
-    func updateProductName(
-        for product: RoutineProduct,
-        name: String
-    ) {
-        guard let index = products.firstIndex(where: {
-            $0.id == product.id
-        }) else {
+    func updateProductName(for product: RoutineProduct, name: String) {
+        guard let index = products.firstIndex(where: { $0.id == product.id }) else {
             return
         }
 
         products[index].name = name
 
-        storageService.save(products: products)
+        Task {
+            do {
+                let request = UpdateRoutineRequest(
+                    productName: name,
+                    imageBase64: nil,
+                    usageTime: nil,
+                    notes: nil
+                )
+
+                _ = try await apiService.updateRoutine(
+                    id: product.id,
+                    requestBody: request
+                )
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
     }
 
-    func updateProductImage(
-        for product: RoutineProduct,
-        imageData: Data?
-    ) {
-        guard let index = products.firstIndex(where: {
-            $0.id == product.id
-        }) else {
-            return
+    func updateProductImage(for product: RoutineProduct, imageData: Data?) {
+        Task {
+            do {
+                let request = UpdateRoutineRequest(
+                    productName: nil,
+                    imageBase64: imageData?.toBase64ImageString(),
+                    usageTime: nil,
+                    notes: nil
+                )
+
+                let dto = try await apiService.updateRoutine(
+                    id: product.id,
+                    requestBody: request
+                )
+
+                await MainActor.run {
+                    guard let index = self.products.firstIndex(where: { $0.id == product.id }) else {
+                        return
+                    }
+
+                    self.products[index] = RoutineProduct(dto: dto)
+                }
+            } catch {
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
         }
+    }
+}
 
-        products[index].imageData = imageData
-
-        storageService.save(products: products)
+private extension Data {
+    func toBase64ImageString() -> String {
+        "data:image/jpeg;base64,\(self.base64EncodedString())"
     }
 }

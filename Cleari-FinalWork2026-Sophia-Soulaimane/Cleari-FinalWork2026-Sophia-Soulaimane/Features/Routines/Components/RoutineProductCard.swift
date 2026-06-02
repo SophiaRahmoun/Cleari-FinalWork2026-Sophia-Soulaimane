@@ -17,58 +17,59 @@ struct RoutineProductCard: View {
     @State private var selectedPhoto: PhotosPickerItem?
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(spacing: 14) {
-                Spacer().frame(height: 20)
+        VStack(spacing: 10) {
+            HStack {
+                Spacer()
 
-                PhotosPicker(
-                    selection: $selectedPhoto,
-                    matching: .images
-                ) {
-                    productImageView
+                Button(action: onDelete) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 22, weight: .medium))
+                        .foregroundColor(.black)
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-
-                TextField(
-                    "Product name",
-                    text: Binding(
-                        get: { product.name },
-                        set: { newValue in
-                            onNameChange(newValue)
-                        }
-                    )
-                )
-                .font(.system(size: 20))
-                .multilineTextAlignment(.center)
-                .textFieldStyle(.plain)
+                .zIndex(10)
             }
-            .padding()
-            .frame(height: 190)
-            .background(Color.white)
-            .cornerRadius(14)
-            .shadow(radius: 8, x: 0, y: 4)
 
-            Button {
-                onDelete()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.system(size: 30, weight: .medium))
-                    .foregroundColor(.black)
-                    .padding(14)
+            PhotosPicker(
+                selection: $selectedPhoto,
+                matching: .images
+            ) {
+                productImageView
             }
             .buttonStyle(.plain)
-            .zIndex(10)
-        }
-        .onChange(of: selectedPhoto) { newPhoto in
-            Task {
-                guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
-                    return
-                }
+            .onChange(of: selectedPhoto) { newPhoto in
+                Task {
+                    guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
+                        return
+                    }
 
-                onImageChange(data)
-                selectedPhoto = nil
+                    onImageChange(data)
+                    selectedPhoto = nil
+                }
             }
+
+            TextField(
+                "Product name",
+                text: Binding(
+                    get: {
+                        product.name
+                    },
+                    set: { newValue in
+                        onNameChange(newValue)
+                    }
+                )
+            )
+            .font(.system(size: 16))
+            .multilineTextAlignment(.center)
+            .textFieldStyle(.plain)
         }
+        .padding()
+        .frame(height: 190)
+        .background(Color.white)
+        .cornerRadius(14)
+        .shadow(radius: 8, x: 0, y: 4)
     }
 
     private var productImageView: some View {
@@ -81,17 +82,44 @@ struct RoutineProductCard: View {
                     .frame(width: 120, height: 95)
                     .clipped()
                     .cornerRadius(8)
-            } else {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.15))
-                    .frame(width: 120, height: 95)
-                    .cornerRadius(8)
-                    .overlay {
-                        Image(systemName: "photo")
-                            .font(.system(size: 30))
-                            .foregroundColor(.gray)
+            } else if let imageUrl = product.imageUrl,
+                      let url = URL(string: imageUrl) {
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ProgressView()
+                            .frame(width: 120, height: 95)
+
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 120, height: 95)
+                            .clipped()
+                            .cornerRadius(8)
+
+                    case .failure:
+                        placeholderImage
+
+                    @unknown default:
+                        placeholderImage
                     }
+                }
+            } else {
+                placeholderImage
             }
         }
+    }
+
+    private var placeholderImage: some View {
+        Rectangle()
+            .fill(Color.gray.opacity(0.15))
+            .frame(width: 120, height: 95)
+            .cornerRadius(8)
+            .overlay {
+                Image(systemName: "photo")
+                    .font(.system(size: 30))
+                    .foregroundColor(.gray)
+            }
     }
 }
