@@ -50,7 +50,7 @@ struct FeedPostCard: View {
 
             // ── Image (if any) ──
             if let imageUrl = post.imageUrl,
-               let url = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "http://localhost:4000\(imageUrl)") {
+               let url = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "\(APIConfig.baseHost)\(imageUrl)") {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):

@@ -13,7 +13,7 @@ final class SkinFormService {
     private init() {}
 
     func submitSkinForm(formData: ConsultationFormData, token: String? = nil) async throws {
-        guard let url = URL(string: "http://127.0.0.1:4000/api/skin-form") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/skin-form") else {
             throw URLError(.badURL)
         }
 

@@ -1,6 +1,4 @@
-const BASE = window.location.port === "4000"
-  ? "/api"
-  : "http://localhost:4000/api";
+const BASE = API_BASE_URL;
 
 let token = sessionStorage.getItem("cleari_admin_token") || null;
 let dermatologists = [];

@@ -21,10 +21,10 @@ struct DebunkPostCard: View {
                 .lineLimit(2)
 
             if let imageUrl = post.imageUrl,
-               let resolvedUrl = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "http://localhost:4000\(imageUrl)") {
+               let resolvedUrl = URL(string: imageUrl.hasPrefix("http") ? imageUrl : "\(APIConfig.baseHost)\(imageUrl)") {
 
 
-                AsyncImage(url: URL(string: "http://localhost:4000\(imageUrl)")) { image in
+                AsyncImage(url: URL(string: "\(APIConfig.baseHost)\(imageUrl)")) { image in
                     image
                         .resizable()
                         .scaledToFill()

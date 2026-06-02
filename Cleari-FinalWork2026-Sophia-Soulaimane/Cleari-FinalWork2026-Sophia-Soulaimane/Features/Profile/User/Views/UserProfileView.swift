@@ -14,6 +14,7 @@ struct UserProfileView: View {
     @State private var showLogoutSheet = false
     @State private var showPrivacyView = false
     @State private var showSkinGoalsView = false
+    @State private var showRoutineView = false
 
     @StateObject private var viewModel = UserProfileViewModel()
 
@@ -82,8 +83,13 @@ struct UserProfileView: View {
                             }
                             .buttonStyle(.plain)
                             
-                            ProfileMenuRow(title: "My routines")
-
+                            Button {
+                                showRoutineView = true
+                            } label: {
+                                ProfileMenuRow(title: "My routines")
+                            }
+                            .buttonStyle(.plain)
+                            
                             ProfileMenuRow(title: "My skin scans")
                             
 
@@ -165,6 +171,9 @@ struct UserProfileView: View {
         }
         .fullScreenCover(isPresented: $showSkinGoalsView) {
             SkinGoalView()
+        }
+        .fullScreenCover(isPresented: $showRoutineView) {
+            RoutineView()
         }
     }
 }

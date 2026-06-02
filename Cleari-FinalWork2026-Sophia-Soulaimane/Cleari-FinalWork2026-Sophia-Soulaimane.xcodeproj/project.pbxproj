@@ -319,7 +319,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "be.ehb.Cleari-FinalWork2026-Sophia-Soulaimane";
+				PRODUCT_BUNDLE_IDENTIFIER = be.ehb.CleariFinalWork2026.Soulaimane.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -353,7 +353,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "be.ehb.Cleari-FinalWork2026-Sophia-Soulaimane";
+				PRODUCT_BUNDLE_IDENTIFIER = be.ehb.CleariFinalWork2026.Soulaimane.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

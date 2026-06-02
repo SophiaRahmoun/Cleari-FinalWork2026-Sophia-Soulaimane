@@ -16,6 +16,7 @@ const {
 } = require("./controllers/paymentWebhookController");
 const userRoutes = require("./routes/userRoutes");
 const skinGoalRoutes = require("./routes/skinGoalRoutes");
+const routineRoutes = require("./routes/routineRoutes");
 
 const path = require("path");
 
@@ -53,6 +54,8 @@ app.use("/api/fake-trends", fakeTrendPostRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/skin-goals", skinGoalRoutes);
+app.use("/api/routines", routineRoutes);
+
 
 const chatRoutes = require("./routes/chatRoutes");
 app.use("/api/chat", chatRoutes);
