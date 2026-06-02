@@ -8,5 +8,6 @@
 import Foundation
 
 enum APIConfig {
-    static let baseURL = "http://localhost:4000/api"
+    static let baseHost = "https://cleari-finalwork2026-sophia-soulaimane.onrender.com"
+    static let baseURL  = "\(baseHost)/api"
 }
