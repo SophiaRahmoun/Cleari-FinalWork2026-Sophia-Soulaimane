@@ -22,8 +22,37 @@ enum AppRoute: Hashable {
 struct AppFlowView: View {
     @StateObject private var authViewModel = AuthViewModel()
     @State private var path = NavigationPath()
+    @State private var isCheckingSession = true
 
     var body: some View {
+        Group {
+            if isCheckingSession {
+                sessionCheckView
+            } else {
+                navigationStack
+            }
+        }
+        .task {
+            await checkExistingSession()
+        }
+    }
+
+    // Minimal splash shown while validating a stored token
+    private var sessionCheckView: some View {
+        ZStack {
+            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
+                .ignoresSafeArea()
+            VStack(spacing: 16) {
+                Text("cleari")
+                    .font(AppFont.gillSwiftUI(.regular, size: 48))
+                    .foregroundColor(Color(hex: "1A1018"))
+                ProgressView()
+                    .tint(Color(hex: "1A1018"))
+            }
+        }
+    }
+
+    private var navigationStack: some View {
         NavigationStack(path: $path) {
             WelcomeView {
                 path.append(AppRoute.login)
@@ -51,7 +80,12 @@ struct AppFlowView: View {
                                 path.append(AppRoute.dermPending)
                             }
                         } else {
-                            path.append(AppRoute.consultationForm)
+                            // Returning user: skip form if already completed
+                            if TokenStorage.shared.hasCompletedSkinForm {
+                                path.append(AppRoute.userHome)
+                            } else {
+                                path.append(AppRoute.consultationForm)
+                            }
                         }
                     } onRegister: {
                         path.append(AppRoute.rolePicker)
@@ -90,6 +124,7 @@ struct AppFlowView: View {
 
                 case .consultationForm:
                     ConsultationFormView {
+                        TokenStorage.shared.hasCompletedSkinForm = true
                         path = NavigationPath()
                         path.append(AppRoute.userHome)
                     }
@@ -107,4 +142,18 @@ struct AppFlowView: View {
             }
         }
     }
-}   
+
+    private func checkExistingSession() async {
+        guard TokenStorage.shared.token != nil else {
+            isCheckingSession = false
+            return
+        }
+
+        if let destination = await authViewModel.validateSession() {
+            path = NavigationPath()
+            path.append(destination)
+        }
+
+        isCheckingSession = false
+    }
+}
