@@ -29,6 +29,7 @@ final class SkinScanViewModel: ObservableObject {
         do {
             let response = try await service.uploadSkinScan(image: selectedImage)
             scanResult = response.scan
+            print("[SkinScan] Scan received — skin type: \(response.scan.recommendation.skinTypeEstimate ?? "unknown")")
         } catch {
             errorMessage = error.localizedDescription
         }

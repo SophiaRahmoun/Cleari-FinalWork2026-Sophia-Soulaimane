@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CameraCaptureView: View {
     @StateObject private var viewModel = ScanViewModel()
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ZStack {
@@ -16,6 +17,22 @@ struct CameraCaptureView: View {
                 .ignoresSafeArea()
 
             VStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 24, weight: .medium))
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.35))
+                            .clipShape(Circle())
+                    }
+                    .padding(.leading, 20)
+                    .padding(.top, 60)
+                    Spacer()
+                }
+
                 Spacer()
 
                 Button {

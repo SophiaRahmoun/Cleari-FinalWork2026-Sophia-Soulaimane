@@ -1,7 +1,7 @@
 const { SkinAnalysis } = require("../models");
 const { analyzeWithYouCam } = require("../services/youcamService");
-
 const { buildSkinInsights } = require("../utils/skinInsightsBuilder");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
 
 async function createSkinScan(req, res) {
 	try {
@@ -12,6 +12,10 @@ async function createSkinScan(req, res) {
 			});
 		}
 
+		const cloudinaryResult = await uploadToCloudinary(req.file.buffer, "skin-scans");
+		const imageUrl = cloudinaryResult.secure_url;
+		console.log("Skin scan uploaded to Cloudinary:", imageUrl);
+
 		const analysis = await analyzeWithYouCam(req.file);
 
 		const insights = buildSkinInsights(analysis.simplified.scores);
@@ -19,10 +23,11 @@ async function createSkinScan(req, res) {
 
 		const savedAnalysis = await SkinAnalysis.create({
 			user_id: req.user.id,
-			image_url: req.file.path,
+			image_url: imageUrl,
 			result: JSON.stringify(analysis.simplified),
 			raw_result_json: JSON.stringify(analysis.raw),
 		});
+		console.log("Skin scan saved with image_url:", savedAnalysis.image_url);
 
 		return res.status(201).json({
 			success: true,
