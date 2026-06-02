@@ -17,6 +17,8 @@ const {
 const userRoutes = require("./routes/userRoutes");
 const skinGoalRoutes = require("./routes/skinGoalRoutes");
 
+const path = require("path");
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -45,6 +47,7 @@ app.use("/api/appointments", appointmentRoutes);
 app.use("/api/availability", availabilityRoutes);
 const communityPostRoutes = require("./routes/communityPostRoutes");
 app.use("/uploads", express.static("uploads"));
+app.use("/admin", express.static(path.join(__dirname, "../../admin")));
 app.use("/api/community", communityPostRoutes);
 app.use("/api/fake-trends", fakeTrendPostRoutes);
 app.use("/api/payments", paymentRoutes);
