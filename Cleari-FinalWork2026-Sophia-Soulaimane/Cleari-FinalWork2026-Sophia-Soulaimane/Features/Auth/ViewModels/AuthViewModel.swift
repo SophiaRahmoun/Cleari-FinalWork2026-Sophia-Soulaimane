@@ -13,76 +13,131 @@ final class AuthViewModel: ObservableObject {
     @Published var isLoggedIn = false
     @Published var isLoading = false
     @Published var errorMessage: String?
-    var isPendingDermatologist: Bool {
-           currentUser?.role == "dermatologist" && currentUser?.verificationStatus == "pending"
-       }
 
-       var isApprovedDermatologist: Bool {
-           currentUser?.role == "dermatologist" && currentUser?.verificationStatus == "approved"
-       }
+    var isPendingDermatologist: Bool {
+        currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "pending"
+    }
+
+    var isApprovedDermatologist: Bool {
+        currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "approved"
+    }
     
     func login(email: String, password: String) async {
-           isLoading = true
-           errorMessage = nil
-           defer { isLoading = false }
-           do {
-               let response = try await AuthAPIService.shared.login(email: email, password: password)
+        isLoading = true
+        errorMessage = nil
 
-               TokenStorage.shared.token = response.token
-               currentUser = response.user
-               isLoggedIn = true
-               print("LOGIN SUCCESS:", response.user.email)
-           } catch {
-               isLoggedIn = false
-               currentUser = nil
-               errorMessage = cleanError(error.localizedDescription)
-           }
-       }
-       func registerUser(firstName: String, lastName: String, email: String, password: String) async {
-           isLoading = true
-           errorMessage = nil
-           defer { isLoading = false }
-           do {
-               let username = "\(firstName) \(lastName)"
-               let response = try await AuthAPIService.shared.registerUser(username: username, email: email, password: password)
-               TokenStorage.shared.token = response.token
-               currentUser = response.user
-               isLoggedIn = true
-               print("USER REGISTER SUCCESS:", response.user.email)
-           } catch {
-               isLoggedIn = false
-               currentUser = nil
-               errorMessage = cleanError(error.localizedDescription)
-           }
-       }
+        defer {
+            isLoading = false
+        }
 
-       func registerDermatologist(firstName: String, lastName: String, email: String, password: String, licenseNumber: String? = nil) async {
-           isLoading = true
-           errorMessage = nil
-           defer { isLoading = false }
-           do {
-               let username = "\(firstName) \(lastName)"
-               let response = try await AuthAPIService.shared.registerDermatologist(username: username, email: email, password: password, licenseNumber: licenseNumber)
-               TokenStorage.shared.token = response.token
-               currentUser = response.user
-               isLoggedIn = true
-               print("DERMATOLOGIST REGISTER SUCCESS:", response.user.email)
-           } catch {
-               isLoggedIn = false
-               currentUser = nil
-               errorMessage = cleanError(error.localizedDescription)
-           }
-       }
+        do {
+            let response = try await AuthAPIService.shared.login(
+                email: email,
+                password: password
+            )
 
-       func logout() {
-           TokenStorage.shared.token = nil
-           currentUser = nil
-           isLoggedIn = false
-           errorMessage = nil
-       }
+            TokenStorage.shared.token = response.token
+            TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
 
-       private func cleanError(_ message: String) -> String {
-           message.replacingOccurrences(of: "{\"message\":\"", with: "").replacingOccurrences(of: "\"}", with: "")
-       }
+            currentUser = response.user
+            isLoggedIn = true
 
-   }
+            print("LOGIN SUCCESS:", response.user.email)
+        } catch {
+            isLoggedIn = false
+            currentUser = nil
+            errorMessage = cleanError(error.localizedDescription)
+        }
+    }
+
+    func registerUser(
+        firstName: String,
+        lastName: String,
+        username: String,
+        email: String,
+        password: String
+    ) async {
+        isLoading = true
+        errorMessage = nil
+
+        defer {
+            isLoading = false
+        }
+
+        do {
+            let response = try await AuthAPIService.shared.registerUser(
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                email: email,
+                password: password
+            )
+
+            TokenStorage.shared.token = response.token
+            TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
+
+            currentUser = response.user
+            isLoggedIn = true
+
+            print("USER REGISTER SUCCESS:", response.user.email)
+        } catch {
+            isLoggedIn = false
+            currentUser = nil
+            errorMessage = cleanError(error.localizedDescription)
+        }
+    }
+
+    func registerDermatologist(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String,
+        licenseNumber: String? = nil
+    ) async {
+        isLoading = true
+        errorMessage = nil
+
+        defer {
+            isLoading = false
+        }
+
+        do {
+            let username = "\(firstName) \(lastName)"
+
+            let response = try await AuthAPIService.shared.registerDermatologist(
+                username: username,
+                email: email,
+                password: password,
+                licenseNumber: licenseNumber
+            )
+
+            TokenStorage.shared.token = response.token
+            TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
+
+            currentUser = response.user
+            isLoggedIn = true
+
+            print("DERMATOLOGIST REGISTER SUCCESS:", response.user.email)
+        } catch {
+            isLoggedIn = false
+            currentUser = nil
+            errorMessage = cleanError(error.localizedDescription)
+        }
+    }
+
+    func logout() {
+        TokenStorage.shared.clear()
+        currentUser = nil
+        isLoggedIn = false
+        errorMessage = nil
+    }
+
+    private func cleanError(_ message: String) -> String {
+        message
+            .replacingOccurrences(of: "{\"message\":\"", with: "")
+            .replacingOccurrences(of: "\"}", with: "")
+    }
+}

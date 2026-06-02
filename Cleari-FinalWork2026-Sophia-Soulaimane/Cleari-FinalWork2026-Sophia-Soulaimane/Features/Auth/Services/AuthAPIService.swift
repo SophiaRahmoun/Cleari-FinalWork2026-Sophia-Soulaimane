@@ -17,10 +17,25 @@ final class AuthAPIService {
             try await post(endpoint: "/auth/login", body: LoginRequest(email: email, password: password))
         }
 
-        func registerUser(username: String, email: String, password: String) async throws -> AuthResponse {
+    func registerUser(
+        firstName: String,
+        lastName: String,
+        username: String,
+        email: String,
+        password: String
+    ) async throws -> AuthResponse {
 
-            try await post(endpoint: "/auth/register-user", body: RegisterUserRequest(username: username, email: email, password: password))
-        }
+        try await post(
+            endpoint: "/auth/register-user",
+            body: RegisterUserRequest(
+                first_name: firstName,
+                last_name: lastName,
+                username: username,
+                email: email,
+                password: password
+            )
+        )
+    }
 
         func registerDermatologist(username: String, email: String, password: String, licenseNumber: String? = nil) async throws -> AuthResponse {
 

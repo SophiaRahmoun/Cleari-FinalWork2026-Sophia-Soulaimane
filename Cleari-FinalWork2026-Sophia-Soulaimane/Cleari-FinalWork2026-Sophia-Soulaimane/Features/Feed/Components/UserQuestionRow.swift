@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct UserQuestionRow: View {
-
     let post: CommunityPost
 
     var body: some View {
-
         VStack(alignment: .leading, spacing: 8) {
-
             HStack(spacing: 10) {
-
                 Image(systemName: "person.circle.fill")
                     .resizable()
                     .frame(width: 32, height: 32)

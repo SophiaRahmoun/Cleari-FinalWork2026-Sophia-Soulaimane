@@ -67,7 +67,3 @@ struct RolePickerView: View {
         }
     }
 }
-
-#Preview {
-    RolePickerView()
-}

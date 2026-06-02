@@ -8,31 +8,33 @@
 import SwiftUI
 
 struct DermatologistCard: View {
-    let imageName: String
-    let name: String
-    let description: String
-    let city: String
-    let rating: String
+    let dermatologist: Dermatologist
 
     var body: some View {
         HStack(spacing: 18) {
-            AvatarView(imageName: imageName, size: 76)
+
+            AvatarView(imageUrl: dermatologist.profileImageUrl, size: 76)
 
             VStack(alignment: .leading, spacing: 8) {
-                Text(name)
+                Text(dermatologist.displayName)
                     .font(AppFont.gillSwiftUI(.bold, size: 16))
                     .foregroundColor(.white)
 
-                Text(description)
+                Text(dermatologist.bio ?? dermatologist.specialization ?? "Skin specialist")
                     .font(AppFont.gillSwiftUI(.regular, size: 14))
                     .foregroundColor(.white.opacity(0.85))
+                    .lineLimit(2)
 
                 HStack(spacing: 28) {
-                    Text(city)
+                    if let city = dermatologist.city {
+                        Text(city)
+                    } else {
+                        Text("Brussels")
+                    }
 
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
-                        Text(rating)
+                        Text("Verified")
                     }
                 }
                 .font(AppFont.gillSwiftUI(.regular, size: 14))
@@ -41,13 +43,14 @@ struct DermatologistCard: View {
 
             Spacer()
 
-            Image(systemName: "arrow.down.left")
-                .font(.system(size: 26, weight: .regular))
+            Image(systemName: "message.fill")
+                .font(.system(size: 24, weight: .regular))
                 .foregroundColor(.white)
         }
         .padding(.horizontal, 22)
         .frame(height: 105)
         .background(Color(hex: "1A1018"))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .contentShape(Rectangle())
     }
 }

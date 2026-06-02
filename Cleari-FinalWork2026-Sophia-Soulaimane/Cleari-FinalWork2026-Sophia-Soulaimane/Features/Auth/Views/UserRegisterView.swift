@@ -15,6 +15,7 @@ struct UserRegisterView: View {
     @StateObject private var viewModel = AuthViewModel()
     @State private var firstName = ""
     @State private var lastName = ""
+    @State private var username = ""
     @State private var email = ""
     @State private var password = ""
     
@@ -49,20 +50,23 @@ struct UserRegisterView: View {
                               .padding(.top, 5)
                               VStack(spacing: 16) {
                                   AuthRegisterInput(label: "First Name", text: $firstName, maxLength: 20)
-                                  AuthRegisterInput(label: "Surname", text: $lastName, maxLength: 20)
-                                  AuthRegisterInput(label: "Email", text: $email, maxLength: 20)
+                                  AuthRegisterInput(label: "Last Name", text: $lastName, maxLength: 20)
+                                  AuthRegisterInput(label: "Username", text: $username, maxLength: 20)
+                                  AuthRegisterInput(label: "Email", text: $email, maxLength: 40)
                                   AuthRegisterInput(label: "Password", text: $password, maxLength: 25, isSecure: true)
                                   AuthBirthdatePicker(birthdate: $birthdate)
                               }
 
                               .padding(.horizontal, 8)
-                              PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
+                              PrimaryButton(title: viewModel.isLoading ?    "LOADING..." : "NEXT STEP") {
                                   Task {
                                       await viewModel.registerUser(
                                           firstName: firstName,
                                           lastName: lastName,
+                                          username: username,
                                           email: email,
-                                          password: password)
+                                          password: password
+                                      )
                                       if viewModel.isLoggedIn {
                                                   onSuccess()
                                     }
@@ -88,7 +92,3 @@ struct UserRegisterView: View {
 
               }
           }
-
-#Preview {
-    UserRegisterView()
-}

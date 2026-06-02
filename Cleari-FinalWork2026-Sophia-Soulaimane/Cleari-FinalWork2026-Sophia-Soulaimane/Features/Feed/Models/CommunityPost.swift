@@ -26,6 +26,12 @@ struct PostUser: Codable {
     let id: Int
     let username: String
     let email: String
+    let profilePictureUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, username, email
+        case profilePictureUrl = "profile_picture_url"
+    }
 }
 
 struct LikeResponse: Codable {

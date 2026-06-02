@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 final class CommunityPostService {
     static let shared = CommunityPostService()
@@ -26,7 +27,7 @@ final class CommunityPostService {
         return try JSONDecoder().decode([CommunityPost].self, from: data)
     }
 
-    func createPost(content: String) async throws {
+    func createPost(content: String, image: UIImage? = nil) async throws {
         guard let url = URL(string: "http://localhost:4000/api/community/posts") else {
             throw URLError(.badURL)
         }
@@ -45,8 +46,16 @@ final class CommunityPostService {
         body.append("--\(boundary)\r\n")
         body.append("Content-Disposition: form-data; name=\"content\"\r\n\r\n")
         body.append("\(content)\r\n")
-        body.append("--\(boundary)--\r\n")
 
+        if let image, let imageData = image.jpegData(compressionQuality: 0.8) {
+            body.append("--\(boundary)\r\n")
+            body.append("Content-Disposition: form-data; name=\"image\"; filename=\"post.jpg\"\r\n")
+            body.append("Content-Type: image/jpeg\r\n\r\n")
+            body.append(imageData)
+            body.append("\r\n")
+        }
+
+        body.append("--\(boundary)--\r\n")
         request.httpBody = body
 
         let (_, response) = try await URLSession.shared.data(for: request)

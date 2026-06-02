@@ -13,6 +13,8 @@ struct CreatePostView: View {
     let onPostCreated: () async -> Void
 
     @State private var content = ""
+    @State private var selectedImage: UIImage?
+    @State private var showImagePicker = false
     @State private var isPosting = false
 
     var body: some View {
@@ -50,26 +52,65 @@ struct CreatePostView: View {
                         .frame(width: 44, height: 44)
                         .foregroundColor(.gray)
 
-                    TextEditor(text: $content)
-                        .font(AppFont.gillSwiftUI(.regular, size: 24))
-                        .foregroundColor(Color(hex: "1A1018"))
-                        .scrollContentBackground(.hidden)
-                        .frame(minHeight: 260)
-                        .overlay(alignment: .topLeading) {
-                            if content.isEmpty {
-                                Text("Share your thoughts.")
-                                    .font(AppFont.gillSwiftUI(.regular, size: 24))
-                                    .foregroundColor(Color(hex: "1A1018").opacity(0.6))
-                                    .padding(.top, 8)
-                                    .padding(.leading, 5)
+                    VStack(alignment: .leading, spacing: 12) {
+                        TextEditor(text: $content)
+                            .font(AppFont.gillSwiftUI(.regular, size: 24))
+                            .foregroundColor(Color(hex: "1A1018"))
+                            .scrollContentBackground(.hidden)
+                            .frame(minHeight: 180)
+                            .overlay(alignment: .topLeading) {
+                                if content.isEmpty {
+                                    Text("Share your thoughts.")
+                                        .font(AppFont.gillSwiftUI(.regular, size: 24))
+                                        .foregroundColor(Color(hex: "1A1018").opacity(0.6))
+                                        .padding(.top, 8)
+                                        .padding(.leading, 5)
+                                }
+                            }
+
+                        if let image = selectedImage {
+                            ZStack(alignment: .topTrailing) {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(height: 160)
+                                    .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                                Button {
+                                    selectedImage = nil
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 22))
+                                        .foregroundColor(.white)
+                                        .shadow(radius: 3)
+                                }
+                                .padding(8)
                             }
                         }
+                    }
                 }
+
+                Button {
+                    showImagePicker = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "photo")
+                        Text("Add photo")
+                    }
+                    .font(AppFont.gillSwiftUI(.regular, size: 16))
+                    .foregroundColor(Color(hex: "1A1018").opacity(0.7))
+                }
+                .buttonStyle(.plain)
 
                 Spacer()
             }
             .padding(.horizontal, 34)
             .padding(.top, 70)
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker { image in
+                selectedImage = image
+            }
         }
     }
 
@@ -77,7 +118,7 @@ struct CreatePostView: View {
         isPosting = true
 
         do {
-            try await CommunityPostService.shared.createPost(content: content)
+            try await CommunityPostService.shared.createPost(content: content, image: selectedImage)
             await onPostCreated()
             dismiss()
         } catch {
