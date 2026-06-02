@@ -13,6 +13,7 @@ enum AppRoute: Hashable {
     case rolePicker
     case userRegister
     case dermatologistRegister
+    case dermPending
     case consultationForm
     case userHome
     case scan
@@ -41,9 +42,14 @@ struct AppFlowView: View {
 
                 case .login:
                     LoginView {
+                        path = NavigationPath()
                         if TokenStorage.shared.userRole == "dermatologist" {
-                            path = NavigationPath()
-                            path.append(AppRoute.userHome)
+                            let status = TokenStorage.shared.dermVerificationStatus ?? "pending"
+                            if status == "approved" {
+                                path.append(AppRoute.userHome)
+                            } else {
+                                path.append(AppRoute.dermPending)
+                            }
                         } else {
                             path.append(AppRoute.consultationForm)
                         }
@@ -73,9 +79,13 @@ struct AppFlowView: View {
 
                 case .dermatologistRegister:
                     DermatologistRegisterView {
-                        print("DERMATOLOGIST REGISTER SUCCESS → GO TO FEED")
                         path = NavigationPath()
-                        path.append(AppRoute.userHome)
+                        path.append(AppRoute.dermPending)
+                    }
+
+                case .dermPending:
+                    DermatologistPendingApprovalView {
+                        authViewModel.logout()
                     }
 
                 case .consultationForm:

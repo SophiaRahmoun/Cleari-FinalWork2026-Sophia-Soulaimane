@@ -39,6 +39,7 @@ final class AuthViewModel: ObservableObject {
             TokenStorage.shared.token = response.token
             TokenStorage.shared.userRole = response.user.role
             TokenStorage.shared.userId = response.user.id
+            TokenStorage.shared.dermVerificationStatus = response.user.dermatologistProfile?.verificationStatus
 
             currentUser = response.user
             isLoggedIn = true
@@ -94,7 +95,9 @@ final class AuthViewModel: ObservableObject {
         lastName: String,
         email: String,
         password: String,
-        licenseNumber: String? = nil
+        specialization: String?,
+        conventionStatus: String?,
+        inamiNumber: String?
     ) async {
         isLoading = true
         errorMessage = nil
@@ -104,13 +107,19 @@ final class AuthViewModel: ObservableObject {
         }
 
         do {
-            let username = "\(firstName) \(lastName)"
+            let base = "\(firstName.lowercased()).\(lastName.lowercased())"
+                .replacingOccurrences(of: " ", with: "")
+            let username = base.isEmpty ? email : base
 
             let response = try await AuthAPIService.shared.registerDermatologist(
+                firstName: firstName,
+                lastName: lastName,
                 username: username,
                 email: email,
                 password: password,
-                licenseNumber: licenseNumber
+                specialization: specialization,
+                conventionStatus: conventionStatus,
+                inamiNumber: inamiNumber
             )
 
             TokenStorage.shared.token = response.token
@@ -119,6 +128,8 @@ final class AuthViewModel: ObservableObject {
 
             currentUser = response.user
             isLoggedIn = true
+
+            TokenStorage.shared.dermVerificationStatus = response.user.dermatologistProfile?.verificationStatus ?? "pending"
 
             print("DERMATOLOGIST REGISTER SUCCESS:", response.user.email)
         } catch {

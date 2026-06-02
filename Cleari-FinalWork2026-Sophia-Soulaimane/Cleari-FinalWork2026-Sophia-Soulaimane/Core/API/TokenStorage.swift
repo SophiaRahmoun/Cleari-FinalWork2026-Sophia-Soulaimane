@@ -16,11 +16,12 @@ final class TokenStorage {
     static let shared = TokenStorage()
     private init() {}
 
-    private let tokenKey             = "cleari_auth_token"
-    private let roleKey              = "cleari_user_role"
-    private let userIdKey            = "cleari_user_id"
-    private let subscriptionStatusKey = "cleari_subscription_status"
-    private let profilePictureKey    = "cleari_profile_picture_url"
+    private let tokenKey                   = "cleari_auth_token"
+    private let roleKey                    = "cleari_user_role"
+    private let userIdKey                  = "cleari_user_id"
+    private let subscriptionStatusKey      = "cleari_subscription_status"
+    private let profilePictureKey          = "cleari_profile_picture_url"
+    private let dermVerificationStatusKey  = "cleari_derm_verification_status"
 
     var token: String? {
         get { UserDefaults.standard.string(forKey: tokenKey) }
@@ -50,6 +51,11 @@ final class TokenStorage {
         set { UserDefaults.standard.set(newValue, forKey: subscriptionStatusKey) }
     }
 
+    var dermVerificationStatus: String? {
+        get { UserDefaults.standard.string(forKey: dermVerificationStatusKey) }
+        set { UserDefaults.standard.set(newValue, forKey: dermVerificationStatusKey) }
+    }
+
     var hasFakeTrendAccess: Bool {
         if userRole == "dermatologist" {
             return true
@@ -64,6 +70,7 @@ final class TokenStorage {
         UserDefaults.standard.removeObject(forKey: userIdKey)
         UserDefaults.standard.removeObject(forKey: subscriptionStatusKey)
         UserDefaults.standard.removeObject(forKey: profilePictureKey)
+        UserDefaults.standard.removeObject(forKey: dermVerificationStatusKey)
 
         NotificationCenter.default.post(name: .didLogout, object: nil)
     }

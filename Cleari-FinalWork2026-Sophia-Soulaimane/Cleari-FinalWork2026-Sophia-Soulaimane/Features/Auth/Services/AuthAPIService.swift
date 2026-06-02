@@ -37,11 +37,30 @@ final class AuthAPIService {
         )
     }
 
-        func registerDermatologist(username: String, email: String, password: String, licenseNumber: String? = nil) async throws -> AuthResponse {
-
-            try await post(endpoint: "/auth/register-dermatologist", body: RegisterDermatologistRequest(username: username, email: email, password: password, specialization: "Dermatology", license_number: licenseNumber, bio: nil))
-
-        }
+    func registerDermatologist(
+        firstName: String,
+        lastName: String,
+        username: String,
+        email: String,
+        password: String,
+        specialization: String?,
+        conventionStatus: String?,
+        inamiNumber: String?
+    ) async throws -> AuthResponse {
+        try await post(
+            endpoint: "/auth/register-dermatologist",
+            body: RegisterDermatologistRequest(
+                first_name: firstName,
+                last_name: lastName,
+                username: username,
+                email: email,
+                password: password,
+                specialization: specialization,
+                convention_status: conventionStatus,
+                inami_number: inamiNumber
+            )
+        )
+    }
 
         private func post<T: Encodable, U: Decodable>(endpoint: String, body: T) async throws -> U {
 
