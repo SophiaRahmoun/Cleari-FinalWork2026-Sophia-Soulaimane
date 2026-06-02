@@ -12,17 +12,17 @@ struct FeedTopBar: View {
     var onFakeTrendsTapped: (() -> Void)? = nil
     var onProfileTapped: (() -> Void)? = nil
 
+    private let dark = Color(hex: "1A1018")
+
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
+            // ── Top row: logo + profile icon ──
             HStack {
                 Spacer()
 
-                TypographyLabel(
-                    text: "cleari",
-                    style: .h2,
-                    color: .white,
-                    alignment: .center
-                )
+                Text("cleari")
+                    .font(AppFont.gillSwiftUI(.regular, size: 30))
+                    .foregroundColor(dark)
 
                 Spacer()
 
@@ -30,26 +30,25 @@ struct FeedTopBar: View {
                     onProfileTapped?()
                 } label: {
                     Image(systemName: "person")
-                        .font(.system(size: 20))
-                        .foregroundColor(.black)
+                        .font(.system(size: 22, weight: .regular))
+                        .foregroundColor(dark)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
 
-            HStack {
+            // ── Tab row: explore (underlined) | fake trends ──
+            HStack(spacing: 0) {
                 Spacer()
 
                 Button {
                     onExploreTapped?()
                 } label: {
-                    TypographyLabel(
-                        text: "explore",
-                        style: .button,
-                        color: .black,
-                        alignment: .center
-                    )
-                    .underline()
+                    Text("explore")
+                        .font(AppFont.gillSwiftUI(.regular, size: 16))
+                        .foregroundColor(dark)
+                        .underline()
                 }
                 .buttonStyle(.plain)
 
@@ -58,12 +57,9 @@ struct FeedTopBar: View {
                 Button {
                     onFakeTrendsTapped?()
                 } label: {
-                    TypographyLabel(
-                        text: "fake trends",
-                        style: .button,
-                        color: .black,
-                        alignment: .center
-                    )
+                    Text("fake trends")
+                        .font(AppFont.gillSwiftUI(.regular, size: 16))
+                        .foregroundColor(dark)
                 }
                 .buttonStyle(.plain)
 

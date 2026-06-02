@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cleari Admin</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo">cleari</div>
+    <div class="subtitle">Admin dashboard — dermatologist verification</div>
+
+    <div id="login-error" class="error-msg"></div>
+
+    <label class="field-label" for="login-email">Email</label>
+    <input id="login-email" class="field-input" type="email" placeholder="admin@cleari.be" autocomplete="username" />
+
+    <label class="field-label" for="login-password">Password</label>
+    <input id="login-password" class="field-input" type="password" placeholder="••••••••" autocomplete="current-password" />
+
+    <button id="login-btn" class="btn-primary">Sign in</button>
+  </div>
+</div>
+
+
+<div id="dashboard">
+
+  <div class="topbar">
+    <span class="logo">cleari</span>
+    <span class="admin-badge">Admin</span>
+    <button class="btn-logout" id="logout-btn">Sign out</button>
+  </div>
+
+  <div class="split">
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>
+          Pending verification
+          <span class="count-badge" id="pending-count">0</span>
+        </h2>
+        <div class="subtitle">Select a dermatologist to review their profile</div>
+      </div>
+      <div class="sidebar-list" id="sidebar-list">
+        <div class="state-msg">
+          <div class="spinner"></div>
+          Loading…
+        </div>
+      </div>
+    </aside>
+
+    <main class="detail" id="detail-panel">
+      <div class="detail-empty" id="detail-empty">
+        <span class="icon">🩺</span>
+        <p>Select a dermatologist from the list to review their registration details.</p>
+      </div>
+
+      <div id="detail-content" style="display:none">
+
+        <div class="detail-header">
+          <div class="detail-avatar" id="d-avatar"></div>
+          <div class="detail-header-info">
+            <h1 id="d-name"></h1>
+            <div class="email" id="d-email"></div>
+            <span class="status-pill" id="d-status-pill"></span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Registration information</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Username</label>
+              <div class="value" id="d-username"></div>
+            </div>
+            <div class="info-item">
+              <label>Specialization</label>
+              <div class="value" id="d-specialization"></div>
+            </div>
+            <div class="info-item">
+              <label>INAMI / RIZIV number</label>
+              <div class="value mono" id="d-inami"></div>
+            </div>
+            <div class="info-item">
+              <label>License number</label>
+              <div class="value mono" id="d-license"></div>
+            </div>
+            <div class="info-item">
+              <label>City</label>
+              <div class="value" id="d-city"></div>
+            </div>
+            <div class="info-item">
+              <label>Postal code</label>
+              <div class="value" id="d-postal"></div>
+            </div>
+            <div class="info-item" style="grid-column: 1 / -1">
+              <label>Bio</label>
+              <div class="value" id="d-bio"></div>
+            </div>
+            <div class="info-item" id="d-cert-row" style="grid-column: 1 / -1">
+              <label>Certificate</label>
+              <div class="value" id="d-cert"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="riziv-card">
+          <span class="riziv-icon">🔍</span>
+          <div class="riziv-body">
+            <div class="riziv-title">Verify on the official RIZIV / INAMI Silverpages</div>
+            <div class="riziv-hint">
+              Search for <strong id="riziv-hint-name"></strong> · INAMI <strong id="riziv-hint-inami"></strong>
+              on the official register. The verification is manual — no data is sent automatically.
+            </div>
+          </div>
+          <a id="btn-riziv" class="btn-riziv" href="https://webappsa.riziv-inami.fgov.be/silverpages/" target="_blank" rel="noopener noreferrer">
+            Open RIZIV ↗
+          </a>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Decision</div>
+          <label class="notes-label" for="notes-textarea">Verification notes (optional)</label>
+          <textarea id="notes-textarea" class="notes-textarea" placeholder="Add any notes about your decision…"></textarea>
+
+          <div class="action-row">
+            <button class="btn-approve" id="btn-approve">✓ Approve</button>
+            <button class="btn-reject"  id="btn-reject">✕ Reject</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
