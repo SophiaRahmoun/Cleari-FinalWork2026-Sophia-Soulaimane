@@ -26,14 +26,22 @@ struct RoutineProductCard: View {
                 }
             }
 
-            Rectangle()
-                .fill(Color.gray.opacity(0.15))
-                .frame(height: 90)
-                .overlay {
-                    Image(systemName: "photo")
-                        .font(.system(size: 30))
-                        .foregroundColor(.gray)
-                }
+            if let imageData = product.imageData,
+               let uiImage = UIImage(data: imageData) {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 90)
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.15))
+                    .frame(height: 90)
+                    .overlay {
+                        Image(systemName: "photo")
+                            .font(.system(size: 30))
+                            .foregroundColor(.gray)
+                    }
+            }
 
             TextField(
                 "Product name",

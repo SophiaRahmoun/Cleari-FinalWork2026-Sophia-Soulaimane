@@ -27,15 +27,8 @@ struct RoutineHeader: View {
 
             Spacer()
 
-            Button {
-                onAddTapped()
-            } label: {
-                Text("Add")
-                    .font(.system(size: 18, weight: .semibold))
-                    .italic()
-                    .underline()
-                    .foregroundColor(.black)
-            }
+            Color.clear
+                .frame(width: 45, height: 30)
         }
         .padding(.horizontal, 28)
         .padding(.top, 40)
