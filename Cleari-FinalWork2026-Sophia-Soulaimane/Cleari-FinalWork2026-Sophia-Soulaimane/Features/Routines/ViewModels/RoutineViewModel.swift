@@ -11,8 +11,8 @@ import SwiftUI
 final class RoutineViewModel: ObservableObject {
     @Published var products: [RoutineProduct] = []
 
-    func addProduct() {
-        let newProduct = RoutineProduct()
+    func addProduct(imageData: Data? = nil) {
+        let newProduct = RoutineProduct(imageData: imageData)
         products.append(newProduct)
     }
 
