@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct RoutineView: View {
     @StateObject private var viewModel = RoutineViewModel()
+    @State private var selectedPhoto: PhotosPickerItem?
 
     private let columns = [
         GridItem(.flexible()),
@@ -22,7 +24,31 @@ struct RoutineView: View {
 
             VStack {
                 RoutineHeader {
-                    viewModel.addProduct()
+                    // Not used anymore because Add is handled by PhotosPicker below
+                }
+                .overlay(alignment: .trailing) {
+                    PhotosPicker(
+                        selection: $selectedPhoto,
+                        matching: .images
+                    ) {
+                        Text("Add")
+                            .font(.system(size: 18, weight: .semibold))
+                            .italic()
+                            .underline()
+                            .foregroundColor(.black)
+                            .padding(.trailing, 28)
+                            .padding(.top, 40)
+                    }
+                }
+                .onChange(of: selectedPhoto) { newPhoto in
+                    Task {
+                        guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
+                            return
+                        }
+
+                        viewModel.addProduct(imageData: data)
+                        selectedPhoto = nil
+                    }
                 }
 
                 if viewModel.products.isEmpty {
