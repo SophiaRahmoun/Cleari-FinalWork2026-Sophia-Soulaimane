@@ -41,13 +41,29 @@ final class SkinScanService {
            let (data, response) = try await URLSession.shared.data(for: request)
            guard let httpResponse = response as? HTTPURLResponse,
                  200..<300 ~= httpResponse.statusCode else {
-               let backendError = String(data: data, encoding: .utf8) ?? "Upload failed"
-               throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: backendError])
-
+               struct BackendError: Decodable { let message: String }
+               if let parsed = try? JSONDecoder().decode(BackendError.self, from: data) {
+                   throw NSError(domain: "SkinScan", code: (response as? HTTPURLResponse)?.statusCode ?? 0,
+                                 userInfo: [NSLocalizedDescriptionKey: parsed.message])
+               }
+               let raw = String(data: data, encoding: .utf8) ?? "Upload failed"
+               throw NSError(domain: "SkinScan", code: 0, userInfo: [NSLocalizedDescriptionKey: raw])
            }
 
            return try JSONDecoder().decode(SkinScanResponse.self, from: data)
-
        }
 
-   }
+    func fetchHistory() async throws -> [ScanHistoryRecord] {
+        guard let token = TokenStorage.shared.token else {
+            throw NSError(domain: "SkinScan", code: 401, userInfo: [NSLocalizedDescriptionKey: "No auth token found"])
+        }
+        guard let url = URL(string: APIConfig.baseURL + "/skin-scan/history") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(ScanHistoryResponse.self, from: data)
+        return response.scans
+    }
+}
