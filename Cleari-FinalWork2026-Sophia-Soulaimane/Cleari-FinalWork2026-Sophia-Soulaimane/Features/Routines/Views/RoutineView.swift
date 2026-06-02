@@ -24,7 +24,7 @@ struct RoutineView: View {
 
             VStack {
                 RoutineHeader {
-                    // Not used anymore because Add is handled by PhotosPicker below
+                    // Add is handled by PhotosPicker
                 }
                 .overlay(alignment: .trailing) {
                     PhotosPicker(
@@ -38,16 +38,6 @@ struct RoutineView: View {
                             .foregroundColor(.black)
                             .padding(.trailing, 28)
                             .padding(.top, 40)
-                    }
-                }
-                .onChange(of: selectedPhoto) { newPhoto in
-                    Task {
-                        guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
-                            return
-                        }
-
-                        viewModel.addProduct(imageData: data)
-                        selectedPhoto = nil
                     }
                 }
 
@@ -67,6 +57,12 @@ struct RoutineView: View {
                                             for: product,
                                             name: newName
                                         )
+                                    },
+                                    onImageChange: { imageData in
+                                        viewModel.updateProductImage(
+                                            for: product,
+                                            imageData: imageData
+                                        )
                                     }
                                 )
                             }
@@ -77,6 +73,16 @@ struct RoutineView: View {
                 }
 
                 Spacer()
+            }
+        }
+        .onChange(of: selectedPhoto) { newPhoto in
+            Task {
+                guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
+                    return
+                }
+
+                viewModel.addProduct(imageData: data)
+                selectedPhoto = nil
             }
         }
     }
