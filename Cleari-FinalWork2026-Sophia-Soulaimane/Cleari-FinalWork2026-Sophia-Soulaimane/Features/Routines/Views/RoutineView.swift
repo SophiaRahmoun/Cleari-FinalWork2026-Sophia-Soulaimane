@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
-import PhotosUI
 
 struct RoutineView: View {
-    @StateObject private var viewModel = RoutineViewModel()
-    @State private var selectedPhoto: PhotosPickerItem?
-    @State private var showCameraPicker = false
     @Environment(\.dismiss) private var dismiss
+
+    @StateObject private var viewModel = RoutineViewModel()
+
     @State private var showAddOptions = false
+    @State private var showCameraPicker = false
+    @State private var showLibraryPicker = false
 
     private let columns = [
         GridItem(.flexible()),
@@ -69,6 +70,21 @@ struct RoutineView: View {
                 Spacer()
             }
         }
+        .confirmationDialog(
+            "Add product photo",
+            isPresented: $showAddOptions,
+            titleVisibility: .visible
+        ) {
+            Button("Take photo") {
+                showCameraPicker = true
+            }
+
+            Button("Choose from library") {
+                showLibraryPicker = true
+            }
+
+            Button("Cancel", role: .cancel) {}
+        }
         .sheet(isPresented: $showCameraPicker) {
             CameraPicker(
                 onImagePicked: { imageData in
@@ -79,33 +95,15 @@ struct RoutineView: View {
                 }
             )
         }
-        .confirmationDialog(
-            "Add product photo",
-            isPresented: $showAddOptions,
-            titleVisibility: .visible
-        ) {
-            Button("Take photo") {
-                showCameraPicker = true
-            }
-
-            PhotosPicker(
-                selection: $selectedPhoto,
-                matching: .images
-            ) {
-                Text("Choose from library")
-            }
-
-            Button("Cancel", role: .cancel) {}
-        }
-        .onChange(of: selectedPhoto) { newPhoto in
-            Task {
-                guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
-                    return
+        .sheet(isPresented: $showLibraryPicker) {
+            PhotoLibraryPicker(
+                onImagePicked: { imageData in
+                    viewModel.addProduct(imageData: imageData)
+                },
+                onDismiss: {
+                    showLibraryPicker = false
                 }
-
-                viewModel.addProduct(imageData: data)
-                selectedPhoto = nil
-            }
+            )
         }
     }
 }
