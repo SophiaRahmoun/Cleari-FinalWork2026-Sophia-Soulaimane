@@ -18,39 +18,46 @@ struct PostActionsRow: View {
     private let pink = Color(hex: "C66F8C")
 
     var body: some View {
-        HStack(spacing: 32) {
-            Button {
-                onLikeTapped()
-            } label: {
-                HStack(spacing: 6) {
+        HStack(spacing: 22) {
+            // Like
+            Button { onLikeTapped() } label: {
+                HStack(spacing: 5) {
                     Image(systemName: isLiked ? "heart.fill" : "heart")
-                        .foregroundColor(isLiked ? pink : dark)
+                        .font(.system(size: 15))
+                        .foregroundColor(isLiked ? pink : dark.opacity(0.6))
                     Text("\(likesCount)")
-                        .foregroundColor(dark)
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(dark.opacity(0.65))
                 }
             }
             .buttonStyle(.plain)
 
-            Button {
-                onCommentTapped()
-            } label: {
-                HStack(spacing: 6) {
+            // Comment
+            Button { onCommentTapped() } label: {
+                HStack(spacing: 5) {
                     Image(systemName: "bubble.right")
+                        .font(.system(size: 15))
+                        .foregroundColor(dark.opacity(0.6))
                     Text("\(commentsCount)")
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(dark.opacity(0.65))
                 }
-                .foregroundColor(dark)
             }
             .buttonStyle(.plain)
 
-            HStack(spacing: 6) {
+            // Share (static)
+            HStack(spacing: 5) {
                 Image(systemName: "arrowshape.turn.up.right")
+                    .font(.system(size: 15))
+                    .foregroundColor(dark.opacity(0.6))
                 Text("0")
+                    .font(AppFont.gillSwiftUI(.regular, size: 14))
+                    .foregroundColor(dark.opacity(0.65))
             }
-            .foregroundColor(dark)
 
             Spacer()
         }
-        .font(.subheadline)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 4)
     }
 }
