@@ -27,4 +27,16 @@ final class RoutineViewModel: ObservableObject {
 
         products[index].name = name
     }
+    func updateProductImage(
+        for product: RoutineProduct,
+        imageData: Data?
+    ) {
+        guard let index = products.firstIndex(where: {
+            $0.id == product.id
+        }) else {
+            return
+        }
+
+        products[index].imageData = imageData
+    }
 }

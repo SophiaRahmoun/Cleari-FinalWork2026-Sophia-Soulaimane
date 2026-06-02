@@ -11,6 +11,7 @@ struct RoutineProductCard: View {
     let product: RoutineProduct
     let onDelete: () -> Void
     let onNameChange: (String) -> Void
+    let onImageTapped: () -> Void
 
     var body: some View {
         VStack(spacing: 10) {
@@ -26,21 +27,32 @@ struct RoutineProductCard: View {
                 }
             }
 
-            if let imageData = product.imageData,
-               let uiImage = UIImage(data: imageData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 90)
-            } else {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.15))
-                    .frame(height: 90)
-                    .overlay {
-                        Image(systemName: "photo")
-                            .font(.system(size: 30))
-                            .foregroundColor(.gray)
-                    }
+            Button {
+                onImageTapped()
+            } label: {
+
+                if let imageData = product.imageData,
+                   let uiImage = UIImage(data: imageData) {
+
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 120, height: 95)
+                        .clipped()
+                        .cornerRadius(8)
+
+                } else {
+
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(width: 120, height: 95)
+                        .cornerRadius(8)
+                        .overlay {
+                            Image(systemName: "photo")
+                                .font(.system(size: 30))
+                                .foregroundColor(.gray)
+                        }
+                }
             }
 
             TextField(
