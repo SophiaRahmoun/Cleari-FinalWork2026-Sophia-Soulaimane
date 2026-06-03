@@ -269,9 +269,9 @@ function ScanCard({ scan: s }) {
 
   const insights  = Array.isArray(parsed?.insights) ? parsed.insights : [];
 
+  // Show any absolute URL; skip old local uploads/... paths
   const isCloudinary = s.image_url &&
-    (s.image_url.startsWith("https://res.cloudinary") ||
-     s.image_url.startsWith("http://res.cloudinary"));
+    (s.image_url.startsWith("https://") || s.image_url.startsWith("http://"));
 
   const SCORES = [
     { label: "Overall",  value: s.overall_score  },
@@ -420,8 +420,7 @@ function RoutinesView({ data }) {
     <div className="routines-list">
       {routines.map((r, i) => {
         const hasImg = r.product_image_url &&
-          (r.product_image_url.startsWith("https://res.cloudinary") ||
-           r.product_image_url.startsWith("http://res.cloudinary"));
+          (r.product_image_url.startsWith("https://") || r.product_image_url.startsWith("http://"));
         return (
           <div key={r.id || i} className="routine-item">
             {hasImg

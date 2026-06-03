@@ -69,6 +69,20 @@
   font-size: 0.85rem;
   color: var(--brown);
   font-family: "gill-sans-nova", sans-serif;
+  flex: 1;
+}
+
+.slot-status {
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: "gill-sans-nova", sans-serif;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.cal-slot--active {
+  background: rgba(198,111,140,0.08);
+  box-shadow: inset 0 0 0 1px rgba(198,111,140,0.2);
 }
 
 /* ── Detail panel ── */
@@ -160,3 +174,23 @@
 
 .btn-accept:disabled,
 .btn-decline:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.detail-patient-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0.75rem auto 0;
+  display: block;
+  border: 2px solid rgba(198,111,140,0.2);
+}
+
+.detail-status-note {
+  margin-top: 1.1rem;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.6rem;
+  border-radius: 10px;
+  background: rgba(198,111,140,0.04);
+}
