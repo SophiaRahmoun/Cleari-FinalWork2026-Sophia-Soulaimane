@@ -19,6 +19,10 @@ struct UserProfileView: View {
     @State private var showScanHistoryView = false
     @State private var showRoutineView = false
 
+    private var isDermatologist: Bool {
+        TokenStorage.shared.userRole == "dermatologist"
+    }
+
     @StateObject private var viewModel = UserProfileViewModel()
 
     var body: some View {
@@ -77,28 +81,31 @@ struct UserProfileView: View {
                             }
                             .buttonStyle(.plain)
 
-                            ProfileMenuSection(title: "My skin")
+                            // User-only "My skin" sections — hidden for dermatologists
+                            if !isDermatologist {
+                                ProfileMenuSection(title: "My skin")
 
-                            Button {
-                                showSkinGoalsView = true
-                            } label: {
-                                ProfileMenuRow(title: "Skin goals")
+                                Button {
+                                    showSkinGoalsView = true
+                                } label: {
+                                    ProfileMenuRow(title: "Skin goals")
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    showRoutineView = true
+                                } label: {
+                                    ProfileMenuRow(title: "My routines")
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    showScanHistoryView = true
+                                } label: {
+                                    ProfileMenuRow(title: "My skin scans")
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
-                            
-                            Button {
-                                showRoutineView = true
-                            } label: {
-                                ProfileMenuRow(title: "My routines")
-                            }
-                            .buttonStyle(.plain)
-                            
-                            Button {
-                                showScanHistoryView = true
-                            } label: {
-                                ProfileMenuRow(title: "My skin scans")
-                            }
-                            .buttonStyle(.plain)
 
                             Button {
                                 showAppointmentsView = true
@@ -133,8 +140,7 @@ struct UserProfileView: View {
                     .padding(.top, 25)
                     .padding(.bottom, 35)
                 }
-
-                ScanBottomBar()
+                // Profile is a standalone full-screen page — no bottom navigation bar here.
             }
 
             if showLogoutSheet {
@@ -187,7 +193,11 @@ struct UserProfileView: View {
             SkinGoalView()
         }
         .fullScreenCover(isPresented: $showAppointmentsView) {
-            MyAppointmentsView()
+            if isDermatologist {
+                DermatologistAppointmentRequestsView()
+            } else {
+                MyAppointmentsView()
+            }
         }
         .fullScreenCover(isPresented: $showScanHistoryView) {
             ScanHistoryView()

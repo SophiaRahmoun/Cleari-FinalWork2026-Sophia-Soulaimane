@@ -10,6 +10,14 @@ exports.createConversation = async (req, res) => {
 		if (!dermatologistId) {
 			return res.status(400).json({ message: "Dermatologist id is required." });
 		}
+
+		// Prevent a user (or dermatologist) from opening a conversation with themselves.
+		if (Number(dermatologistId) === Number(userId)) {
+			return res.status(400).json({
+				message: "You cannot start a conversation with yourself.",
+			});
+		}
+
 		let conversation = await Conversation.findOne({
 			where: {
 				userId,
@@ -66,13 +74,56 @@ exports.getMyConversations = async (req, res) => {
 			user.role === "dermatologist"
 				? { dermatologistId: user.id }
 				: { userId: user.id };
+
+		const { User } = require("../models");
 		const conversations = await Conversation.findAll({
 			where: whereCondition,
-
 			order: [["lastMessageAt", "DESC"]],
+			include: [
+				{
+					model: User,
+					as: "patient",
+					attributes: [
+						"id",
+						"first_name",
+						"last_name",
+						"username",
+						"email",
+						"profile_picture_url",
+					],
+				},
+			],
 		});
 
-		res.status(200).json(conversations);
+		const result = conversations.map((c) => {
+			const json = c.toJSON();
+			const p = json.patient;
+
+			const patient = p
+				? {
+						id: p.id,
+						firstName: p.first_name ?? null,
+						lastName: p.last_name ?? null,
+						username: p.username ?? null,
+						email: p.email ?? null,
+						profilePictureUrl: p.profile_picture_url ?? null,
+					}
+				: null;
+
+			const fullName = patient
+				? [patient.firstName, patient.lastName].filter(Boolean).join(" ").trim()
+				: "";
+			const patientName =
+				fullName !== ""
+					? fullName
+					: patient?.username || `Patient #${json.userId}`;
+
+			json.patient = patient;
+			json.patientName = patientName;
+			return json;
+		});
+
+		res.status(200).json(result);
 	} catch (error) {
 		res.status(500).json({
 			message: "Error fetching conversations.",
@@ -191,7 +242,8 @@ exports.sendImageMessage = async (req, res) => {
 		}
 
 		const isAllowed =
-			conversation.userId === user.id || conversation.dermatologistId === user.id;
+			conversation.userId === user.id ||
+			conversation.dermatologistId === user.id;
 		if (!isAllowed) {
 			return res.status(403).json({ message: "Access denied." });
 		}
@@ -211,7 +263,9 @@ exports.sendImageMessage = async (req, res) => {
 
 		res.status(201).json({ message: "Image sent.", newMessage });
 	} catch (error) {
-		res.status(500).json({ message: "Error sending image.", error: error.message });
+		res
+			.status(500)
+			.json({ message: "Error sending image.", error: error.message });
 	}
 };
 
@@ -265,5 +319,149 @@ exports.requestAppointmentFromChat = async (req, res) => {
 
 			error: error.message,
 		});
+	}
+};
+
+exports.getPatientScans = async (req, res) => {
+	try {
+		const { conversationId } = req.params;
+		const user = req.user;
+
+		if (user.role !== "dermatologist") {
+			return res
+				.status(403)
+				.json({ message: "Only dermatologists can access patient scans." });
+		}
+
+		const conversation = await Conversation.findByPk(conversationId);
+		if (!conversation)
+			return res.status(404).json({ message: "Conversation not found." });
+		if (conversation.dermatologistId !== user.id) {
+			return res.status(403).json({ message: "Access denied." });
+		}
+
+		const { SkinAnalysis } = require("../models");
+		const scans = await SkinAnalysis.findAll({
+			where: { user_id: conversation.userId },
+			order: [["createdAt", "DESC"]],
+		});
+
+		res.status(200).json({ scans });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: "Error fetching patient scans.", error: error.message });
+	}
+};
+
+exports.getPatientForm = async (req, res) => {
+	try {
+		const { conversationId } = req.params;
+		const user = req.user;
+
+		if (user.role !== "dermatologist") {
+			return res
+				.status(403)
+				.json({ message: "Only dermatologists can access patient forms." });
+		}
+
+		const conversation = await Conversation.findByPk(conversationId);
+		if (!conversation)
+			return res.status(404).json({ message: "Conversation not found." });
+		if (conversation.dermatologistId !== user.id) {
+			return res.status(403).json({ message: "Access denied." });
+		}
+
+		const { SkinFormAnswer } = require("../models");
+		const form = await SkinFormAnswer.findOne({
+			where: { user_id: conversation.userId },
+			order: [["created_at", "DESC"]],
+		});
+
+		res.status(200).json({ form: form || null });
+	} catch (error) {
+		res
+			.status(500)
+			.json({ message: "Error fetching patient form.", error: error.message });
+	}
+};
+
+exports.getPatientRoutines = async (req, res) => {
+	try {
+		const { conversationId } = req.params;
+		const user = req.user;
+
+		if (user.role !== "dermatologist") {
+			return res
+				.status(403)
+				.json({ message: "Only dermatologists can access patient routines." });
+		}
+
+		const conversation = await Conversation.findByPk(conversationId);
+		if (!conversation)
+			return res.status(404).json({ message: "Conversation not found." });
+		if (conversation.dermatologistId !== user.id) {
+			return res.status(403).json({ message: "Access denied." });
+		}
+
+		const { Routine } = require("../models");
+		const routines = await Routine.findAll({
+			where: { user_id: conversation.userId },
+			order: [["createdAt", "DESC"]],
+		});
+
+		res.status(200).json({ routines });
+	} catch (error) {
+		res
+			.status(500)
+			.json({
+				message: "Error fetching patient routines.",
+				error: error.message,
+			});
+	}
+};
+
+// ── User: book an appointment with the dermatologist of this conversation ──
+exports.bookAppointmentFromChat = async (req, res) => {
+	try {
+		const { conversationId } = req.params;
+		const { appointment_date, appointment_time, reason } = req.body;
+		const user = req.user;
+
+		if (!appointment_date || !appointment_time) {
+			return res.status(400).json({ message: "Date and time are required." });
+		}
+
+		const conversation = await Conversation.findByPk(conversationId);
+		if (!conversation) return res.status(404).json({ message: "Conversation not found." });
+
+		// Only the patient (conversation owner) can book through this conversation
+		if (conversation.userId !== user.id) {
+			return res.status(403).json({ message: "Access denied." });
+		}
+
+		const { DermatologistProfile, Appointment } = require("../models");
+		const profile = await DermatologistProfile.findOne({
+			where: { user_id: conversation.dermatologistId },
+		});
+		if (!profile) {
+			return res.status(404).json({ message: "Dermatologist profile not found." });
+		}
+
+		const appointment = await Appointment.create({
+			user_id: user.id,
+			dermatologist_profile_id: profile.id,
+			appointment_date,
+			appointment_time,
+			reason: reason || null,
+			status: "pending",
+		});
+
+		return res.status(201).json({
+			message: "Appointment request sent.",
+			appointment,
+		});
+	} catch (error) {
+		return res.status(500).json({ message: "Error booking appointment.", error: error.message });
 	}
 };

@@ -37,4 +37,28 @@ router.post(
 	chatController.requestAppointmentFromChat
 );
 
+router.get(
+	"/conversations/:conversationId/patient-scans",
+	authMiddleware,
+	chatController.getPatientScans
+);
+
+router.get(
+	"/conversations/:conversationId/patient-form",
+	authMiddleware,
+	chatController.getPatientForm
+);
+
+router.get(
+	"/conversations/:conversationId/patient-routines",
+	authMiddleware,
+	chatController.getPatientRoutines
+);
+
+router.post(
+	"/conversations/:conversationId/book-appointment",
+	authMiddleware,
+	chatController.bookAppointmentFromChat
+);
+
 module.exports = router;
