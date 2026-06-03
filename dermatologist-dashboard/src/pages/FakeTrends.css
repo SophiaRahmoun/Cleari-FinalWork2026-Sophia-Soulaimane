@@ -279,3 +279,76 @@
 }
 
 .ft-delete-btn:hover { background: rgba(200,50,50,0.07); }
+
+/* ── TikTok Preview ── */
+.ft-tiktok-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.45rem;
+  padding: 0.32rem 0.75rem;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-pill);
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.73rem;
+  font-weight: 700;
+  color: var(--dark);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+
+.ft-tiktok-card--btn { border: none; }
+
+.ft-tiktok-card:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.ft-tiktok-icon {
+  display: flex;
+  align-items: center;
+  color: var(--dark);
+}
+
+.ft-tiktok-embed-wrap {
+  margin-top: 0.65rem;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(198, 111, 140, 0.15);
+  background: #000;
+}
+
+.ft-tiktok-iframe {
+  width: 100%;
+  height: 560px;
+  border: none;
+  display: block;
+}
+
+.ft-tiktok-embed-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255,255,255,0.95);
+  border-top: 1px solid rgba(198,111,140,0.12);
+}
+
+.ft-tiktok-link {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--pink);
+  text-decoration: none;
+}
+
+.ft-tiktok-close {
+  background: none;
+  border: none;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #a08090;
+  cursor: pointer;
+}

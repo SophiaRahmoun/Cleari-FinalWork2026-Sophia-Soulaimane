@@ -35,8 +35,8 @@ function Avatar({ user, size = 38 }) {
 function PostImage({ src }) {
   const [broken, setBroken] = useState(false);
   if (!src || broken) return null;
-  const isCloudinary = src.includes("cloudinary.com") || src.startsWith("http");
-  if (!isCloudinary) return null;
+  // Only render absolute HTTP(S) URLs — skip old local `uploads/...` paths
+  if (!src.startsWith("http://") && !src.startsWith("https://")) return null;
   return (
     <img
       src={src}
@@ -148,7 +148,7 @@ export default function Community() {
               </div>
             </div>
 
-            <PostImage src={post.image || post.imageUrl} />
+            <PostImage src={post.imageUrl || post.image_url || post.image} />
 
             <p className="post-content">{post.content}</p>
 
