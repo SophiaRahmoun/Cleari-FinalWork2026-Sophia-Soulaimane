@@ -64,22 +64,24 @@ final class AuthAPIService {
 
     func fetchMe() async throws -> AuthUser {
         guard let token = TokenStorage.shared.token else {
-            throw URLError(.userAuthenticationRequired)
+            throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "No token"])
         }
         guard let url = URL(string: baseURL + "/auth/me") else {
             throw URLError(.badURL)
         }
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
+        request.timeoutInterval = 15 // don't wait 60s for a cold Render start
+        let (data, http) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = http as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
-        guard http.statusCode != 401 else {
+        if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
             throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Session expired"])
         }
-        guard 200..<300 ~= http.statusCode else {
-            throw URLError(.badServerResponse)
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw NSError(domain: "Auth", code: httpResponse.statusCode,
+                          userInfo: [NSLocalizedDescriptionKey: "Server error \(httpResponse.statusCode)"])
         }
         let me = try JSONDecoder().decode(MeResponse.self, from: data)
         return me.user

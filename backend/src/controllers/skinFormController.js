@@ -54,8 +54,7 @@ const createSkinFormAnswer = async (req, res) => {
 			product_reaction
 		);
 
-		const newAnswer = await SkinFormAnswer.create({
-			user_id: userId,
+		const formFields = {
 			skin_feeling,
 			product_reaction,
 			flakiness,
@@ -67,7 +66,17 @@ const createSkinFormAnswer = async (req, res) => {
 			wants_photo_upload,
 			consent_shared,
 			step_completed,
-		});
+		};
+
+		// Upsert: update existing record if one already exists for this user
+		const existing = await SkinFormAnswer.findOne({ where: { user_id: userId } });
+		let answer;
+		if (existing) {
+			await existing.update(formFields);
+			answer = existing;
+		} else {
+			answer = await SkinFormAnswer.create({ user_id: userId, ...formFields });
+		}
 
 		await User.update(
 			{
@@ -75,16 +84,14 @@ const createSkinFormAnswer = async (req, res) => {
 				pronouns,
 			},
 			{
-				where: {
-					id: userId,
-				},
+				where: { id: userId },
 			}
 		);
 
 		res.status(201).json({
 			message: "Skin form saved successfully",
 			skinType,
-			data: newAnswer,
+			data: answer,
 		});
 	} catch (error) {
 		console.error(error);

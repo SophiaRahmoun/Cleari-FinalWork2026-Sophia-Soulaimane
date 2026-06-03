@@ -47,11 +47,28 @@ final class AuthViewModel: ObservableObject {
                 return user.hasCompletedSkinForm ? .userHome : .consultationForm
             }
         } catch {
-            // Token expired or invalid — clear and force re-login
-            TokenStorage.shared.clear()
-            isLoggedIn = false
-            currentUser = nil
-            return nil
+            // Only revoke the token for genuine auth failures (401/403).
+            // Network errors (timeout, server sleeping) must NOT clear the token —
+            // the user should stay logged in and we fall back to cached data.
+            let code = (error as NSError).code
+            let isAuthError = code == 401 || code == 403
+
+            if isAuthError {
+                TokenStorage.shared.clear()
+                isLoggedIn = false
+                currentUser = nil
+                return nil
+            }
+
+            // Network/server error: navigate using cached TokenStorage values
+            isLoggedIn = true
+            let role = TokenStorage.shared.userRole ?? ""
+            if role == "dermatologist" {
+                let status = TokenStorage.shared.dermVerificationStatus ?? "pending"
+                return status == "approved" ? .userHome : .dermPending
+            } else {
+                return TokenStorage.shared.hasCompletedSkinForm ? .userHome : .consultationForm
+            }
         }
     }
 
