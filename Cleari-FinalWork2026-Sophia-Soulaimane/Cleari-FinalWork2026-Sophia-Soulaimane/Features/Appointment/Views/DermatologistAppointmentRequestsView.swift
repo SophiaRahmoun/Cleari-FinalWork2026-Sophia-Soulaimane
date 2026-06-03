@@ -170,7 +170,7 @@ struct DermatologistAppointmentRequestsView: View {
                 // Legend
                 HStack(spacing: 16) {
                     legendDot(Color(hex: "AAAAAA"), "Pending")
-                    legendDot(Color(hex: "FF9500"), "Confirmed")
+                    legendDot(Color(hex: "FF9500"), "Accepted")
                     legendDot(Color(hex: "E05C5C"), "Declined")
                 }
                 .padding(.top, 8)
@@ -198,9 +198,9 @@ struct DermatologistAppointmentRequestsView: View {
 
     private func statusColor(_ status: String) -> Color {
         switch status {
-        case "confirmed": return Color(hex: "FF9500")
-        case "cancelled": return Color(hex: "E05C5C")
-        default:          return Color(hex: "AAAAAA")
+        case "approved", "confirmed": return Color(hex: "FF9500") // accepted = orange
+        case "declined", "cancelled": return Color(hex: "E05C5C") // declined = red
+        default:                       return Color(hex: "AAAAAA") // pending = grey
         }
     }
 
@@ -344,9 +344,9 @@ struct AppointmentDayDetailSheet: View {
     private func statusBadge(_ status: String) -> some View {
         let (color, label): (Color, String) = {
             switch status {
-            case "confirmed": return (Color(hex: "FF9500"), "Confirmed")
-            case "cancelled": return (Color(hex: "E05C5C"), "Declined")
-            default:          return (Color(hex: "AAAAAA"), "Pending")
+            case "approved", "confirmed": return (Color(hex: "FF9500"), "Accepted")
+            case "declined", "cancelled": return (Color(hex: "E05C5C"), "Declined")
+            default:                       return (Color(hex: "AAAAAA"), "Pending")
             }
         }()
         return Text(label)

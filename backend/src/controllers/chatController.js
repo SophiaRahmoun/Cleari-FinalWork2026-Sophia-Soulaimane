@@ -456,6 +456,15 @@ exports.bookAppointmentFromChat = async (req, res) => {
 			reason: reason || null,
 			status: "pending",
 		});
+		console.log("[Booking] created appointment:", {
+			id: appointment.id,
+			user_id: appointment.user_id,
+			dermatologist_profile_id: appointment.dermatologist_profile_id,
+			derm_user_id: conversation.dermatologistId,
+			date: appointment.appointment_date,
+			time: appointment.appointment_time,
+			status: appointment.status,
+		});
 
 		return res.status(201).json({
 			message: "Appointment request sent.",

@@ -159,7 +159,9 @@ struct PatientFormRecord: Codable {
     let allergiesDetails: String?
     let hasSkinIssues: String?
     let mainConcern: String?
-    let stepCompleted: String?
+    let wantsPhotoUpload: Bool?
+    let consentShared: Bool?
+    let stepCompleted: Int?
     let createdAt: String?
 }
 

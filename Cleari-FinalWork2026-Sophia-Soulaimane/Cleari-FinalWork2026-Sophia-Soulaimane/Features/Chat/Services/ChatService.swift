@@ -132,7 +132,6 @@ final class ChatService {
         return try decoder.decode(PatientRoutineResponse.self, from: data).routines
     }
 
-    /// User books an appointment with the dermatologist of this conversation.
     func bookAppointment(conversationId: Int, date: String, time: String, reason: String) async throws {
         guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/book-appointment") else {
             throw URLError(.badURL)
@@ -146,6 +145,7 @@ final class ChatService {
             "appointment_time": time,
             "reason": reason,
         ]
+        print("[Booking] POST conversations/\(conversationId)/book-appointment body=\(body)")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
