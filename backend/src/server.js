@@ -29,7 +29,8 @@ app.post(
 	express.raw({ type: "application/json" }),
 	handleStripeWebhook
 );
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 const availabilityRoutes = require("./routes/availabilityRoutes");
 app.use("/api/availability", availabilityRoutes);
