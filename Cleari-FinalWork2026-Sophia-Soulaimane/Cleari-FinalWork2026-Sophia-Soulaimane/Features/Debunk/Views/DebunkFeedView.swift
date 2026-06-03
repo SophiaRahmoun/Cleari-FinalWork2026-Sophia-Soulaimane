@@ -11,6 +11,10 @@ struct DebunkFeedView: View {
     @StateObject private var viewModel = DebunkFeedViewModel()
     @State private var showAddDebunk = false
     @State private var selectedPost: FakeTrendPost?
+    @State private var showProfile = false
+    @State private var showFindDermatologist = false
+    @State private var showScan = false
+    @State private var showCalendar = false
 
     var isDermatologist: Bool = false
 
@@ -31,6 +35,7 @@ struct DebunkFeedView: View {
 
                     FeedTopBar(
                         onExploreTapped: { dismiss() },
+                        onProfileTapped: { showProfile = true },
                         activeTab: .fakeTrends
                     )
 
@@ -72,14 +77,13 @@ struct DebunkFeedView: View {
                 .padding(.bottom, 30)
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                VStack(spacing: 0) {
-                    DebunkReplyBar(imageName: "ProfileSample")
-                        .padding(.horizontal, 34)
-                        .padding(.bottom, 8)
-
-                    ScanBottomBar()
-                        .padding(.bottom, 8)
-                }
+                ScanBottomBar(
+                    onHomeTapped: { dismiss() },
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: { showScan = true },
+                    onCalendarTapped: { showCalendar = true }
+                )
+                .padding(.bottom, 8)
             }
         }
         .task {
@@ -87,6 +91,18 @@ struct DebunkFeedView: View {
             await viewModel.fetchPosts()
         }
 
+        .fullScreenCover(isPresented: $showProfile) {
+            UserProfileView()
+        }
+        .fullScreenCover(isPresented: $showFindDermatologist) {
+            FindDermatologistView()
+        }
+        .fullScreenCover(isPresented: $showScan) {
+            CameraCaptureView()
+        }
+        .fullScreenCover(isPresented: $showCalendar) {
+            MyAppointmentsView()
+        }
         .fullScreenCover(isPresented: $showAddDebunk, onDismiss: {
 
             Task {

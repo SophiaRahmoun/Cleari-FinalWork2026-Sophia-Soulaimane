@@ -11,6 +11,8 @@ struct MyAppointmentsView: View {
 
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: AppointmentViewModel
+    @State private var showScan = false
+    @State private var showFindDermatologist = false
        init(previewAppointments: [Appointment] = []) {
            _viewModel = StateObject(
                wrappedValue: AppointmentViewModel(
@@ -27,46 +29,40 @@ struct MyAppointmentsView: View {
             )
             .ignoresSafeArea()
 
-            VStack(alignment: .leading, spacing: 0) {
-                header
-                    .padding(.top, 45)
-
-                content
-                    .padding(.top, 95)
-
-                previousSection
-                    .padding(.top, 85)
-
-                Spacer()
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 0) {
+                    TypographyLabel(text: "Appointments", style: .h1, color: .black)
+                        .padding(.top, 60)
+                    content.padding(.top, 95)
+                    previousSection.padding(.top, 85)
+                    Spacer()
+                }
+                .padding(.horizontal, 28)
+                .frame(maxWidth: .infinity, alignment: .top)
+                .padding(.bottom, 40)
             }
-            .padding(.horizontal, 28)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ScanBottomBar(
+                    onHomeTapped: { dismiss() },
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: { showScan = true },
+                    onCalendarTapped: nil,
+                    activeTab: 3
+                )
+                .padding(.bottom, 8)
+            }
         }
         .task {
             if viewModel.appointments.isEmpty {
                 await viewModel.fetchMyAppointments()
             }
         }
+        .fullScreenCover(isPresented: $showScan) { CameraCaptureView() }
+        .fullScreenCover(isPresented: $showFindDermatologist) { FindDermatologistView() }
     }
 
     private var header: some View {
-        HStack(spacing: 18) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 30, weight: .regular))
-                    .foregroundColor(.black)
-            }
-
-            TypographyLabel(
-                text: "Appointments",
-                style: .h1,
-                color: .black
-            )
-
-            Spacer()
-        }
+        TypographyLabel(text: "Appointments", style: .h1, color: .black)
     }
 
     private var content: some View {

@@ -10,12 +10,10 @@ import SwiftUI
 struct UserHomeShellView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
 
-    // User flow state
     @State private var showFindDermatologist = false
     @State private var showScan = false
     @State private var showCalendar = false
 
-    // Dermatologist flow state
     @State private var showChat = false
     @State private var showRequests = false
 
@@ -31,8 +29,6 @@ struct UserHomeShellView: View {
         }
     }
 
-    // MARK: - User bottom navigation (unchanged)
-
     private var userShell: some View {
         FeedView()
             .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -44,22 +40,18 @@ struct UserHomeShellView: View {
                 )
                 .padding(.bottom, 8)
             }
-        .navigationBarBackButtonHidden(true)
-        .fullScreenCover(isPresented: $showFindDermatologist) {
-            FindDermatologistView()
-                .environmentObject(authViewModel)
-        }
-        .fullScreenCover(isPresented: $showScan) {
-            CameraCaptureView()
-        }
-        .fullScreenCover(isPresented: $showCalendar) {
-            MyAppointmentsView()
-        }
+            .navigationBarBackButtonHidden(true)
+            .fullScreenCover(isPresented: $showFindDermatologist) {
+                FindDermatologistView()
+                    .environmentObject(authViewModel)
+            }
+            .fullScreenCover(isPresented: $showScan) {
+                CameraCaptureView()
+            }
+            .fullScreenCover(isPresented: $showCalendar) {
+                MyAppointmentsView()
+            }
     }
-
-    // MARK: - Dermatologist bottom navigation
-    // Only two tabs: Messages and Appointments.
-    // No skin scan tab, no user profile/head tab, no user "My skin" pages.
 
     private var dermatologistShell: some View {
         FeedView()
@@ -67,13 +59,13 @@ struct UserHomeShellView: View {
                 dermBottomBar
                     .padding(.bottom, 8)
             }
-        .navigationBarBackButtonHidden(true)
-        .fullScreenCover(isPresented: $showChat) {
-            DermatologistConversationsView()
-        }
-        .fullScreenCover(isPresented: $showRequests) {
-            DermatologistAppointmentRequestsView()
-        }
+            .navigationBarBackButtonHidden(true)
+            .fullScreenCover(isPresented: $showChat) {
+                DermatologistConversationsView()
+            }
+            .fullScreenCover(isPresented: $showRequests) {
+                DermatologistAppointmentRequestsView()
+            }
     }
 
     private var dermBottomBar: some View {
@@ -83,18 +75,17 @@ struct UserHomeShellView: View {
             dermTab(icon: "calendar", isActive: showRequests) { showRequests = true }
         }
         .padding(.horizontal, 52)
-        .padding(.vertical, 18)
+        .padding(.vertical, 12)
         .background(Color(hex: "C97A94"))
         .clipShape(Capsule())
         .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
         .padding(.horizontal, 24)
-        .padding(.bottom, 30)
     }
 
     private func dermTab(icon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 26, weight: .regular))
+                .font(.system(size: 22, weight: .regular))
                 .foregroundColor(isActive ? .white : Color(hex: "1A1018"))
         }
         .buttonStyle(.plain)
