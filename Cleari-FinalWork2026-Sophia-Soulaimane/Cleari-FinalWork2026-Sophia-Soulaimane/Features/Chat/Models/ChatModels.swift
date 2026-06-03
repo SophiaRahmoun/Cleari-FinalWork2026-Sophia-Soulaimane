@@ -15,6 +15,32 @@ struct Conversation: Codable, Identifiable, Hashable {
     let formId: Int?
     let status: String
     let lastMessageAt: String?
+    let patient: ConversationPatient?
+    let patientName: String?
+
+    /// Best available patient label for the dermatologist's view.
+    var resolvedPatientName: String {
+        if let patientName, !patientName.isEmpty { return patientName }
+        if let patient { return patient.displayName }
+        return "Patient #\(userId)"
+    }
+}
+
+struct ConversationPatient: Codable, Hashable {
+    // Decoded via ChatService's convertFromSnakeCase decoder — keys arrive camelCase.
+    let id: Int
+    let firstName: String?
+    let lastName: String?
+    let username: String?
+    let email: String?
+    let profilePictureUrl: String?
+
+    var displayName: String {
+        let parts = [firstName, lastName].compactMap { $0 }.filter { !$0.isEmpty }
+        if !parts.isEmpty { return parts.joined(separator: " ") }
+        if let username, !username.isEmpty { return username }
+        return "Patient #\(id)"
+    }
 }
 
 struct ChatMessage: Codable, Identifiable, Hashable {
@@ -57,4 +83,100 @@ struct CreateConversationResponse: Codable {
 struct AppointmentSuggestionResponse: Codable {
     let message: String
     let appointmentMessage: ChatMessage
+}
+
+// MARK: - Patient data (dermatologist view)
+// All decoded via ChatService's convertFromSnakeCase decoder — plain camelCase, no snake_case CodingKeys.
+
+struct PatientScanResponse: Codable {
+    let scans: [PatientScanRecord]
+}
+
+struct PatientScanRecord: Codable, Identifiable {
+    let id: Int
+    let imageUrl: String?
+    let result: String?
+    let createdAt: String?
+
+    var parsedSkinScan: SkinScanBrief? {
+        guard let result, let data = result.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(SkinScanBrief.self, from: data)
+    }
+
+    var displayImageUrl: URL? {
+        guard let raw = imageUrl, raw.hasPrefix("http") else { return nil }
+        let jpg = raw.replacingOccurrences(of: "/upload/", with: "/upload/f_jpg,q_80/")
+        return URL(string: jpg)
+    }
+
+    var formattedDate: String {
+        guard let createdAt else { return "" }
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = iso.date(from: createdAt) {
+            let fmt = DateFormatter(); fmt.dateStyle = .medium; fmt.timeStyle = .short
+            return fmt.string(from: date)
+        }
+        if let date = ISO8601DateFormatter().date(from: createdAt) {
+            let fmt = DateFormatter(); fmt.dateStyle = .medium
+            return fmt.string(from: date)
+        }
+        return createdAt
+    }
+}
+
+/// Minimal decoded scan result (the `result` JSON string is camelCase, decoded with a plain decoder)
+struct SkinScanBrief: Codable {
+    let recommendation: SkinScanRecommendationBrief?
+    let insights: [SkinScanInsightBrief]?
+}
+
+struct SkinScanRecommendationBrief: Codable {
+    let skinTypeEstimate: String?
+    let shortAdvice: String?
+}
+
+struct SkinScanInsightBrief: Codable, Identifiable {
+    var id: String { key }
+    let key: String
+    let title: String
+    let level: String
+    let shortText: String
+    let tip: String
+}
+
+struct PatientFormResponse: Codable {
+    let form: PatientFormRecord?
+}
+
+struct PatientFormRecord: Codable {
+    let id: Int?
+    let skinFeeling: String?
+    let productReaction: String?
+    let flakiness: String?
+    let diagnosedCondition: String?
+    let hasAllergies: String?
+    let allergiesDetails: String?
+    let hasSkinIssues: String?
+    let mainConcern: String?
+    let stepCompleted: String?
+    let createdAt: String?
+}
+
+struct PatientRoutineResponse: Codable {
+    let routines: [PatientRoutineRecord]
+}
+
+struct PatientRoutineRecord: Codable, Identifiable {
+    let id: Int
+    let productName: String?
+    let productImageUrl: String?
+    let usageTime: String?
+    let notes: String?
+
+    var displayImageUrl: URL? {
+        guard let raw = productImageUrl, raw.hasPrefix("http") else { return nil }
+        let jpg = raw.replacingOccurrences(of: "/upload/", with: "/upload/f_jpg,q_80/")
+        return URL(string: jpg)
+    }
 }
