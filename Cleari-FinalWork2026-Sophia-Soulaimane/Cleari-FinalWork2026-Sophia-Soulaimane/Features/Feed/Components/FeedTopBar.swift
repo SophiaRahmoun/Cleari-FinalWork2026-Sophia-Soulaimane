@@ -15,7 +15,7 @@ struct FeedTopBar: View {
     private let dark = Color(hex: "1A1018")
 
     var body: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 24) {
             // ── Top row: logo perfectly centered + profile icon overlaid right ──
             ZStack {
                 Image("Cleari_Header")
@@ -40,11 +40,11 @@ struct FeedTopBar: View {
             .padding(.top, 16)
 
             // ── Tab row: explore | fake trends ──
-            HStack(spacing: 60) {
+            HStack(spacing: 100) {
                 Button {
                     onExploreTapped?()
                 } label: {
-                    TypographyLabel(text: "explore", style: .bodyItalic, color: .white)
+                    TypographyLabel(text: "explore", style: .button, color: .white)
                         .underline()
                 }
                 .buttonStyle(.plain)
@@ -52,11 +52,12 @@ struct FeedTopBar: View {
                 Button {
                     onFakeTrendsTapped?()
                 } label: {
-                    TypographyLabel(text: "fake trends", style: .bodyItalic, color: .white)
+                    TypographyLabel(text: "fake trends", style: .button, color: .white)
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(.top, 10)
+        .padding(.top, 20)
+        .padding(.bottom, 10)
     }
 }
