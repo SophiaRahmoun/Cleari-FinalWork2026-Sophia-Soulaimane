@@ -26,18 +26,33 @@ struct DermatologistEarningsView: View {
                     Spacer()
                 } else if let error = viewModel.errorMessage {
                     Spacer()
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.system(size: 36))
-                            .foregroundColor(Color(hex: "1A1018").opacity(0.5))
-                        Text("Could not load earnings")
-                            .font(AppFont.gillSwiftUI(.bold, size: 18))
+                    VStack(spacing: 16) {
+                        Image(systemName: errorIcon(for: error))
+                            .font(.system(size: 42))
+                            .foregroundColor(Color(hex: "1A1018").opacity(0.45))
+
+                        Text(errorTitle(for: error))
+                            .font(AppFont.gillSwiftUI(.bold, size: 20))
                             .foregroundColor(Color(hex: "1A1018"))
-                        Text(error)
-                            .font(AppFont.gillSwiftUI(.regular, size: 13))
+
+                        Text(errorSubtitle(for: error))
+                            .font(AppFont.gillSwiftUI(.regular, size: 15))
                             .foregroundColor(Color(hex: "1A1018").opacity(0.6))
                             .multilineTextAlignment(.center)
-                            .padding(.horizontal, 32)
+                            .padding(.horizontal, 36)
+
+                        Button {
+                            Task { await viewModel.fetchEarnings() }
+                        } label: {
+                            Text("Try again")
+                                .font(AppFont.gillSwiftUI(.bold, size: 15))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 28)
+                                .padding(.vertical, 12)
+                                .background(Color(hex: "1A1018"))
+                                .clipShape(Capsule())
+                        }
+                        .padding(.top, 4)
                     }
                     Spacer()
                 } else {
@@ -152,6 +167,31 @@ struct DermatologistEarningsView: View {
                 }
             }
         }
+    }
+
+    // MARK: Error helpers
+    private func errorIcon(for error: String) -> String {
+        if error.contains("404") { return "cloud.slash" }
+        if error.contains("403") { return "lock.shield" }
+        if error.contains("401") { return "person.crop.circle.badge.xmark" }
+        if error.contains("500") { return "server.rack" }
+        return "wifi.exclamationmark"
+    }
+
+    private func errorTitle(for error: String) -> String {
+        if error.contains("404") { return "Feature not deployed yet" }
+        if error.contains("403") { return "Access denied" }
+        if error.contains("401") { return "Session expired" }
+        if error.contains("500") { return "Server error" }
+        return "Connection failed"
+    }
+
+    private func errorSubtitle(for error: String) -> String {
+        if error.contains("404") { return "The earnings endpoint is missing on the server.\nPush & redeploy your backend on Render." }
+        if error.contains("403") { return "Your account doesn't have dermatologist access.\nCheck the role stored in your token." }
+        if error.contains("401") { return "Your session has expired.\nLog out and log back in." }
+        if error.contains("500") { return "Something went wrong on the server.\nCheck your Render logs for details." }
+        return "Could not reach the server.\nMake sure your backend is running and the API URL is correct."
     }
 
     private func earningsPostCard(_ post: EarningsPost) -> some View {

@@ -26,9 +26,17 @@ final class DermatologistEarningsService {
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
-        guard let httpResponse = response as? HTTPURLResponse,
-              200..<300 ~= httpResponse.statusCode else {
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
+        }
+
+        guard 200..<300 ~= httpResponse.statusCode else {
+            let body = String(data: data, encoding: .utf8) ?? "no body"
+            throw NSError(
+                domain: "EarningsAPI",
+                code: httpResponse.statusCode,
+                userInfo: [NSLocalizedDescriptionKey: "HTTP \(httpResponse.statusCode): \(body)"]
+            )
         }
 
         return try JSONDecoder().decode(DermatologistEarningsResponse.self, from: data)
