@@ -1,0 +1,142 @@
+.earnings-page { max-width: 860px; }
+
+.earnings-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 700px) {
+  .earnings-summary { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: var(--radius-card);
+  padding: 1.35rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(198,111,140,0.08);
+  text-align: center;
+}
+
+.stat-card--highlight {
+  background: var(--grad-primary);
+  box-shadow: var(--shadow-lift);
+  border: none;
+}
+
+.stat-label {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--rose);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-card--highlight .stat-label { color: rgba(255,255,255,0.8); }
+
+.stat-value {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: -0.5px;
+}
+
+.stat-card--highlight .stat-value { color: #fff; }
+
+/* Post breakdown */
+.earnings-posts {
+  background: rgba(255,255,255,0.9);
+  border-radius: var(--radius-card);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(198,111,140,0.08);
+}
+
+.ep-title {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 1.1rem;
+}
+
+.ep-list { display: flex; flex-direction: column; }
+
+.ep-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(198,111,140,0.1);
+  gap: 1rem;
+}
+
+.ep-row:last-child { border-bottom: none; }
+
+.ep-info { display: flex; align-items: center; gap: 0.75rem; flex: 1; min-width: 0; }
+
+.ep-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #d4a0b0;
+}
+
+.ep-name {
+  font-family: "gill-sans-nova", sans-serif;
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.ep-trend {
+  font-family: "gill-sans-nova", sans-serif;
+  display: block;
+  font-size: 0.72rem;
+  color: var(--rose);
+}
+
+.ep-stats { display: flex; gap: 1.25rem; align-items: center; flex-shrink: 0; }
+
+.ep-stat { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+
+.ep-stat-label {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #a08090;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ep-stat-val {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.ep-stat--reward .ep-stat-val { color: var(--pink); }
+
+.ep-disclaimer {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.73rem;
+  color: #a08090;
+  margin: 1.25rem 0 0;
+  font-style: italic;
+  line-height: 1.5;
+}
