@@ -16,6 +16,7 @@ struct UserProfileView: View {
     @State private var showSkinGoalsView = false
     @State private var showAppointmentsView = false
     @State private var showScanHistoryView = false
+    @State private var showRoutineView = false
 
     @StateObject private var viewModel = UserProfileViewModel()
 
@@ -84,8 +85,13 @@ struct UserProfileView: View {
                             }
                             .buttonStyle(.plain)
                             
-                            ProfileMenuRow(title: "My routines")
-
+                            Button {
+                                showRoutineView = true
+                            } label: {
+                                ProfileMenuRow(title: "My routines")
+                            }
+                            .buttonStyle(.plain)
+                            
                             Button {
                                 showScanHistoryView = true
                             } label: {

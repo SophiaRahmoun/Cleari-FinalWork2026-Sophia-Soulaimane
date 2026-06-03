@@ -18,7 +18,7 @@ final class SkinScanService {
                throw URLError(.badURL)
            }
 
-           guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+           guard let imageData = image.jpegData(compressionQuality: 0.6) else {
                throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid image"])
            }
 

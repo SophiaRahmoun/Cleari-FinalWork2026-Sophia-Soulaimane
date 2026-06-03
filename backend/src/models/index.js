@@ -9,6 +9,7 @@ const SkinGoal = require("./SkinGoal");
 
 const Conversation = require("./Conversation");
 const Message = require("./Message");
+const Routine = require("./Routine");
 
 Conversation.hasMany(Message, {
 	foreignKey: "conversationId",
@@ -93,6 +94,16 @@ SkinGoal.belongsTo(User, {
 	foreignKey: "user_id",
 	as: "user",
 });
+User.hasMany(Routine, {
+	foreignKey: "user_id",
+	as: "routines",
+	onDelete: "CASCADE",
+});
+
+Routine.belongsTo(User, {
+	foreignKey: "user_id",
+	as: "user",
+});
 
 module.exports = {
 	sequelize,
@@ -106,4 +117,5 @@ module.exports = {
 	Message,
 	Subscription,
 	SkinGoal,
+	Routine,
 };
