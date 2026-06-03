@@ -82,7 +82,7 @@ struct FeedView: View {
             PostDetailView(post: post)
         }
         .fullScreenCover(isPresented: $showDebunkFeed) {
-            DebunkFeedView(isDermatologist: false)
+            DebunkFeedView(isDermatologist: TokenStorage.shared.userRole == "dermatologist")
         }
         .fullScreenCover(isPresented: $showProfile, onDismiss: {
             Task { await viewModel.fetchPosts() }
