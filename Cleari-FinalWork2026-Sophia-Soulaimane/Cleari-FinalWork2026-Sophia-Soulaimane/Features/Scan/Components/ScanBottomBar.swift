@@ -15,30 +15,30 @@ struct ScanBottomBar: View {
 
     var body: some View {
         HStack {
-            tabButton(icon: "house", action: onHomeTapped)
+            tabButton(icon: "house",          action: onHomeTapped)
             Spacer()
             tabButton(icon: "magnifyingglass", action: onFindDermatologistTapped)
             Spacer()
-            tabButton(icon: "cross.case", action: onScanTapped)
+            tabButton(icon: "cross.case",      action: onScanTapped)
             Spacer()
-            tabButton(icon: "calendar", action: onCalendarTapped)
+            tabButton(icon: "calendar",        action: onCalendarTapped)
         }
         .font(.system(size: 28, weight: .regular))
         .foregroundColor(.black)
         .padding(.horizontal, 38)
         .padding(.top, 14)
         .padding(.bottom, 26)
+        // Solid background blocks touch pass-through to views beneath the bar
+        .background(Color(hex: "F9BDB9"))
+        .contentShape(Rectangle())
     }
 
-    @ViewBuilder
     private func tabButton(icon: String, action: (() -> Void)?) -> some View {
-        if let action {
-            Button { action() } label: {
-                Image(systemName: icon)
-            }
-            .buttonStyle(.plain)
-        } else {
+        Button {
+            action?()
+        } label: {
             Image(systemName: icon)
         }
+        .buttonStyle(.plain)
     }
 }
