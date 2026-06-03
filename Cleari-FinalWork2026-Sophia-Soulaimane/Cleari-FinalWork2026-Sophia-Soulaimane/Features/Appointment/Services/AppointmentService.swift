@@ -67,7 +67,7 @@ final class AppointmentService {
     }
 
     func getDermatologistRequests() async throws -> [Appointment] {
-        let request = try makeRequest(endpoint: "/dermatologist/me", method: "GET")
+        let request = try makeRequest(endpoint: "/dermatologist/requests", method: "GET")
         let (data, _) = try await URLSession.shared.data(for: request)
         let response = try JSONDecoder().decode(AppointmentsListResponse.self, from: data)
 
