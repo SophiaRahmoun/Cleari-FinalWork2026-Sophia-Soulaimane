@@ -1,5 +1,4 @@
 const axios = require("axios");
-const fs = require("fs");
 const FormData = require("form-data");
 
 const {
@@ -128,7 +127,11 @@ async function analyzeWithYouCam(file) {
 
 
 
-	const fileBuffer = fs.readFileSync(file.path);
+	console.log("YOUCAM FILE HAS BUFFER:", !!file.buffer);
+	console.log("YOUCAM FILE PATH:", file.path);
+
+	// memoryStorage: buffer is in memory, file.path is undefined
+	const fileBuffer = file.buffer;
 
 	const uploadInit = await initializeFileUpload({
 		contentType: file.mimetype,

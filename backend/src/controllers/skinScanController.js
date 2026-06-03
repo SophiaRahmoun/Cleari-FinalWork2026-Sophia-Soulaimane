@@ -11,7 +11,8 @@ async function createSkinScan(req, res) {
 		if (!req.file) {
 			return res.status(400).json({
 				success: false,
-				message: "No image uploaded. Send multipart/form-data with field name 'image'.",
+				message:
+					"No image uploaded. Send multipart/form-data with field name 'image'.",
 			});
 		}
 
@@ -31,8 +32,9 @@ async function createSkinScan(req, res) {
 			});
 		}
 
-		// Free scan check
-		const totalScans = await SkinAnalysis.count({ where: { user_id: req.user.id } });
+		const totalScans = await SkinAnalysis.count({
+			where: { user_id: req.user.id },
+		});
 		if (totalScans >= 1) {
 			const activeSubscription = await Subscription.findOne({
 				where: { user_id: req.user.id, status: "active" },
@@ -40,21 +42,26 @@ async function createSkinScan(req, res) {
 			if (!activeSubscription) {
 				return res.status(403).json({
 					success: false,
-					message: "You have used your free scan. Subscribe to unlock more scans.",
+					message:
+						"You have used your free scan. Subscribe to unlock more scans.",
 				});
 			}
 		}
 
-		// Upload to Cloudinary — must be defined BEFORE using its result
-		const cloudinaryResult = await uploadToCloudinary(req.file.buffer, "cleari/skin-scans");
+		const cloudinaryResult = await uploadToCloudinary(
+			req.file.buffer,
+			"cleari/skin-scans"
+		);
 		console.log("CLOUDINARY SCAN URL:", cloudinaryResult.secure_url);
 
-		// Analyse with YouCam
-		const analysis = await analyzeWithYouCam(req.file);
+		const analysis = await analyzeWithYouCam({
+			buffer: req.file.buffer,
+			originalname: req.file.originalname,
+			mimetype: req.file.mimetype,
+		});
 		const insights = buildSkinInsights(analysis.simplified.scores);
 		analysis.simplified.insights = insights;
 
-		// Save to DB
 		const savedAnalysis = await SkinAnalysis.create({
 			user_id: req.user.id,
 			image_url: cloudinaryResult.secure_url,
@@ -90,7 +97,9 @@ exports.getLatestScan = async (req, res) => {
 		}
 		return res.status(200).json({ scan: latest });
 	} catch (error) {
-		return res.status(500).json({ message: "Error fetching latest scan", error: error.message });
+		return res
+			.status(500)
+			.json({ message: "Error fetching latest scan", error: error.message });
 	}
 };
 
@@ -102,7 +111,9 @@ exports.getScanHistory = async (req, res) => {
 		});
 		return res.status(200).json({ scans });
 	} catch (error) {
-		return res.status(500).json({ message: "Error fetching scan history", error: error.message });
+		return res
+			.status(500)
+			.json({ message: "Error fetching scan history", error: error.message });
 	}
 };
 
