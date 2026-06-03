@@ -77,28 +77,25 @@ struct UserHomeShellView: View {
     }
 
     private var dermBottomBar: some View {
-        HStack {
-            dermTab(icon: "bubble.left.and.bubble.right", label: "Messages") { showChat = true }
+        HStack(spacing: 0) {
+            dermTab(icon: "bubble.left.and.bubble.right", isActive: !showRequests) { showChat = true }
             Spacer()
-            dermTab(icon: "calendar", label: "Appointments") { showRequests = true }
+            dermTab(icon: "calendar", isActive: showRequests) { showRequests = true }
         }
-        .padding(.horizontal, 60)
-        .padding(.top, 14)
-        .padding(.bottom, 26)
-        .frame(maxWidth: .infinity)
-        .background(Color(hex: "F9BDB9"))
-        .contentShape(Rectangle())
+        .padding(.horizontal, 52)
+        .padding(.vertical, 18)
+        .background(Color(hex: "C97A94"))
+        .clipShape(Capsule())
+        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 30)
     }
 
-    private func dermTab(icon: String, label: String, action: @escaping () -> Void) -> some View {
+    private func dermTab(icon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.system(size: 26, weight: .regular))
-                Text(label)
-                    .font(AppFont.gillSwiftUI(.regular, size: 12))
-            }
-            .foregroundColor(.black)
+            Image(systemName: icon)
+                .font(.system(size: 26, weight: .regular))
+                .foregroundColor(isActive ? .white : Color(hex: "1A1018"))
         }
         .buttonStyle(.plain)
     }
