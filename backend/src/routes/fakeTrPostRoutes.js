@@ -13,6 +13,7 @@ const {
 	getFakeTrendPostsByDermatologist,
 	updateFakeTrendPost,
 	deleteFakeTrendPost,
+	getMyEarnings,
 } = require("../controllers/fakeTrendPostController");
 
 const {
@@ -69,6 +70,7 @@ router.post(
 
 router.get("/posts", getAllFakeTrendPosts);
 router.get("/feed", authMiddleware, getFakeTrendFeed);
+router.get("/my-earnings", authMiddleware, dermatologistOnlyMiddleware, getMyEarnings);
 
 router.get("/saved-posts", authMiddleware, getSavedFakeTrendPosts);
 router.get(
