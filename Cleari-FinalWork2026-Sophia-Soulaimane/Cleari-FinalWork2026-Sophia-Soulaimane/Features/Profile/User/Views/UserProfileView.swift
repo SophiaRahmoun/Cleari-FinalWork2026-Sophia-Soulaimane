@@ -140,8 +140,7 @@ struct UserProfileView: View {
                     .padding(.top, 25)
                     .padding(.bottom, 35)
                 }
-
-                ScanBottomBar()
+                // Profile is a standalone full-screen page — no bottom navigation bar here.
             }
 
             if showLogoutSheet {
