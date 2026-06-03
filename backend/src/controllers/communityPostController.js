@@ -44,7 +44,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
 	try {
 		const posts = await CommunityPost.findAll({
-			include: [{ model: User, attributes: ["id", "username", "email"] }],
+			include: [{ model: User, attributes: ["id", "username", "email", "profile_picture_url"] }],
 			order: [["createdAt", "DESC"]],
 		});
 

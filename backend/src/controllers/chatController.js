@@ -407,7 +407,6 @@ exports.getPatientRoutines = async (req, res) => {
 		const { Routine } = require("../models");
 		const routines = await Routine.findAll({
 			where: { user_id: conversation.userId },
-			attributes: { exclude: ["product_image_public_id"] },
 			order: [["createdAt", "DESC"]],
 		});
 
