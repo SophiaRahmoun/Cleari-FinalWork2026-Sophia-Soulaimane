@@ -233,6 +233,57 @@ exports.updateFakeTrendPost = async (req, res) => {
 	}
 };
 
+exports.getMyEarnings = async (req, res) => {
+	try {
+		const dermatologistId = req.user.id;
+
+		const posts = await FakeTrendPost.findAll({
+			where: { dermatologistId },
+			order: [["createdAt", "DESC"]],
+		});
+
+		const postsWithStats = await Promise.all(
+			posts.map(async (post) => {
+				const likesCount = await FakeTrendLike.count({
+					where: { fakeTrendPostId: post.id },
+				});
+				const commentsCount = await FakeTrendComment.count({
+					where: { fakeTrendPostId: post.id },
+				});
+				const estimatedReward = likesCount * 0.05 + commentsCount * 0.15;
+
+				return {
+					id: post.id,
+					title: post.title,
+					trendName: post.trendName,
+					imageUrl: post.imageUrl,
+					createdAt: post.createdAt,
+					likesCount,
+					commentsCount,
+					estimatedReward: Math.round(estimatedReward * 100) / 100,
+				};
+			})
+		);
+
+		const totalLikes = postsWithStats.reduce((sum, p) => sum + p.likesCount, 0);
+		const totalComments = postsWithStats.reduce((sum, p) => sum + p.commentsCount, 0);
+		const totalEarnings = postsWithStats.reduce((sum, p) => sum + p.estimatedReward, 0);
+
+		res.json({
+			totalPosts: posts.length,
+			totalLikes,
+			totalComments,
+			estimatedEarnings: Math.round(totalEarnings * 100) / 100,
+			posts: postsWithStats,
+		});
+	} catch (error) {
+		res.status(500).json({
+			message: "Error fetching earnings",
+			error: error.message,
+		});
+	}
+};
+
 exports.deleteFakeTrendPost = async (req, res) => {
 	try {
 		const post = await FakeTrendPost.findByPk(req.params.id);
