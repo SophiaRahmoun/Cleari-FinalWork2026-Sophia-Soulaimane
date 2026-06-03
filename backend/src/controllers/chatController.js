@@ -10,6 +10,14 @@ exports.createConversation = async (req, res) => {
 		if (!dermatologistId) {
 			return res.status(400).json({ message: "Dermatologist id is required." });
 		}
+
+		// Prevent a user (or dermatologist) from opening a conversation with themselves.
+		if (Number(dermatologistId) === Number(userId)) {
+			return res.status(400).json({
+				message: "You cannot start a conversation with yourself.",
+			});
+		}
+
 		let conversation = await Conversation.findOne({
 			where: {
 				userId,
@@ -66,39 +74,52 @@ exports.getMyConversations = async (req, res) => {
 			user.role === "dermatologist"
 				? { dermatologistId: user.id }
 				: { userId: user.id };
-		const conversations = await Conversation.findAll({
-			where: whereCondition,
-
-			order: [["lastMessageAt", "DESC"]],
-		});
 
 		const { User } = require("../models");
-		const userIds = [...new Set(conversations.map((c) => c.userId))];
-		const patients = await User.findAll({
-			where: { id: userIds },
-			attributes: [
-				"id",
-				"username",
-				"first_name",
-				"last_name",
-				"profile_picture_url",
+		const conversations = await Conversation.findAll({
+			where: whereCondition,
+			order: [["lastMessageAt", "DESC"]],
+			include: [
+				{
+					model: User,
+					as: "patient",
+					attributes: [
+						"id",
+						"first_name",
+						"last_name",
+						"username",
+						"email",
+						"profile_picture_url",
+					],
+				},
 			],
 		});
-		const patientMap = {};
-		for (const p of patients) patientMap[p.id] = p;
 
 		const result = conversations.map((c) => {
 			const json = c.toJSON();
-			const p = patientMap[c.userId];
-			json.patient = p
+			const p = json.patient;
+
+			const patient = p
 				? {
 						id: p.id,
-						username: p.username,
-						first_name: p.first_name,
-						last_name: p.last_name,
-						profile_picture_url: p.profile_picture_url,
+						firstName: p.first_name ?? null,
+						lastName: p.last_name ?? null,
+						username: p.username ?? null,
+						email: p.email ?? null,
+						profilePictureUrl: p.profile_picture_url ?? null,
 					}
 				: null;
+
+			const fullName = patient
+				? [patient.firstName, patient.lastName].filter(Boolean).join(" ").trim()
+				: "";
+			const patientName =
+				fullName !== ""
+					? fullName
+					: patient?.username || `Patient #${json.userId}`;
+
+			json.patient = patient;
+			json.patientName = patientName;
 			return json;
 		});
 
@@ -397,5 +418,50 @@ exports.getPatientRoutines = async (req, res) => {
 				message: "Error fetching patient routines.",
 				error: error.message,
 			});
+	}
+};
+
+// ── User: book an appointment with the dermatologist of this conversation ──
+exports.bookAppointmentFromChat = async (req, res) => {
+	try {
+		const { conversationId } = req.params;
+		const { appointment_date, appointment_time, reason } = req.body;
+		const user = req.user;
+
+		if (!appointment_date || !appointment_time) {
+			return res.status(400).json({ message: "Date and time are required." });
+		}
+
+		const conversation = await Conversation.findByPk(conversationId);
+		if (!conversation) return res.status(404).json({ message: "Conversation not found." });
+
+		// Only the patient (conversation owner) can book through this conversation
+		if (conversation.userId !== user.id) {
+			return res.status(403).json({ message: "Access denied." });
+		}
+
+		const { DermatologistProfile, Appointment } = require("../models");
+		const profile = await DermatologistProfile.findOne({
+			where: { user_id: conversation.dermatologistId },
+		});
+		if (!profile) {
+			return res.status(404).json({ message: "Dermatologist profile not found." });
+		}
+
+		const appointment = await Appointment.create({
+			user_id: user.id,
+			dermatologist_profile_id: profile.id,
+			appointment_date,
+			appointment_time,
+			reason: reason || null,
+			status: "pending",
+		});
+
+		return res.status(201).json({
+			message: "Appointment request sent.",
+			appointment,
+		});
+	} catch (error) {
+		return res.status(500).json({ message: "Error booking appointment.", error: error.message });
 	}
 };

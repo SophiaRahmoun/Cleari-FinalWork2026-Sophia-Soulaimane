@@ -55,4 +55,10 @@ router.get(
 	chatController.getPatientRoutines
 );
 
+router.post(
+	"/conversations/:conversationId/book-appointment",
+	authMiddleware,
+	chatController.bookAppointmentFromChat
+);
+
 module.exports = router;

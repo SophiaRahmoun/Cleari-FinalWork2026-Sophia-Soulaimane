@@ -19,6 +19,12 @@ Conversation.hasMany(Message, {
 Message.belongsTo(Conversation, {
 	foreignKey: "conversationId",
 });
+
+// The patient (user) who owns the conversation
+Conversation.belongsTo(User, {
+	foreignKey: "userId",
+	as: "patient",
+});
 const Subscription = require("./Subscription");
 const DermatologistAvailability = require("./DermatologistAvailability");
 
