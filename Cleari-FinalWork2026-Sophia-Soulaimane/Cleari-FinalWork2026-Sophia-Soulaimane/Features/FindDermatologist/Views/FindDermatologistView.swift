@@ -26,11 +26,12 @@ struct FindDermatologistView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 26) {
-                        Text("Recommended\ndermatologist")
-                            .font(AppFont.gillSwiftUI(.regular, size: 42))
-                            .foregroundColor(Color(hex: "1A1018"))
-                            .lineSpacing(4)
-                            .padding(.top, 60)
+                        TypographyLabel(
+                            text: "Recommended\ndermatologist",
+                            style: .h1,
+                            color: Color(hex: "1A1018")
+                        )
+                        .padding(.top, 60)
 
                         HStack(spacing: 8) {
                             filterButton("Any")
