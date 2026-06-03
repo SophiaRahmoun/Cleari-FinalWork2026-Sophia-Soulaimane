@@ -72,7 +72,7 @@ struct DermatologistConversationsView: View {
                                                 conversationId: conv.id,
                                                 currentUserId: TokenStorage.shared.userId ?? 0,
                                                 currentUserRole: "dermatologist",
-                                                dermatologistName: conv.patient?.displayName ?? "Patient #\(conv.userId)",
+                                                dermatologistName: conv.resolvedPatientName,
                                                 currentUserProfileImageUrl: TokenStorage.shared.profilePictureUrl,
                                                 dermatologistProfileImageUrl: nil
                                             )
@@ -101,7 +101,7 @@ struct DermatologistConversationsView: View {
     }
 
     private func initials(for conv: Conversation) -> String {
-        let name = conv.patient?.displayName ?? "P"
+        let name = conv.resolvedPatientName
         let letters = name.split(separator: " ").compactMap { $0.first }
         return String(letters.prefix(2)).uppercased()
     }
@@ -118,7 +118,7 @@ struct DermatologistConversationsView: View {
                 )
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(conv.patient?.displayName ?? "Patient #\(conv.userId)")
+                Text(conv.resolvedPatientName)
                     .font(AppFont.gillSwiftUI(.bold, size: 16))
                     .foregroundColor(.white)
                 Text(conv.status == "open" ? "Active" : "Closed")

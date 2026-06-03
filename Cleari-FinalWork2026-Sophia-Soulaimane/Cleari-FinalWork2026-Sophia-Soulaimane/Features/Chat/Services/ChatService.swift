@@ -132,6 +132,31 @@ final class ChatService {
         return try decoder.decode(PatientRoutineResponse.self, from: data).routines
     }
 
+    /// User books an appointment with the dermatologist of this conversation.
+    func bookAppointment(conversationId: Int, date: String, time: String, reason: String) async throws {
+        guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/book-appointment") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body: [String: String] = [
+            "appointment_date": date,
+            "appointment_time": time,
+            "reason": reason,
+        ]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            struct BackendError: Decodable { let message: String }
+            if let parsed = try? decoder.decode(BackendError.self, from: data) {
+                throw NSError(domain: "Chat", code: 0, userInfo: [NSLocalizedDescriptionKey: parsed.message])
+            }
+            throw URLError(.badServerResponse)
+        }
+    }
+
     func requestAppointment(conversationId: Int) async throws -> ChatMessage {
         guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/request-appointment") else {
             throw URLError(.badURL)

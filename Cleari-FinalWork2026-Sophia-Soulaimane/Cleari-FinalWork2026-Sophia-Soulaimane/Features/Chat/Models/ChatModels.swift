@@ -16,14 +16,23 @@ struct Conversation: Codable, Identifiable, Hashable {
     let status: String
     let lastMessageAt: String?
     let patient: ConversationPatient?
+    let patientName: String?
+
+    /// Best available patient label for the dermatologist's view.
+    var resolvedPatientName: String {
+        if let patientName, !patientName.isEmpty { return patientName }
+        if let patient { return patient.displayName }
+        return "Patient #\(userId)"
+    }
 }
 
 struct ConversationPatient: Codable, Hashable {
-    // Decoded via ChatService's convertFromSnakeCase decoder — no explicit CodingKeys.
+    // Decoded via ChatService's convertFromSnakeCase decoder — keys arrive camelCase.
     let id: Int
-    let username: String?
     let firstName: String?
     let lastName: String?
+    let username: String?
+    let email: String?
     let profilePictureUrl: String?
 
     var displayName: String {
