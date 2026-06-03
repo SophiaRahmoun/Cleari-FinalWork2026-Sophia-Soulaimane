@@ -25,63 +25,61 @@ struct DebunkFeedView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
 
-                ScrollView(showsIndicators: false) {
+                VStack(spacing: 26) {
 
-                    VStack(spacing: 26) {
+                    FeedTopBar(
+                        onExploreTapped: { dismiss() },
+                        activeTab: .fakeTrends
+                    )
 
-                        FeedTopBar(
-                            onExploreTapped: {
-                                dismiss()
-                            }
-                        )
+                    filters
 
-                        filters
+                    if isDermatologist {
 
-                        if isDermatologist {
-
-                            AddDebunkButton {
-                                showAddDebunk = true
-                            }
-                            .padding(.horizontal, 80)
+                        AddDebunkButton {
+                            showAddDebunk = true
                         }
+                        .padding(.horizontal, 80)
+                    }
 
-                        if viewModel.isLoading {
+                    if viewModel.isLoading {
 
-                            ProgressView()
-                                .padding(.top, 40)
+                        ProgressView()
+                            .padding(.top, 40)
 
-                        } else {
+                    } else {
 
-                            ForEach(viewModel.posts) { post in
+                        ForEach(viewModel.posts) { post in
 
-                                DebunkPostCard(
-                                    post: post,
-
-                                    onLikeTapped: {
-                                        Task {
-                                            await viewModel.toggleLike(for: post)
-                                        }
-                                    },
-
-                                    onCommentTapped: {
-                                        selectedPost = post
+                            DebunkPostCard(
+                                post: post,
+                                onLikeTapped: {
+                                    Task {
+                                        await viewModel.toggleLike(for: post)
                                     }
-                                )
-                                .padding(.horizontal, 34)
-                            }
+                                },
+                                onCommentTapped: {
+                                    selectedPost = post
+                                }
+                            )
+                            .padding(.horizontal, 34)
                         }
                     }
-                    .padding(.top, 55)
-                    .padding(.bottom, 30)
                 }
+                .padding(.top, 20)
+                .padding(.bottom, 30)
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(spacing: 0) {
+                    DebunkReplyBar(imageName: "ProfileSample")
+                        .padding(.horizontal, 34)
+                        .padding(.bottom, 8)
 
-                DebunkReplyBar(imageName: "ProfileSample")
-                    .padding(.horizontal, 34)
-                    .padding(.bottom, 14)
-
-                ScanBottomBar()
+                    ScanBottomBar()
+                        .padding(.bottom, 8)
+                }
             }
         }
         .task {

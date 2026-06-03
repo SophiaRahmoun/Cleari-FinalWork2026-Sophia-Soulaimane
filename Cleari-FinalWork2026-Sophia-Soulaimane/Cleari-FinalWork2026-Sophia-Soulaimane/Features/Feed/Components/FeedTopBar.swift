@@ -11,6 +11,9 @@ struct FeedTopBar: View {
     var onExploreTapped: (() -> Void)? = nil
     var onFakeTrendsTapped: (() -> Void)? = nil
     var onProfileTapped: (() -> Void)? = nil
+    var activeTab: FeedTab = .explore
+
+    enum FeedTab { case explore, fakeTrends }
 
     private let dark = Color(hex: "1A1018")
 
@@ -45,7 +48,7 @@ struct FeedTopBar: View {
                     onExploreTapped?()
                 } label: {
                     TypographyLabel(text: "explore", style: .button, color: .white)
-                        .underline()
+                        .underline(activeTab == .explore)
                 }
                 .buttonStyle(.plain)
 
@@ -53,6 +56,7 @@ struct FeedTopBar: View {
                     onFakeTrendsTapped?()
                 } label: {
                     TypographyLabel(text: "fake trends", style: .button, color: .white)
+                        .underline(activeTab == .fakeTrends)
                 }
                 .buttonStyle(.plain)
             }
