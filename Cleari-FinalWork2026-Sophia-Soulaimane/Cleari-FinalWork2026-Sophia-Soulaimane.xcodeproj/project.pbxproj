@@ -33,7 +33,6 @@
 		847B5D3A2F40C40D00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Cleari-FinalWork2026-Sophia-Soulaimane" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Features/Debunk/ViewModels/DebunkFeedViewModel.swift,
 				Info.plist,
 			);
 			target = 847B5D102F40C40A00224093 /* Cleari-FinalWork2026-Sophia-Soulaimane */;
@@ -308,7 +307,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = be.ehb.CleariFinalWork2026.Soulaimane.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = be.ehb.soulaimane.CleariFinalWork2026;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -327,7 +326,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Cleari-FinalWork2026-Sophia-Soulaimane/Preview Content\"";
-				DEVELOPMENT_TEAM = AAD6RP3VQY;
+				DEVELOPMENT_TEAM = S3K4S43NMK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Cleari-FinalWork2026-Sophia-Soulaimane/Info.plist";
@@ -342,7 +341,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = be.ehb.CleariFinalWork2026.Soulaimane.dev;
+				PRODUCT_BUNDLE_IDENTIFIER = be.ehb.soulaimane.CleariFinalWork2026;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -13,7 +13,7 @@ final class CommunityPostService {
     private init() {}
 
     func fetchPosts() async throws -> [CommunityPost] {
-        guard let url = URL(string: "http://localhost:4000/api/community/posts") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts") else {
             throw URLError(.badURL)
         }
 
@@ -28,7 +28,7 @@ final class CommunityPostService {
     }
 
     func createPost(content: String, image: UIImage? = nil) async throws {
-        guard let url = URL(string: "http://localhost:4000/api/community/posts") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts") else {
             throw URLError(.badURL)
         }
 
@@ -67,7 +67,7 @@ final class CommunityPostService {
     }
 
     func likePost(postId: Int) async throws -> LikeResponse {
-        guard let url = URL(string: "http://localhost:4000/api/community/posts/\(postId)/like") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/like") else {
             throw URLError(.badURL)
         }
 
@@ -90,7 +90,7 @@ final class CommunityPostService {
     }
 
     func unlikePost(postId: Int) async throws -> LikeResponse {
-        guard let url = URL(string: "http://localhost:4000/api/community/posts/\(postId)/like") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/like") else {
             throw URLError(.badURL)
         }
 
@@ -113,7 +113,7 @@ final class CommunityPostService {
     }
 
     func fetchComments(postId: Int) async throws -> [CommunityPostComment] {
-        guard let url = URL(string: "http://localhost:4000/api/community/posts/\(postId)/comments") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/comments") else {
             throw URLError(.badURL)
         }
 
@@ -128,7 +128,7 @@ final class CommunityPostService {
     }
 
     func createComment(postId: Int, content: String) async throws {
-        guard let url = URL(string: "http://localhost:4000/api/community/posts/\(postId)/comments") else {
+        guard let url = URL(string: "\(APIConfig.baseURL)/community/posts/\(postId)/comments") else {
             throw URLError(.badURL)
         }
 

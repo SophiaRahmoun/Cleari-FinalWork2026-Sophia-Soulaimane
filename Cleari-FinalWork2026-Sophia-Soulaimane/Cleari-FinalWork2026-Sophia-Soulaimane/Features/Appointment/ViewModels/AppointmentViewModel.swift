@@ -79,11 +79,12 @@ final class AppointmentViewModel: ObservableObject {
     }
 
     func acceptRequest(_ appointment: Appointment) async {
-        await updateStatus(appointment, status: "confirmed")
+        // Backend accepts: approved / declined / cancelled / completed
+        await updateStatus(appointment, status: "approved")
     }
 
     func declineRequest(_ appointment: Appointment) async {
-        await updateStatus(appointment, status: "cancelled")
+        await updateStatus(appointment, status: "declined")
     }
 
     private func updateStatus(_ appointment: Appointment, status: String) async {

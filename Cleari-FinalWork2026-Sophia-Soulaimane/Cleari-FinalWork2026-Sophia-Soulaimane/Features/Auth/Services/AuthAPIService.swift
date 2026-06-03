@@ -37,11 +37,55 @@ final class AuthAPIService {
         )
     }
 
-        func registerDermatologist(username: String, email: String, password: String, licenseNumber: String? = nil) async throws -> AuthResponse {
+    func registerDermatologist(
+        firstName: String,
+        lastName: String,
+        username: String,
+        email: String,
+        password: String,
+        specialization: String?,
+        conventionStatus: String?,
+        inamiNumber: String?
+    ) async throws -> AuthResponse {
+        try await post(
+            endpoint: "/auth/register-dermatologist",
+            body: RegisterDermatologistRequest(
+                first_name: firstName,
+                last_name: lastName,
+                username: username,
+                email: email,
+                password: password,
+                specialization: specialization,
+                convention_status: conventionStatus,
+                inami_number: inamiNumber
+            )
+        )
+    }
 
-            try await post(endpoint: "/auth/register-dermatologist", body: RegisterDermatologistRequest(username: username, email: email, password: password, specialization: "Dermatology", license_number: licenseNumber, bio: nil))
-
+    func fetchMe() async throws -> AuthUser {
+        guard let token = TokenStorage.shared.token else {
+            throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "No token"])
         }
+        guard let url = URL(string: baseURL + "/auth/me") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.timeoutInterval = 15 // don't wait 60s for a cold Render start
+        let (data, http) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = http as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
+            throw NSError(domain: "Auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Session expired"])
+        }
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw NSError(domain: "Auth", code: httpResponse.statusCode,
+                          userInfo: [NSLocalizedDescriptionKey: "Server error \(httpResponse.statusCode)"])
+        }
+        let me = try JSONDecoder().decode(MeResponse.self, from: data)
+        return me.user
+    }
 
         private func post<T: Encodable, U: Decodable>(endpoint: String, body: T) async throws -> U {
 

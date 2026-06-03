@@ -14,6 +14,10 @@ struct ChatDetailView: View {
 
     @State private var showImagePicker = false
     @State private var showDocumentPicker = false
+    @State private var showPatientScans = false
+    @State private var showPatientForm = false
+    @State private var showPatientRoutines = false
+    @State private var showBookAppointment = false
     
     let currentUserRole: String
     let dermatologistName: String
@@ -82,6 +86,21 @@ struct ChatDetailView: View {
                 }
             }
         }
+        .sheet(isPresented: $showPatientScans) {
+            PatientScansView(conversationId: viewModel.conversationId)
+        }
+        .sheet(isPresented: $showPatientForm) {
+            PatientSkinFormView(conversationId: viewModel.conversationId)
+        }
+        .sheet(isPresented: $showPatientRoutines) {
+            PatientRoutinesView(conversationId: viewModel.conversationId)
+        }
+        .sheet(isPresented: $showBookAppointment) {
+            BookAppointmentFromChatView(
+                conversationId: viewModel.conversationId,
+                dermatologistName: dermatologistName
+            )
+        }
     }
 
     private var header: some View {
@@ -125,9 +144,29 @@ struct ChatDetailView: View {
                     }
 
                     Button {
+                        showPatientRoutines = true
+                    } label: {
+                        Label("View routine", systemImage: "drop.fill")
+                    }
+
+                    Button {
                         requestAppointment()
                     } label: {
                         Label("Suggest appointment", systemImage: "calendar.badge.plus")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(darkBrown)
+                        .padding(8)
+                }
+            } else {
+                // User menu: book an appointment with this dermatologist
+                Menu {
+                    Button {
+                        showBookAppointment = true
+                    } label: {
+                        Label("Book appointment", systemImage: "calendar.badge.plus")
                     }
                 } label: {
                     Image(systemName: "ellipsis")
@@ -259,21 +298,11 @@ struct ChatDetailView: View {
     }
 
     private func openSkinScan() {
-        guard let scanId = viewModel.conversation?.scanId else {
-            print("No skin scan linked to this conversation")
-            return
-        }
-
-        print("Navigate to skin scan detail: \(scanId)")
+        showPatientScans = true
     }
 
     private func openSkinForm() {
-        guard let formId = viewModel.conversation?.formId else {
-            print("No skin form linked to this conversation")
-            return
-        }
-
-        print("Navigate to skin form detail: \(formId)")
+        showPatientForm = true
     }
 
     private func requestAppointment() {

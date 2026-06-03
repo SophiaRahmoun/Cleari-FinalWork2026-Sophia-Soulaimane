@@ -7,5 +7,5 @@
 
 enum APIConfig {
     static let baseHost = "https://cleari-finalwork2026-sophia-soulaimane.onrender.com"
-    static let baseURL = "\(baseHost)/api"
+    static let baseURL  = "\(baseHost)/api"
 }

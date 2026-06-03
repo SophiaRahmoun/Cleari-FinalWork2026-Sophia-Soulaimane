@@ -131,6 +131,7 @@ exports.getDermatologistAppointmentsRequests = async (req, res) => {
 				message: "Dermatologist profile not found.",
 			});
 		}
+		console.log("[Requests] fetching for derm user_id:", req.user.id, "profile_id:", dermatologistProfile.id);
 
 		const appointments = await Appointment.findAll({
 			where: { dermatologist_profile_id: dermatologistProfile.id },

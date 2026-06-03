@@ -89,7 +89,8 @@ struct DebunkDetailView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Text(comment.User.username)
+                    //Text(comment.User.username)
+                    Text("User")
                         .font(AppFont.gillSwiftUI(.bold, size: 16))
 
                     Text("· now")

@@ -1,5 +1,4 @@
 const axios = require("axios");
-const fs = require("fs");
 const FormData = require("form-data");
 
 const {
@@ -128,12 +127,23 @@ async function analyzeWithYouCam(file) {
 
 
 
-	const fileBuffer = fs.readFileSync(file.path);
+	console.log("YOUCAM FILE HAS BUFFER:", !!file.buffer);
+	console.log("YOUCAM FILE PATH:", file.path);
+	console.log("YOUCAM FILE NAME:", file.originalname);
+	console.log("YOUCAM FILE SIZE:", file.size);
+	console.log("YOUCAM MIME TYPE:", file.mimetype);
+
+	// memoryStorage: buffer is in memory, file.path is undefined
+	const fileBuffer = file.buffer;
+
+	// file.size may be undefined with some multer configurations;
+	// buffer.length is always the exact byte count.
+	const fileSize = file.size || fileBuffer.length;
 
 	const uploadInit = await initializeFileUpload({
 		contentType: file.mimetype,
-		fileName: file.originalname,
-		fileSize: file.size,
+		fileName: file.originalname || "scan.jpg",
+		fileSize,
 	});
 
 	const uploadData = uploadInit?.data?.files?.[0];
