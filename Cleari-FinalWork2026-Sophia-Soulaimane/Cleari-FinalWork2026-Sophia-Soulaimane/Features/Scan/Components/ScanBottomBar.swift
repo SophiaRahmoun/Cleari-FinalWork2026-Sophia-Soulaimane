@@ -13,22 +13,27 @@ struct ScanBottomBar: View {
     var onScanTapped: (() -> Void)?
     var onCalendarTapped: (() -> Void)?
 
+    // Icons default to the user-facing set; dermatologist shell overrides them.
+    var homeIcon: String = "house"
+    var secondIcon: String = "magnifyingglass"
+    var thirdIcon: String = "cross.case"
+    var fourthIcon: String = "calendar"
+
     var body: some View {
         HStack {
-            tabButton(icon: "house",          action: onHomeTapped)
+            tabButton(icon: homeIcon,   action: onHomeTapped)
             Spacer()
-            tabButton(icon: "magnifyingglass", action: onFindDermatologistTapped)
+            tabButton(icon: secondIcon, action: onFindDermatologistTapped)
             Spacer()
-            tabButton(icon: "cross.case",      action: onScanTapped)
+            tabButton(icon: thirdIcon,  action: onScanTapped)
             Spacer()
-            tabButton(icon: "calendar",        action: onCalendarTapped)
+            tabButton(icon: fourthIcon, action: onCalendarTapped)
         }
         .font(.system(size: 28, weight: .regular))
         .foregroundColor(.black)
         .padding(.horizontal, 38)
         .padding(.top, 14)
         .padding(.bottom, 26)
-        // Solid background blocks touch pass-through to views beneath the bar
         .background(Color(hex: "F9BDB9"))
         .contentShape(Rectangle())
     }

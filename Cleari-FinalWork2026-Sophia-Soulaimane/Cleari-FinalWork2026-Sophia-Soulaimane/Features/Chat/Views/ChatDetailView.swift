@@ -14,6 +14,9 @@ struct ChatDetailView: View {
 
     @State private var showImagePicker = false
     @State private var showDocumentPicker = false
+    @State private var showPatientScans = false
+    @State private var showPatientForm = false
+    @State private var showPatientRoutines = false
     
     let currentUserRole: String
     let dermatologistName: String
@@ -82,6 +85,15 @@ struct ChatDetailView: View {
                 }
             }
         }
+        .sheet(isPresented: $showPatientScans) {
+            PatientScansView(conversationId: viewModel.conversationId)
+        }
+        .sheet(isPresented: $showPatientForm) {
+            PatientSkinFormView(conversationId: viewModel.conversationId)
+        }
+        .sheet(isPresented: $showPatientRoutines) {
+            PatientRoutinesView(conversationId: viewModel.conversationId)
+        }
     }
 
     private var header: some View {
@@ -122,6 +134,12 @@ struct ChatDetailView: View {
                         openSkinForm()
                     } label: {
                         Label("View skin form", systemImage: "doc.text")
+                    }
+
+                    Button {
+                        showPatientRoutines = true
+                    } label: {
+                        Label("View routine", systemImage: "drop.fill")
                     }
 
                     Button {
@@ -259,21 +277,11 @@ struct ChatDetailView: View {
     }
 
     private func openSkinScan() {
-        guard let scanId = viewModel.conversation?.scanId else {
-            print("No skin scan linked to this conversation")
-            return
-        }
-
-        print("Navigate to skin scan detail: \(scanId)")
+        showPatientScans = true
     }
 
     private func openSkinForm() {
-        guard let formId = viewModel.conversation?.formId else {
-            print("No skin form linked to this conversation")
-            return
-        }
-
-        print("Navigate to skin form detail: \(formId)")
+        showPatientForm = true
     }
 
     private func requestAppointment() {

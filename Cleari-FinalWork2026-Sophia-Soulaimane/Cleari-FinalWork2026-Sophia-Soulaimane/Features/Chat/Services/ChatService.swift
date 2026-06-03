@@ -94,6 +94,44 @@ final class ChatService {
         return try decoder.decode(SendMessageResponse.self, from: data).newMessage
     }
 
+    func fetchConversations() async throws -> [Conversation] {
+        guard let url = URL(string: "\(baseURL)/conversations") else { throw URLError(.badURL) }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try decoder.decode([Conversation].self, from: data)
+    }
+
+    func fetchPatientScans(conversationId: Int) async throws -> [PatientScanRecord] {
+        guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/patient-scans") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try decoder.decode(PatientScanResponse.self, from: data).scans
+    }
+
+    func fetchPatientForm(conversationId: Int) async throws -> PatientFormRecord? {
+        guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/patient-form") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try decoder.decode(PatientFormResponse.self, from: data).form
+    }
+
+    func fetchPatientRoutines(conversationId: Int) async throws -> [PatientRoutineRecord] {
+        guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/patient-routines") else {
+            throw URLError(.badURL)
+        }
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(TokenStorage.shared.token ?? "")", forHTTPHeaderField: "Authorization")
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try decoder.decode(PatientRoutineResponse.self, from: data).routines
+    }
+
     func requestAppointment(conversationId: Int) async throws -> ChatMessage {
         guard let url = URL(string: "\(baseURL)/conversations/\(conversationId)/request-appointment") else {
             throw URLError(.badURL)

@@ -10,6 +10,7 @@ import SwiftUI
 struct UserProfileView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showPayementView = false
+    @State private var showEarningsView = false
     @State private var showEditProfileView = false
     @State private var showLogoutSheet = false
     @State private var showPrivacyView = false
@@ -17,6 +18,10 @@ struct UserProfileView: View {
     @State private var showAppointmentsView = false
     @State private var showScanHistoryView = false
     @State private var showRoutineView = false
+
+    private var isDermatologist: Bool {
+        TokenStorage.shared.userRole == "dermatologist"
+    }
 
     @StateObject private var viewModel = UserProfileViewModel()
 
@@ -66,38 +71,41 @@ struct UserProfileView: View {
                             .buttonStyle(.plain)
 
                             Button {
-
-                                if TokenStorage.shared.userRole != "dermatologist" {
+                                if TokenStorage.shared.userRole == "dermatologist" {
+                                    showEarningsView = true
+                                } else {
                                     showPayementView = true
                                 }
-
                             } label: {
                                 ProfileMenuRow(title: "Subscription")
                             }
                             .buttonStyle(.plain)
 
-                            ProfileMenuSection(title: "My skin")
+                            // User-only "My skin" sections — hidden for dermatologists
+                            if !isDermatologist {
+                                ProfileMenuSection(title: "My skin")
 
-                            Button {
-                                showSkinGoalsView = true
-                            } label: {
-                                ProfileMenuRow(title: "Skin goals")
+                                Button {
+                                    showSkinGoalsView = true
+                                } label: {
+                                    ProfileMenuRow(title: "Skin goals")
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    showRoutineView = true
+                                } label: {
+                                    ProfileMenuRow(title: "My routines")
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    showScanHistoryView = true
+                                } label: {
+                                    ProfileMenuRow(title: "My skin scans")
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
-                            
-                            Button {
-                                showRoutineView = true
-                            } label: {
-                                ProfileMenuRow(title: "My routines")
-                            }
-                            .buttonStyle(.plain)
-                            
-                            Button {
-                                showScanHistoryView = true
-                            } label: {
-                                ProfileMenuRow(title: "My skin scans")
-                            }
-                            .buttonStyle(.plain)
 
                             Button {
                                 showAppointmentsView = true
@@ -163,8 +171,10 @@ struct UserProfileView: View {
             await viewModel.fetchCurrentUser()
         }
         .fullScreenCover(isPresented: $showPayementView) {
-
             PayementView()
+        }
+        .fullScreenCover(isPresented: $showEarningsView) {
+            DermatologistEarningsView()
         }
         .fullScreenCover(isPresented: $showEditProfileView, onDismiss: {
 
@@ -184,7 +194,11 @@ struct UserProfileView: View {
             SkinGoalView()
         }
         .fullScreenCover(isPresented: $showAppointmentsView) {
-            MyAppointmentsView()
+            if isDermatologist {
+                DermatologistAppointmentRequestsView()
+            } else {
+                MyAppointmentsView()
+            }
         }
         .fullScreenCover(isPresented: $showScanHistoryView) {
             ScanHistoryView()
