@@ -75,10 +75,7 @@ struct ScanHistoryView: View {
 
     private func scanRow(_ record: ScanHistoryRecord) -> some View {
         HStack(spacing: 16) {
-            // Thumbnail
-            if let urlStr = record.imageUrl,
-               urlStr.hasPrefix("http"),
-               let url = URL(string: urlStr) {
+            if let url = record.displayImageUrl {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):

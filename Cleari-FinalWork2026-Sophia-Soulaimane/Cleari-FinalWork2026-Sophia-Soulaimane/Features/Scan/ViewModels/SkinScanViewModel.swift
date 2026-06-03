@@ -12,6 +12,7 @@ import UIKit
 final class SkinScanViewModel: ObservableObject {
     @Published var selectedImage: UIImage?
     @Published var scanResult: SkinScan?
+    @Published var scanImageUrl: String?   // Cloudinary URL from analysis.image_url
     @Published var isLoading = false
     @Published var errorMessage: String?
 
@@ -28,8 +29,10 @@ final class SkinScanViewModel: ObservableObject {
 
         do {
             let response = try await service.uploadSkinScan(image: selectedImage)
-            scanResult = response.scan
-            print("[SkinScan] Scan received — skin type: \(response.scan.recommendation.skinTypeEstimate ?? "unknown")")
+            scanResult   = response.scan
+            scanImageUrl = response.analysis?.imageUrl
+            print("[SkinScan] Skin type: \(response.scan.recommendation.skinTypeEstimate ?? "unknown")")
+            print("[SkinScan] Cloudinary URL: \(scanImageUrl ?? "none")")
         } catch {
             errorMessage = error.localizedDescription
         }

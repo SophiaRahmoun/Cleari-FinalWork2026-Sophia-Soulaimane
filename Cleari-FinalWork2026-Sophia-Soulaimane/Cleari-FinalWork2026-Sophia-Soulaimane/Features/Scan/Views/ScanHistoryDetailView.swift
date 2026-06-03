@@ -32,10 +32,8 @@ struct ScanHistoryDetailView: View {
                             .font(AppFont.gillSwiftUI(.regular, size: 14))
                             .foregroundColor(.black.opacity(0.6))
 
-                        // Scan image from Cloudinary
-                        if let urlStr = record.imageUrl,
-                           urlStr.hasPrefix("http"),
-                           let url = URL(string: urlStr) {
+                        // Scan image from Cloudinary (f_jpg transform avoids HEIC issues)
+                        if let url = record.displayImageUrl {
                             AsyncImage(url: url) { phase in
                                 switch phase {
                                 case .success(let image):
