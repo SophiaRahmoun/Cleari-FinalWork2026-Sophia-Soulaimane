@@ -52,7 +52,7 @@ struct FeedView: View {
             }
 
             ReplyBar(onTap: { showCreatePost = true })
-                .padding(.bottom, 120)
+                .padding(.bottom, 16)
         }
         .task {
             await viewModel.fetchPosts()

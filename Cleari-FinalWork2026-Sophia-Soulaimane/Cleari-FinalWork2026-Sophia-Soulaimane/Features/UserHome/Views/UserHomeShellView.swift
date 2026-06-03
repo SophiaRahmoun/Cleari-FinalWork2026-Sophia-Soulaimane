@@ -34,16 +34,16 @@ struct UserHomeShellView: View {
     // MARK: - User bottom navigation (unchanged)
 
     private var userShell: some View {
-        ZStack(alignment: .bottom) {
-            FeedView()
-
-            ScanBottomBar(
-                onHomeTapped: nil, // Already on home
-                onFindDermatologistTapped: { showFindDermatologist = true },
-                onScanTapped: { showScan = true },
-                onCalendarTapped: { showCalendar = true }
-            )
-        }
+        FeedView()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ScanBottomBar(
+                    onHomeTapped: nil,
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: { showScan = true },
+                    onCalendarTapped: { showCalendar = true }
+                )
+                .padding(.bottom, 8)
+            }
         .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $showFindDermatologist) {
             FindDermatologistView()
@@ -62,11 +62,11 @@ struct UserHomeShellView: View {
     // No skin scan tab, no user profile/head tab, no user "My skin" pages.
 
     private var dermatologistShell: some View {
-        ZStack(alignment: .bottom) {
-            FeedView()
-
-            dermBottomBar
-        }
+        FeedView()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                dermBottomBar
+                    .padding(.bottom, 8)
+            }
         .navigationBarBackButtonHidden(true)
         .fullScreenCover(isPresented: $showChat) {
             DermatologistConversationsView()

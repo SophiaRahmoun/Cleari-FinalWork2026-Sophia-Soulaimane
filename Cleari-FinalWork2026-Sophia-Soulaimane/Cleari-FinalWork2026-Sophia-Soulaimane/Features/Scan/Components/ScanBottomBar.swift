@@ -34,13 +34,12 @@ struct ScanBottomBar: View {
             Spacer()
             tabButton(icon: fourthIcon, index: 3, action: onCalendarTapped)
         }
-        .padding(.horizontal, 36)
-        .padding(.vertical, 18)
+        .padding(.horizontal, 28)
+        .padding(.vertical, 12)
         .background(bg)
         .clipShape(Capsule())
         .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 4)
         .padding(.horizontal, 24)
-        .padding(.bottom, 44)
     }
 
     private func tabButton(icon: String, index: Int, action: (() -> Void)?) -> some View {
@@ -48,7 +47,7 @@ struct ScanBottomBar: View {
             action?()
         } label: {
             Image(systemName: icon)
-                .font(.system(size: 26, weight: .regular))
+                .font(.system(size: 22, weight: .regular))
                 .foregroundColor(activeTab == index ? active : inactive)
         }
         .buttonStyle(.plain)
