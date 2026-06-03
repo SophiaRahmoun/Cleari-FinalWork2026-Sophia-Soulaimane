@@ -46,3 +46,46 @@ struct SkinInsight: Codable, Identifiable {
     let shortText: String
     let tip: String
 }
+
+// MARK: - Scan History
+
+struct ScanHistoryResponse: Codable {
+    let scans: [ScanHistoryRecord]
+}
+
+struct ScanHistoryRecord: Codable, Identifiable {
+    let id: Int
+    let imageUrl: String?
+    let result: String?
+    let createdAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case imageUrl = "image_url"
+        case result
+        case createdAt
+    }
+
+    var parsedScan: SkinScan? {
+        guard let result, let data = result.data(using: .utf8) else { return nil }
+        return try? JSONDecoder().decode(SkinScan.self, from: data)
+    }
+
+    var formattedDate: String {
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = iso.date(from: createdAt) {
+            let fmt = DateFormatter()
+            fmt.dateStyle = .medium
+            fmt.timeStyle = .short
+            return fmt.string(from: date)
+        }
+        let iso2 = ISO8601DateFormatter()
+        if let date = iso2.date(from: createdAt) {
+            let fmt = DateFormatter()
+            fmt.dateStyle = .medium
+            return fmt.string(from: date)
+        }
+        return createdAt
+    }
+}

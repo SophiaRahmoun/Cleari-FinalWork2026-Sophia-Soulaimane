@@ -14,6 +14,8 @@ struct UserProfileView: View {
     @State private var showLogoutSheet = false
     @State private var showPrivacyView = false
     @State private var showSkinGoalsView = false
+    @State private var showAppointmentsView = false
+    @State private var showScanHistoryView = false
     @State private var showRoutineView = false
 
     @StateObject private var viewModel = UserProfileViewModel()
@@ -90,10 +92,19 @@ struct UserProfileView: View {
                             }
                             .buttonStyle(.plain)
                             
-                            ProfileMenuRow(title: "My skin scans")
-                            
+                            Button {
+                                showScanHistoryView = true
+                            } label: {
+                                ProfileMenuRow(title: "My skin scans")
+                            }
+                            .buttonStyle(.plain)
 
-                            ProfileMenuRow(title: "Appointments")
+                            Button {
+                                showAppointmentsView = true
+                            } label: {
+                                ProfileMenuRow(title: "Appointments")
+                            }
+                            .buttonStyle(.plain)
                             Button {
 
                                 showPrivacyView = true
@@ -172,8 +183,11 @@ struct UserProfileView: View {
         .fullScreenCover(isPresented: $showSkinGoalsView) {
             SkinGoalView()
         }
-        .fullScreenCover(isPresented: $showRoutineView) {
-            RoutineView()
+        .fullScreenCover(isPresented: $showAppointmentsView) {
+            MyAppointmentsView()
+        }
+        .fullScreenCover(isPresented: $showScanHistoryView) {
+            ScanHistoryView()
         }
     }
 }
