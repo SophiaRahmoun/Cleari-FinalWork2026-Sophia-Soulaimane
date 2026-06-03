@@ -31,6 +31,7 @@ struct RolePickerView: View {
                     style: .body,
                     color: .black
                 )
+                .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
                 HStack(spacing: 70) {

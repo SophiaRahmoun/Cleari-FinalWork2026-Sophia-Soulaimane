@@ -11,6 +11,10 @@ struct DebunkFeedView: View {
     @StateObject private var viewModel = DebunkFeedViewModel()
     @State private var showAddDebunk = false
     @State private var selectedPost: FakeTrendPost?
+    @State private var showProfile = false
+    @State private var showFindDermatologist = false
+    @State private var showScan = false
+    @State private var showCalendar = false
 
     var isDermatologist: Bool = false
 
@@ -25,63 +29,61 @@ struct DebunkFeedView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 0) {
+            ScrollView(showsIndicators: false) {
 
-                ScrollView(showsIndicators: false) {
+                VStack(spacing: 26) {
 
-                    VStack(spacing: 26) {
+                    FeedTopBar(
+                        onExploreTapped: { dismiss() },
+                        onProfileTapped: { showProfile = true },
+                        activeTab: .fakeTrends
+                    )
 
-                        FeedTopBar(
-                            onExploreTapped: {
-                                dismiss()
-                            }
-                        )
+                    filters
 
-                        filters
+                    if isDermatologist {
 
-                        if isDermatologist {
-
-                            AddDebunkButton {
-                                showAddDebunk = true
-                            }
-                            .padding(.horizontal, 80)
+                        AddDebunkButton {
+                            showAddDebunk = true
                         }
+                        .padding(.horizontal, 80)
+                    }
 
-                        if viewModel.isLoading {
+                    if viewModel.isLoading {
 
-                            ProgressView()
-                                .padding(.top, 40)
+                        ProgressView()
+                            .padding(.top, 40)
 
-                        } else {
+                    } else {
 
-                            ForEach(viewModel.posts) { post in
+                        ForEach(viewModel.posts) { post in
 
-                                DebunkPostCard(
-                                    post: post,
-
-                                    onLikeTapped: {
-                                        Task {
-                                            await viewModel.toggleLike(for: post)
-                                        }
-                                    },
-
-                                    onCommentTapped: {
-                                        selectedPost = post
+                            DebunkPostCard(
+                                post: post,
+                                onLikeTapped: {
+                                    Task {
+                                        await viewModel.toggleLike(for: post)
                                     }
-                                )
-                                .padding(.horizontal, 34)
-                            }
+                                },
+                                onCommentTapped: {
+                                    selectedPost = post
+                                }
+                            )
+                            .padding(.horizontal, 34)
                         }
                     }
-                    .padding(.top, 55)
-                    .padding(.bottom, 30)
                 }
-
-                DebunkReplyBar(imageName: "ProfileSample")
-                    .padding(.horizontal, 34)
-                    .padding(.bottom, 14)
-
-                ScanBottomBar()
+                .padding(.top, 20)
+                .padding(.bottom, 30)
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ScanBottomBar(
+                    onHomeTapped: { dismiss() },
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: { showScan = true },
+                    onCalendarTapped: { showCalendar = true }
+                )
+                .padding(.bottom, 8)
             }
         }
         .task {
@@ -89,6 +91,18 @@ struct DebunkFeedView: View {
             await viewModel.fetchPosts()
         }
 
+        .fullScreenCover(isPresented: $showProfile) {
+            UserProfileView()
+        }
+        .fullScreenCover(isPresented: $showFindDermatologist) {
+            FindDermatologistView()
+        }
+        .fullScreenCover(isPresented: $showScan) {
+            CameraCaptureView()
+        }
+        .fullScreenCover(isPresented: $showCalendar) {
+            MyAppointmentsView()
+        }
         .fullScreenCover(isPresented: $showAddDebunk, onDismiss: {
 
             Task {

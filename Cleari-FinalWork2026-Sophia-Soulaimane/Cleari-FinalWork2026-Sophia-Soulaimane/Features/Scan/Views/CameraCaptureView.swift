@@ -10,6 +10,8 @@ import SwiftUI
 struct CameraCaptureView: View {
     @StateObject private var viewModel = ScanViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var showFindDermatologist = false
+    @State private var showCalendar = false
 
     var body: some View {
         ZStack {
@@ -17,22 +19,6 @@ struct CameraCaptureView: View {
                 .ignoresSafeArea()
 
             VStack {
-                HStack {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 24, weight: .medium))
-                            .foregroundColor(.white)
-                            .padding(12)
-                            .background(Color.black.opacity(0.35))
-                            .clipShape(Circle())
-                    }
-                    .padding(.leading, 20)
-                    .padding(.top, 60)
-                    Spacer()
-                }
-
                 Spacer()
 
                 Button {
@@ -47,9 +33,20 @@ struct CameraCaptureView: View {
                                 .frame(width: 62, height: 62)
                         }
                 }
-                .padding(.bottom, 55)
+                .padding(.bottom, 16)
+
+                ScanBottomBar(
+                    onHomeTapped: { dismiss() },
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: nil,
+                    onCalendarTapped: { showCalendar = true },
+                    activeTab: 2
+                )
+                .padding(.bottom, 8)
             }
         }
+        .fullScreenCover(isPresented: $showFindDermatologist) { FindDermatologistView() }
+        .fullScreenCover(isPresented: $showCalendar) { MyAppointmentsView() }
         .onAppear {
             viewModel.checkCameraPermission()
         }
