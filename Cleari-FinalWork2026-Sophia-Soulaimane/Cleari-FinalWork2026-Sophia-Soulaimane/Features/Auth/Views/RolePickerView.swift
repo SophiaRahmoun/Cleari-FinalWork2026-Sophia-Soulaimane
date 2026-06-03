@@ -58,7 +58,8 @@ struct RolePickerView: View {
 
                 AuthBottomLink(
                     text: "already have an account?",
-                    linkText: "Login"
+                    linkText: "Login",
+                    action: onLogin
                 )
                 .padding(.top, 80)
 

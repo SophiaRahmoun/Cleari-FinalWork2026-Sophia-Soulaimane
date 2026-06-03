@@ -40,7 +40,7 @@ struct WelcomeView: View {
                 .padding(.horizontal, 32)
                 .padding(.top, 50)
                 
-                PrimaryButton(title: "Login") {
+                PrimaryButton(title: "LOGIN") {
                     onLogin()
                 }
                 .padding(.horizontal, 32)
