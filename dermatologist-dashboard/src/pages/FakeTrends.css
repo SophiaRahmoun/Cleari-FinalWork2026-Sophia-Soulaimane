@@ -1,0 +1,281 @@
+.ft-page { max-width: 860px; }
+
+.page-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.new-post-btn {
+  padding: 0.65rem 1.25rem;
+  background: var(--grad-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: var(--shadow-lift);
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.3px;
+}
+
+.new-post-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* ── Create form ── */
+.ft-form-card {
+  background: rgba(255,255,255,0.92);
+  border-radius: var(--radius-card);
+  padding: 1.75rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--shadow-lift);
+  border: 1px solid rgba(198,111,140,0.12);
+}
+
+.ft-form-title {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 1.25rem;
+}
+
+.ft-form { display: flex; flex-direction: column; gap: 1rem; }
+
+.ft-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.ft-field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.ft-field label {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--brown);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ft-field input,
+.ft-field textarea,
+.ft-field select {
+  padding: 0.72rem 0.9rem;
+  border: 1.5px solid rgba(198,111,140,0.2);
+  border-radius: var(--radius-btn);
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.88rem;
+  color: var(--dark);
+  background: rgba(244,245,231,0.4);
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ft-field input:focus,
+.ft-field textarea:focus,
+.ft-field select:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(198,111,140,0.1);
+  background: #fff;
+}
+
+.ft-submit-btn {
+  align-self: flex-start;
+  padding: 0.72rem 1.75rem;
+  background: var(--grad-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-lift);
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.3px;
+}
+
+.ft-submit-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+.ft-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── Empty state ── */
+.ft-empty {
+  text-align: center;
+  padding: 3.5rem 1rem;
+  color: #a08090;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  font-family: "gill-sans-nova", sans-serif;
+  font-style: italic;
+}
+
+/* ── Post cards ── */
+.ft-posts { display: flex; flex-direction: column; gap: 1rem; }
+
+.ft-card {
+  background: rgba(255,255,255,0.9);
+  border-radius: var(--radius-card);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(198,111,140,0.08);
+}
+
+.ft-card-top { display: flex; gap: 1rem; align-items: flex-start; }
+
+.ft-card-img {
+  width: 76px;
+  height: 76px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #d4a0b0;
+}
+
+.ft-card-body { flex: 1; min-width: 0; }
+
+.ft-card-tags { display: flex; gap: 0.35rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+
+.ft-tag {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: rgba(167,96,120,0.1);
+  color: var(--rose);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.ft-tag--type { background: rgba(80,120,200,0.08); color: #5a7abf; }
+
+.ft-card-title {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 0.2rem;
+}
+
+.ft-trend-name {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.78rem;
+  color: var(--rose);
+  margin: 0 0 0.4rem;
+}
+
+.ft-tiktok-link {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--pink);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(198,111,140,0.4);
+  transition: color 0.15s;
+}
+
+.ft-tiktok-link:hover { color: var(--rose); }
+
+.ft-expand-btn {
+  margin-top: 0.85rem;
+  background: none;
+  border: none;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pink);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+
+.ft-expand-btn:hover { color: var(--rose); }
+
+.ft-expanded {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(198,111,140,0.12);
+  padding-top: 0.9rem;
+}
+
+.ft-section { display: flex; flex-direction: column; gap: 0.25rem; }
+
+.ft-section p {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.87rem;
+  color: var(--brown);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ft-section--debunk {
+  background: rgba(198,111,140,0.05);
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  border-left: 3px solid rgba(198,111,140,0.3);
+}
+
+.ft-section-label {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--pink);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ft-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(198,111,140,0.1);
+}
+
+.ft-date {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  color: #a08090;
+}
+
+.ft-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ft-author {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  color: var(--rose);
+  font-style: italic;
+}
+
+.ft-delete-btn {
+  background: none;
+  border: 1px solid rgba(200,50,50,0.25);
+  color: #b03030;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.28rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ft-delete-btn:hover { background: rgba(200,50,50,0.07); }
