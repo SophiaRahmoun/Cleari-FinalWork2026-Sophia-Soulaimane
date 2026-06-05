@@ -19,6 +19,22 @@ struct CameraCaptureView: View {
                 .ignoresSafeArea()
 
             VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        viewModel.flipCamera()
+                    } label: {
+                        Image(systemName: "camera.rotate.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.4))
+                            .clipShape(Circle())
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.top, 16)
+                }
+
                 Spacer()
 
                 Button {
