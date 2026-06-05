@@ -17,59 +17,55 @@ struct RoutineProductCard: View {
     @State private var selectedPhoto: PhotosPickerItem?
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             HStack {
                 Spacer()
-
                 Button(action: onDelete) {
                     Image(systemName: "xmark")
-                        .font(.system(size: 22, weight: .medium))
-                        .foregroundColor(.black)
-                        .frame(width: 44, height: 44)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(Color(hex: "1A1018").opacity(0.7))
+                        .frame(width: 36, height: 36)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .zIndex(10)
             }
+            .padding(.horizontal, 10)
+            .padding(.top, 8)
 
-            PhotosPicker(
-                selection: $selectedPhoto,
-                matching: .images
-            ) {
+            PhotosPicker(selection: $selectedPhoto, matching: .images) {
                 productImageView
             }
             .buttonStyle(.plain)
             .onChange(of: selectedPhoto) { newPhoto in
                 Task {
-                    guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else {
-                        return
-                    }
-
+                    guard let data = try? await newPhoto?.loadTransferable(type: Data.self) else { return }
                     onImageChange(data)
                     selectedPhoto = nil
                 }
             }
+            .padding(.horizontal, 12)
 
             TextField(
                 "Product name",
                 text: Binding(
-                    get: {
-                        product.name
-                    },
-                    set: { newValue in
-                        onNameChange(newValue)
-                    }
+                    get: { product.name },
+                    set: { onNameChange($0) }
                 )
             )
-            .font(.system(size: 16))
+            .font(AppFont.gillSwiftUI(.regular, size: 14))
+            .foregroundColor(Color(hex: "1A1018"))
             .multilineTextAlignment(.center)
             .textFieldStyle(.plain)
+            .padding(.horizontal, 8)
+            .padding(.top, 8)
+            .padding(.bottom, 14)
         }
-        .padding()
-        .frame(height: 190)
-        .background(Color.white)
-        .cornerRadius(14)
-        .shadow(radius: 8, x: 0, y: 4)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color(hex: "FDF3EB"))
+        )
+        .shadow(color: Color(hex: "C66F8C").opacity(0.15), radius: 12, x: 0, y: 6)
     }
 
     private var productImageView: some View {
@@ -79,28 +75,28 @@ struct RoutineProductCard: View {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 120, height: 95)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 110)
                     .clipped()
-                    .cornerRadius(8)
+                    .cornerRadius(12)
             } else if let imageUrl = product.imageUrl,
                       let url = URL(string: imageUrl) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
-                            .frame(width: 120, height: 95)
-
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 110)
                     case .success(let image):
                         image
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 120, height: 95)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 110)
                             .clipped()
-                            .cornerRadius(8)
-
+                            .cornerRadius(12)
                     case .failure:
                         placeholderImage
-
                     @unknown default:
                         placeholderImage
                     }
@@ -112,14 +108,19 @@ struct RoutineProductCard: View {
     }
 
     private var placeholderImage: some View {
-        Rectangle()
-            .fill(Color.gray.opacity(0.15))
-            .frame(width: 120, height: 95)
-            .cornerRadius(8)
+        RoundedRectangle(cornerRadius: 12)
+            .fill(Color(hex: "C66F8C").opacity(0.12))
+            .frame(maxWidth: .infinity)
+            .frame(height: 110)
             .overlay {
-                Image(systemName: "photo")
-                    .font(.system(size: 30))
-                    .foregroundColor(.gray)
+                VStack(spacing: 6) {
+                    Image(systemName: "camera")
+                        .font(.system(size: 22, weight: .light))
+                        .foregroundColor(Color(hex: "C66F8C").opacity(0.7))
+                    Text("Add photo")
+                        .font(AppFont.gillSwiftUI(.regular, size: 12))
+                        .foregroundColor(Color(hex: "C66F8C").opacity(0.7))
+                }
             }
     }
 }
