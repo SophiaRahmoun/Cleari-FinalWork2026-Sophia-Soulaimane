@@ -17,16 +17,17 @@ struct YourSkinHistoryView: View {
             VStack(spacing: 0) {
                 header
 
-                VStack(alignment: .leading, spacing: 34) {
-                    questionFour
-                    questionFive
-                    questionSix
-                    questionSeven
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 34) {
+                        questionFour
+                        questionFive
+                        questionSix
+                        questionSeven
+                    }
+                    .padding(.horizontal, 42)
+                    .padding(.top, 58)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 42)
-                .padding(.top, 58)
-
-                Spacer()
 
                 PrimaryButton(title: "NEXT") {
                     viewModel.goToNextStep()

@@ -83,7 +83,7 @@ struct KnowYourSkinView: View {
                     viewModel.formData.skinFeeling = "Dry / Tight"
                 } label: {
                     FormImageChoiceRow(
-                        imageName: "skin_dry",
+                        imageName: "sun.max",
                         title: "Dry/ Tight",
                         isSelected: viewModel.formData.skinFeeling == "Dry / Tight"
                     )
@@ -93,7 +93,7 @@ struct KnowYourSkinView: View {
                     viewModel.formData.skinFeeling = "Comfortable"
                 } label: {
                     FormImageChoiceRow(
-                        imageName: "skin_comfortable",
+                        imageName: "sparkles",
                         title: "Comfortable",
                         isSelected: viewModel.formData.skinFeeling == "Comfortable"
                     )
@@ -103,7 +103,7 @@ struct KnowYourSkinView: View {
                     viewModel.formData.skinFeeling = "Shiny on T-zone"
                 } label: {
                     FormImageChoiceRow(
-                        imageName: "skin_shiny_tzone",
+                        imageName: "drop.halffull",
                         title: "Shiny\non T-zone",
                         isSelected: viewModel.formData.skinFeeling == "Shiny on T-zone"
                     )
@@ -113,7 +113,7 @@ struct KnowYourSkinView: View {
                     viewModel.formData.skinFeeling = "Shiny all over"
                 } label: {
                     FormImageChoiceRow(
-                        imageName: "skin_shiny_all",
+                        imageName: "drop.fill",
                         title: "Shiny\nall over",
                         isSelected: viewModel.formData.skinFeeling == "Shiny all over"
                     )

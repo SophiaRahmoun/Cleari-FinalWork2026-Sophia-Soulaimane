@@ -19,16 +19,17 @@ struct YourSkinTodayView: View {
             VStack(spacing: 0) {
                 header
 
-                VStack(alignment: .leading, spacing: 58) {
-                    questionEight
-                    questionNine
-                    pronounsQuestion
-                    privacyChecks
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 58) {
+                        questionEight
+                        questionNine
+                        pronounsQuestion
+                        privacyChecks
+                    }
+                    .padding(.horizontal, 42)
+                    .padding(.top, 65)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 42)
-                .padding(.top, 65)
-
-                Spacer()
 
                 SecondaryButton(title: viewModel.isLoading ? "SAVING..." : "CONFIRM") {
                     Task {
