@@ -149,7 +149,8 @@ final class AuthViewModel: ObservableObject {
         password: String,
         specialization: String?,
         conventionStatus: String?,
-        inamiNumber: String?
+        inamiNumber: String?,
+        pronouns: String?
     ) async {
         isLoading = true
         errorMessage = nil
@@ -171,7 +172,8 @@ final class AuthViewModel: ObservableObject {
                 password: password,
                 specialization: specialization,
                 conventionStatus: conventionStatus,
-                inamiNumber: inamiNumber
+                inamiNumber: inamiNumber,
+                pronouns: pronouns
             )
 
             TokenStorage.shared.token = response.token

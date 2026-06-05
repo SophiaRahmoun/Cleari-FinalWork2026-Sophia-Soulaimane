@@ -31,11 +31,6 @@ struct DermatologistCard: View {
                     } else {
                         Text("Brussels")
                     }
-
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                        Text("Verified")
-                    }
                 }
                 .font(AppFont.gillSwiftUI(.regular, size: 14))
                 .foregroundColor(.white)
