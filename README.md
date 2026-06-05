@@ -26,11 +26,12 @@ A mobile iOS app that combines AI skin analysis, verified dermatologists, and co
 
 ## Live Deployments
 
-| Service               | URL                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Admin Dashboard       | [sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane](https://sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane/)         |
-| Dermatologist Panel   | [cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com](https://cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com)                      |
-| Backend API           | [cleari-finalwork2026-sophia-soulaimane.onrender.com](https://cleari-finalwork2026-sophia-soulaimane.onrender.com)                                |
+| Service                  | URL                                                                                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Dermatologist Dashboard  | [sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane](https://sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane/)         |
+| Dermatologist Dashboard  | [cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com](https://cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com) *(Render mirror)*    |
+| Backend API              | [cleari-finalwork2026-sophia-soulaimane.onrender.com](https://cleari-finalwork2026-sophia-soulaimane.onrender.com)                                |
+| Admin Dashboard          | `localhost:3000` — run locally (see Getting Started below)                                                                                       |
 
 ### Test Credentials
 
@@ -71,24 +72,18 @@ npm run dev
 
 > The dermatologist dashboard is also deployed via GitHub Pages.
 
-### Admin Panel
+### Admin Dashboard
 
-The admin panel is a standalone HTML/JS app — no build step needed.
+The admin dashboard is a standalone HTML/JS app — no build step, no deployment. It runs locally only.
 
-**Option A — open directly in browser (recommended):**
-```
-admin/index.html → double-click to open
-```
-It connects directly to the production backend on Render.
-
-**Option B — run with a local server:**
 ```bash
 cd admin
 npx serve .
-# then open http://localhost:3000
 ```
 
-Login with the admin credentials above (`drsmith@test.com` / `123456`).
+Then open **http://localhost:3000** in your browser.
+
+> The admin dashboard connects directly to the production backend on Render — make sure you have internet access.
 
 ### iOS Frontend
 
