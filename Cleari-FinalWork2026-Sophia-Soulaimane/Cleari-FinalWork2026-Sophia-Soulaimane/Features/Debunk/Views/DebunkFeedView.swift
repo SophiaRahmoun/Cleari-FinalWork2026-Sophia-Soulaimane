@@ -77,13 +77,15 @@ struct DebunkFeedView: View {
                 .padding(.bottom, 30)
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                ScanBottomBar(
-                    onHomeTapped: { dismiss() },
-                    onFindDermatologistTapped: { showFindDermatologist = true },
-                    onScanTapped: { showScan = true },
-                    onCalendarTapped: { showCalendar = true }
-                )
-                .padding(.bottom, 8)
+                if !isDermatologist {
+                    ScanBottomBar(
+                        onHomeTapped: { dismiss() },
+                        onFindDermatologistTapped: { showFindDermatologist = true },
+                        onScanTapped: { showScan = true },
+                        onCalendarTapped: { showCalendar = true }
+                    )
+                    .padding(.bottom, 8)
+                }
             }
         }
         .task {
