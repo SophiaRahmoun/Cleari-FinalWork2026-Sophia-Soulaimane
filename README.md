@@ -9,13 +9,35 @@ A mobile iOS app that combines AI skin analysis, verified dermatologists, and co
 
 ## Tech Stack
 
-| Layer        | Tech                     |
-| ------------ | ------------------------ |
-| iOS Frontend | SwiftUI (MVVM)           |
-| Backend      | Node.js + Express.js     |
-| Database     | MySQL + Sequelize        |
-| Auth         | JWT + Bcrypt             |
-| AI Analysis  | YouCam Skin Analysis API |
+| Layer              | Tech                     |
+| ------------------ | ------------------------ |
+| iOS Frontend       | SwiftUI (MVVM)           |
+| Backend            | Node.js + Express.js     |
+| Database           | MySQL + Sequelize        |
+| Auth               | JWT + Bcrypt             |
+| AI Analysis        | YouCam Skin Analysis API |
+| Image Storage      | Cloudinary               |
+| Payments           | Stripe                   |
+| Hosting (DB)       | Combell + phpMyAdmin     |
+| Hosting (Backend)  | Render                   |
+| Admin Dashboard    | GitHub Pages + Render    |
+
+---
+
+## Live Deployments
+
+| Service               | URL                                                                                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Admin Dashboard       | [sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane](https://sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane/)         |
+| Dermatologist Panel   | [cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com](https://cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com)                      |
+| Backend API           | [cleari-finalwork2026-sophia-soulaimane.onrender.com](https://cleari-finalwork2026-sophia-soulaimane.onrender.com)                                |
+
+### Test Credentials
+
+| Role          | Email                                      | Password |
+| ------------- | ------------------------------------------ | -------- |
+| User          | rayan@gmail.com                            | testtest |
+| Dermatologist | HaliouiSaid@cleari.com *(case-sensitive)*  | 123456   |
 
 ---
 
@@ -38,6 +60,16 @@ npm install
 npm run dev
 ```
 
+### Dermatologist Dashboard
+
+```bash
+cd dermatologist-dashboard
+npm install
+npm run dev
+```
+
+> The dermatologist dashboard is also deployed via GitHub Pages.
+
 ### iOS Frontend
 
 1. Open `Cleari.xcodeproj` in Xcode
@@ -45,6 +77,49 @@ npm run dev
 3. Hit **Run** (⌘R)
 
 > Make sure the backend is running before launching the app.
+
+---
+
+## Backend Environment Variables
+
+Create a `.env` file in the `backend/` folder with the following variables:
+
+```env
+PORT=
+
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+
+JWT_SECRET=
+JWT_EXPIRES_IN=7d
+
+YOUCAM_API_KEY=
+YOUCAM_BASE_URL=
+
+USE_MOCK_SKIN_SCAN=true
+
+STRIPE_SECRET_KEY=
+STRIPE_PRICE_MONTHLY=
+CLIENT_SUCCESS_URL=
+CLIENT_CANCEL_URL=
+STRIPE_WEBHOOK_SECRET=
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
+
+---
+
+## External API Dependencies
+
+| Service    | Purpose                               | Docs                                                                                 |
+| ---------- | ------------------------------------- | ------------------------------------------------------------------------------------ |
+| YouCam     | AI skin scan (acne, pores, texture…)  | [yce.perfectcorp.com](https://yce.perfectcorp.com/ai-api/products/skin-analysis-api) |
+| Cloudinary | Image storage (scans, profile pics…)  | [cloudinary.com](https://cloudinary.com/)                                            |
+| Stripe     | Dermatologist subscription & payments | [docs.stripe.com](https://docs.stripe.com/billing/quickstart)                        |
 
 ---
 
@@ -60,6 +135,26 @@ npm run dev
 * **Fake Trend Debunker** — dermatologists can link TikTok trends and share their professional opinion on them
 * **Subscription (Stripe)** — dermatologists are compensated based on their activity through a Stripe-powered subscription model
 * **Role-based Auth** — separate flows and permissions for users and dermatologists
+
+---
+
+## AI Prompt Logs (docs/)
+
+All Claude and ChatGPT prompts used during development are saved in the `docs/` folder, split by contributor:
+
+```
+docs/
+├── sophia-session-logs/       # All sessions and prompts from Sophia
+└── soulaimane-session-logs/   # All sessions and prompts from Soulaimane
+```
+
+Each `.md` file in those folders documents a working session — what was built, discussed, or fixed with AI assistance.
+
+### AI Session References
+
+* **ChatGPT project (Sophia)** — [chatgpt.com/g/g-p-69908e48...](https://chatgpt.com/g/g-p-69908e4852a481919a37686b243c3239)
+* **Claude session 1** — [claude.ai/share/c96f9c5c...](https://claude.ai/share/c96f9c5c-f166-4a2a-b7f6-74a7a5d7cefb)
+* **Claude session 2** — [claude.ai/share/5acd3da1...](https://claude.ai/share/5acd3da1-3eeb-4359-aeb1-f1cb3c3799d0)
 
 ---
 
@@ -117,4 +212,3 @@ npm run dev
 
 **Soulaimane Saadi** & **Sophia Kenza Rahmoun**
 Bachelor's Thesis — 2025–2026
-
