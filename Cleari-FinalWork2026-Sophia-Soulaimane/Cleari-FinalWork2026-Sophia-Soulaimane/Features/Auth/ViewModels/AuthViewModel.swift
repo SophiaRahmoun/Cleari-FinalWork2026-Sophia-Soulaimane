@@ -13,101 +13,194 @@ final class AuthViewModel: ObservableObject {
     @Published var isLoggedIn = false
     @Published var isLoading = false
     @Published var errorMessage: String?
+
+    var isPendingDermatologist: Bool {
+        currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "pending"
+    }
+
+    var isApprovedDermatologist: Bool {
+        currentUser?.role == "dermatologist" && currentUser?.dermatologistProfile?.verificationStatus == "approved"
+    }
     
-    func login (email: String, password: String) async{
+    // Called on app launch when a token already exists in storage.
+    // Returns the AppRoute to navigate to, or nil if token is invalid.
+    func validateSession() async -> AppRoute? {
+        guard TokenStorage.shared.token != nil else { return nil }
+
         isLoading = true
-        errorMessage = nil
-        
+        defer { isLoading = false }
+
         do {
-            let response: AuthResponse = try await post(
-                endpoint: "/auth/login",
-                body: LoginRequest(email: email, password: password)
-            )
-            print("LOGIN SUCCESS:", response.user.email)
-            
-            TokenStorage.shared.token = response.token
-            currentUser = response.user
+            let user = try await AuthAPIService.shared.fetchMe()
+            currentUser = user
             isLoggedIn = true
+
+            TokenStorage.shared.userRole = user.role
+            TokenStorage.shared.userId = user.id
+            TokenStorage.shared.hasCompletedSkinForm = user.hasCompletedSkinForm
+
+            if user.role == "dermatologist" {
+                TokenStorage.shared.dermVerificationStatus = user.dermatologistProfile?.verificationStatus
+                let status = user.dermatologistProfile?.verificationStatus ?? "pending"
+                return status == "approved" ? .userHome : .dermPending
+            } else {
+                return user.hasCompletedSkinForm ? .userHome : .consultationForm
+            }
         } catch {
-            errorMessage = error.localizedDescription
+            // Only revoke the token for genuine auth failures (401/403).
+            // Network errors (timeout, server sleeping) must NOT clear the token —
+            // the user should stay logged in and we fall back to cached data.
+            let code = (error as NSError).code
+            let isAuthError = code == 401 || code == 403
+
+            if isAuthError {
+                TokenStorage.shared.clear()
+                isLoggedIn = false
+                currentUser = nil
+                return nil
+            }
+
+            // Network/server error: navigate using cached TokenStorage values
+            isLoggedIn = true
+            let role = TokenStorage.shared.userRole ?? ""
+            if role == "dermatologist" {
+                let status = TokenStorage.shared.dermVerificationStatus ?? "pending"
+                return status == "approved" ? .userHome : .dermPending
+            } else {
+                return TokenStorage.shared.hasCompletedSkinForm ? .userHome : .consultationForm
+            }
         }
-        
-        isLoading = false
     }
-    
-    func registerUser(firstName: String, lastName: String, email: String, password: String) async {
+
+    func login(email: String, password: String) async {
         isLoading = true
         errorMessage = nil
-                
+
+        defer {
+            isLoading = false
+        }
+
         do {
-            print("REGISTER REQUEST SENT")
-            let response: AuthResponse = try await post(
-                endpoint: "/auth/register-user",
-                body: RegisterUserRequest(
-                    username: "\(firstName) \(lastName)",
-                    email: email,
-                    password: password
-                )
+            let response = try await AuthAPIService.shared.login(
+                email: email,
+                password: password
             )
-            print("REGISTER RESPONSE RECEIVED:", response)
-            
+
             TokenStorage.shared.token = response.token
+            TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
+            TokenStorage.shared.dermVerificationStatus = response.user.dermatologistProfile?.verificationStatus
+            TokenStorage.shared.hasCompletedSkinForm = response.user.hasCompletedSkinForm
+
             currentUser = response.user
             isLoggedIn = true
-            print("IS LOGGED IN SET TO TRUE")
+
+            print("LOGIN SUCCESS:", response.user.email)
         } catch {
-                  errorMessage = error.localizedDescription
-              }
-              isLoading = false
-          }
-    
-    func registerDermatologist(firstName: String, lastName: String, email: String, password: String) async {
-        isLoading = true
-        errorMessage = nil
-        
-        do {
-            let response: AuthResponse = try await post(
-                           endpoint: "/auth/register-dermatologist",
-                           body: RegisterDermatologistRequest(
-                               username: "\(firstName) \(lastName)",
-                               email: email,
-                               password: password,
-                               specialization: "Dermatology",
-                               license_number: nil,
-                               bio: nil
-                           )
-                       )
-
-                       TokenStorage.shared.token = response.token
-                       currentUser = response.user
-                       isLoggedIn = true
-
-                   } catch {
-
-                       errorMessage = error.localizedDescription
-
-                   }
-
-                   isLoading = false
+            isLoggedIn = false
+            currentUser = nil
+            errorMessage = cleanError(error.localizedDescription)
+        }
     }
 
-          private func post<T: Codable, U: Codable>(endpoint: String, body: T) async throws -> U {
-              guard let url = URL(string: APIConfig.baseURL + endpoint) else {
-                  throw URLError(.badURL)
-              }
+    func registerUser(
+        firstName: String,
+        lastName: String,
+        username: String,
+        email: String,
+        password: String
+    ) async {
+        isLoading = true
+        errorMessage = nil
 
-              var request = URLRequest(url: url)
-              request.httpMethod = "POST"
-              request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-              request.httpBody = try JSONEncoder().encode(body)
-              
-              let (data, response) = try await URLSession.shared.data(for: request)
-              
-              guard let httpResponse = response as? HTTPURLResponse,
-                    200..<300 ~= httpResponse.statusCode else {
-                  let backendError = String(data: data, encoding: .utf8) ?? "Unknown error"
-                  throw NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: backendError])
-              }
-              return try JSONDecoder().decode(U.self, from: data)
-          }
-      }
+        defer {
+            isLoading = false
+        }
+
+        do {
+            let response = try await AuthAPIService.shared.registerUser(
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                email: email,
+                password: password
+            )
+
+            TokenStorage.shared.token = response.token
+            TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
+            TokenStorage.shared.hasCompletedSkinForm = false
+
+            currentUser = response.user
+            isLoggedIn = true
+
+            print("USER REGISTER SUCCESS:", response.user.email)
+        } catch {
+            isLoggedIn = false
+            currentUser = nil
+            errorMessage = cleanError(error.localizedDescription)
+        }
+    }
+
+    func registerDermatologist(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String,
+        specialization: String?,
+        conventionStatus: String?,
+        inamiNumber: String?
+    ) async {
+        isLoading = true
+        errorMessage = nil
+
+        defer {
+            isLoading = false
+        }
+
+        do {
+            let base = "\(firstName.lowercased()).\(lastName.lowercased())"
+                .replacingOccurrences(of: " ", with: "")
+            let username = base.isEmpty ? email : base
+
+            let response = try await AuthAPIService.shared.registerDermatologist(
+                firstName: firstName,
+                lastName: lastName,
+                username: username,
+                email: email,
+                password: password,
+                specialization: specialization,
+                conventionStatus: conventionStatus,
+                inamiNumber: inamiNumber
+            )
+
+            TokenStorage.shared.token = response.token
+            TokenStorage.shared.userRole = response.user.role
+            TokenStorage.shared.userId = response.user.id
+
+            currentUser = response.user
+            isLoggedIn = true
+
+            TokenStorage.shared.dermVerificationStatus = response.user.dermatologistProfile?.verificationStatus ?? "pending"
+
+            print("DERMATOLOGIST REGISTER SUCCESS:", response.user.email)
+        } catch {
+            isLoggedIn = false
+            currentUser = nil
+            errorMessage = cleanError(error.localizedDescription)
+        }
+    }
+
+    func logout() {
+        TokenStorage.shared.clear()
+        currentUser = nil
+        isLoggedIn = false
+        errorMessage = nil
+    }
+
+    private func cleanError(_ message: String) -> String {
+        message
+            .replacingOccurrences(of: "{\"message\":\"", with: "")
+            .replacingOccurrences(of: "\"}", with: "")
+    }
+}

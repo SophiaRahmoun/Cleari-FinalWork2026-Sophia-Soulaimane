@@ -6,47 +6,66 @@
 //
 
 import Foundation
-
 struct AuthResponse: Codable {
-    let message: String
+    let message: String?
     let token: String
     let user: AuthUser
 }
 
-struct AuthUser: Codable {
+struct AuthUser: Codable, Identifiable {
     let id: Int
     let username: String
     let email: String
     let role: String
+    let skinType: String?
+    let dermatologistProfile: AuthDermatologistProfile?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case email
+        case role
+        case skinType = "skin_type"
+        case dermatologistProfile
+    }
+
+    var hasCompletedSkinForm: Bool { skinType != nil }
+}
+
+struct MeResponse: Codable {
+    let user: AuthUser
+}
+struct AuthDermatologistProfile: Codable {
+    let id: Int?
+    let verified: Bool?
+    let verificationStatus: String?
+    enum CodingKeys: String, CodingKey {
+        case id
+        case verified
+        case verificationStatus = "verification_status"
+    }
 }
 
 struct LoginRequest: Codable {
-
     let email: String
     let password: String
-
 }
 
 struct RegisterUserRequest: Codable {
-
+    let first_name: String
+    let last_name: String
     let username: String
     let email: String
     let password: String
-
 }
 
 struct RegisterDermatologistRequest: Codable {
-
+    let first_name: String
+    let last_name: String
     let username: String
-
     let email: String
-
     let password: String
-
     let specialization: String?
-
-    let license_number: String?
-
-    let bio: String?
-
+    let convention_status: String?
+    let inami_number: String?
 }

@@ -8,32 +8,56 @@
 import SwiftUI
 
 struct PostActionsRow: View {
+    let likesCount: Int
+    let isLiked: Bool
+    let onLikeTapped: () -> Void
+    let commentsCount: Int
+    let onCommentTapped: () -> Void
+
+    private let dark = Color(hex: "1A1018")
+    private let pink = Color(hex: "C66F8C")
+
     var body: some View {
-        HStack(spacing: 32) {
-            
-            HStack(spacing: 6) {
-                Image(systemName: "heart")
-                Text("30")
+        HStack(spacing: 22) {
+            // Like
+            Button { onLikeTapped() } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: isLiked ? "heart.fill" : "heart")
+                        .font(.system(size: 15))
+                        .foregroundColor(isLiked ? pink : dark.opacity(0.6))
+                    Text("\(likesCount)")
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(dark.opacity(0.65))
+                }
             }
-            
-            HStack(spacing: 6) {
-                Image(systemName: "bubble.right")
-                Text("14")
+            .buttonStyle(.plain)
+
+            // Comment
+            Button { onCommentTapped() } label: {
+                HStack(spacing: 5) {
+                    Image(systemName: "bubble.right")
+                        .font(.system(size: 15))
+                        .foregroundColor(dark.opacity(0.6))
+                    Text("\(commentsCount)")
+                        .font(AppFont.gillSwiftUI(.regular, size: 14))
+                        .foregroundColor(dark.opacity(0.65))
+                }
             }
-            
-            HStack(spacing: 6) {
+            .buttonStyle(.plain)
+
+            // Share (static)
+            HStack(spacing: 5) {
                 Image(systemName: "arrowshape.turn.up.right")
-                Text("1")
+                    .font(.system(size: 15))
+                    .foregroundColor(dark.opacity(0.6))
+                Text("0")
+                    .font(AppFont.gillSwiftUI(.regular, size: 14))
+                    .foregroundColor(dark.opacity(0.65))
             }
-            
+
             Spacer()
         }
-        .font(.subheadline)
-        .foregroundColor(.primary)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 4)
     }
-}
-
-#Preview {
-    PostActionsRow()
 }

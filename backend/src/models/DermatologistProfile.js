@@ -13,12 +13,32 @@ const DermatologistProfile = sequelize.define("DermatologistProfile", {
     allowNull: false,
   },
 
+  first_name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  postal_code: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  city: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
   bio: {
     type: DataTypes.TEXT,
     allowNull: true,
   },
 
   specialization: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+
+  inami_number: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -37,6 +57,10 @@ const DermatologistProfile = sequelize.define("DermatologistProfile", {
     type: DataTypes.ENUM("pending", "approved", "rejected"),
     allowNull: false,
     defaultValue: "pending",
+  },
+  verification_notes: {
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
 
   verified: {

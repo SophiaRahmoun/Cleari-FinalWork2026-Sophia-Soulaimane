@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cleari</title>
+    <link rel="stylesheet" href="https://use.typekit.net/cze2hbj.css" />
+    <script>
+      (function() {
+        var p = window.location.search.slice(1);
+        if (p.indexOf('p=/') === 0) {
+          var path = p.replace(/^p=/, '').replace(/~and~/g, '&').split('&q=');
+          window.history.replaceState(null, null,
+            window.location.pathname.split('/').slice(0, 2).join('/') +
+            path[0] + (path[1] ? '?' + path[1] : '') + window.location.hash
+          );
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

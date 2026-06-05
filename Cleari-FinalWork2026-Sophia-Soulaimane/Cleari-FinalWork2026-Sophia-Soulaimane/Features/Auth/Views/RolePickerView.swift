@@ -31,6 +31,7 @@ struct RolePickerView: View {
                     style: .body,
                     color: .black
                 )
+                .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
                 HStack(spacing: 70) {
@@ -58,7 +59,8 @@ struct RolePickerView: View {
 
                 AuthBottomLink(
                     text: "already have an account?",
-                    linkText: "Login"
+                    linkText: "Login",
+                    action: onLogin
                 )
                 .padding(.top, 80)
 
@@ -66,8 +68,4 @@ struct RolePickerView: View {
             }
         }
     }
-}
-
-#Preview {
-    RolePickerView()
 }

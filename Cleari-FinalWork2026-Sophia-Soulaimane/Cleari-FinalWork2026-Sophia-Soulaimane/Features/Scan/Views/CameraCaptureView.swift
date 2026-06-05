@@ -9,6 +9,9 @@ import SwiftUI
 
 struct CameraCaptureView: View {
     @StateObject private var viewModel = ScanViewModel()
+    @Environment(\.dismiss) private var dismiss
+    @State private var showFindDermatologist = false
+    @State private var showCalendar = false
 
     var body: some View {
         ZStack {
@@ -16,6 +19,22 @@ struct CameraCaptureView: View {
                 .ignoresSafeArea()
 
             VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        viewModel.flipCamera()
+                    } label: {
+                        Image(systemName: "camera.rotate.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.white)
+                            .padding(12)
+                            .background(Color.black.opacity(0.4))
+                            .clipShape(Circle())
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.top, 16)
+                }
+
                 Spacer()
 
                 Button {
@@ -30,17 +49,33 @@ struct CameraCaptureView: View {
                                 .frame(width: 62, height: 62)
                         }
                 }
-                .padding(.bottom, 55)
+                .padding(.bottom, 16)
+
+                ScanBottomBar(
+                    onHomeTapped: { dismiss() },
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: nil,
+                    onCalendarTapped: { showCalendar = true },
+                    activeTab: 2
+                )
+                .padding(.bottom, 8)
             }
         }
+        .fullScreenCover(isPresented: $showFindDermatologist) { FindDermatologistView() }
+        .fullScreenCover(isPresented: $showCalendar) { MyAppointmentsView() }
         .onAppear {
             viewModel.checkCameraPermission()
         }
         .onDisappear {
             viewModel.stopCamera()
         }
-        .fullScreenCover(item: $viewModel.scanImage) { image in
-            ScanResultView(scanImage: image)
+        .fullScreenCover(isPresented: Binding(
+            get: { viewModel.scanImage != nil },
+            set: { if !$0 { viewModel.scanImage = nil } }
+        )) {
+            if let image = viewModel.scanImage {
+                ScanResultView(scanImage: image)
+            }
         }
     }
 }

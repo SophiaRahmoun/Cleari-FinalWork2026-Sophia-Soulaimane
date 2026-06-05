@@ -44,32 +44,24 @@ struct LoginView: View {
                
                 
                 PrimaryButton(title: viewModel.isLoading ? "LOADING..." : "NEXT STEP") {
-
                     Task {
-
                         await viewModel.login(email: email, password: password)
-                    }
-                    if viewModel.isLoggedIn {
-                        onSuccess()
+                        if viewModel.isLoggedIn {
+                            onSuccess()
+                        }
                     }
                 }
 
                 .padding(.top, 20)
-
                 if let error = viewModel.errorMessage {
-
                     Text(error)
-
                         .font(.caption)
-
                         .foregroundColor(.red)
 
                 }
 
                 if viewModel.isLoggedIn {
-
                     Text("Login successful")
-
                         .foregroundColor(.green)
 
                 }
@@ -81,11 +73,13 @@ struct LoginView: View {
                         color: .black
                     )
 
-                    TypographyLabel(
-                        text: "Sign up",
-                        style: .button,
-                        color: .black
-                    )
+                    Button(action: { onRegister() }) {
+                        TypographyLabel(
+                            text: "Sign up",
+                            style: .button,
+                            color: .black
+                        )
+                    }
                 }
 
                 Spacer()

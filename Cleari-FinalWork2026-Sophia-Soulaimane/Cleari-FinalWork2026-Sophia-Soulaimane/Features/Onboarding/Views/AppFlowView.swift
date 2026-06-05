@@ -13,14 +13,47 @@ enum AppRoute: Hashable {
     case rolePicker
     case userRegister
     case dermatologistRegister
+    case dermPending
     case consultationForm
+    case userHome
     case scan
 }
 
 struct AppFlowView: View {
+    @StateObject private var authViewModel = AuthViewModel()
     @State private var path = NavigationPath()
+    @State private var isCheckingSession = true
 
     var body: some View {
+        Group {
+            if isCheckingSession {
+                sessionCheckView
+            } else {
+                navigationStack
+            }
+        }
+        .task {
+            await checkExistingSession()
+        }
+    }
+
+    // Minimal splash shown while validating a stored token
+    private var sessionCheckView: some View {
+        ZStack {
+            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
+                .ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image("Cleari_Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 160)
+                ProgressView()
+                    .tint(Color(hex: "1A1018"))
+            }
+        }
+    }
+
+    private var navigationStack: some View {
         NavigationStack(path: $path) {
             WelcomeView {
                 path.append(AppRoute.login)
@@ -29,6 +62,7 @@ struct AppFlowView: View {
             }
             .navigationDestination(for: AppRoute.self) { route in
                 switch route {
+
                 case .welcome:
                     WelcomeView {
                         path.append(AppRoute.login)
@@ -38,7 +72,22 @@ struct AppFlowView: View {
 
                 case .login:
                     LoginView {
-                        path.append(AppRoute.consultationForm)
+                        path = NavigationPath()
+                        if TokenStorage.shared.userRole == "dermatologist" {
+                            let status = TokenStorage.shared.dermVerificationStatus ?? "pending"
+                            if status == "approved" {
+                                path.append(AppRoute.userHome)
+                            } else {
+                                path.append(AppRoute.dermPending)
+                            }
+                        } else {
+                            // Returning user: skip form if already completed
+                            if TokenStorage.shared.hasCompletedSkinForm {
+                                path.append(AppRoute.userHome)
+                            } else {
+                                path.append(AppRoute.consultationForm)
+                            }
+                        }
                     } onRegister: {
                         path.append(AppRoute.rolePicker)
                     }
@@ -56,7 +105,7 @@ struct AppFlowView: View {
 
                 case .userRegister:
                     UserRegisterView {
-                        print("REGISTER SUCCESS → GO TO FORM")
+                        print("USER REGISTER SUCCESS → GO TO FORM")
                         path = NavigationPath()
                         path.append(AppRoute.consultationForm)
                     } onBack: {
@@ -65,16 +114,47 @@ struct AppFlowView: View {
 
                 case .dermatologistRegister:
                     DermatologistRegisterView {
-                        path.append(AppRoute.scan)
+                        path = NavigationPath()
+                        path.append(AppRoute.dermPending)
+                    }
+
+                case .dermPending:
+                    DermatologistPendingApprovalView {
+                        authViewModel.logout()
                     }
 
                 case .consultationForm:
-                    ConsultationFormView()
+                    ConsultationFormView {
+                        TokenStorage.shared.hasCompletedSkinForm = true
+                        path = NavigationPath()
+                        path.append(AppRoute.userHome)
+                    }
+
+                case .userHome:
+                    UserHomeShellView()
+                        .environmentObject(authViewModel)
 
                 case .scan:
                     CameraCaptureView()
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .didLogout)) { _ in
+                path = NavigationPath()
+            }
         }
+    }
+
+    private func checkExistingSession() async {
+        guard TokenStorage.shared.token != nil else {
+            isCheckingSession = false
+            return
+        }
+
+        if let destination = await authViewModel.validateSession() {
+            path = NavigationPath()
+            path.append(destination)
+        }
+
+        isCheckingSession = false
     }
 }

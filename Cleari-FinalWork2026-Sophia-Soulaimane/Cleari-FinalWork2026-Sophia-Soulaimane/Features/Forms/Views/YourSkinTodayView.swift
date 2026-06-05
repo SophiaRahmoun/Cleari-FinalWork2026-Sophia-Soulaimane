@@ -9,6 +9,7 @@ import SwiftUI
 
 struct YourSkinTodayView: View {
     @ObservedObject var viewModel: ConsultationFormViewModel
+    let onFinished: () -> Void
 
     var body: some View {
         ZStack {
@@ -21,6 +22,7 @@ struct YourSkinTodayView: View {
                 VStack(alignment: .leading, spacing: 58) {
                     questionEight
                     questionNine
+                    pronounsQuestion
                     privacyChecks
                 }
                 .padding(.horizontal, 42)
@@ -31,6 +33,10 @@ struct YourSkinTodayView: View {
                 SecondaryButton(title: viewModel.isLoading ? "SAVING..." : "CONFIRM") {
                     Task {
                         await viewModel.submitForm()
+
+                        if viewModel.errorMessage == nil {
+                            onFinished()
+                        }
                     }
                 }
                 .disabled(!viewModel.canSubmit || viewModel.isLoading)
@@ -122,6 +128,33 @@ extension YourSkinTodayView {
                     isSelected: viewModel.formData.wantsPhotoUpload == false
                 )
             }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+extension YourSkinTodayView {
+    private var pronounsQuestion: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("10)   How would you like to be referred to?")
+                .font(AppFont.gillSwiftUI(.regular, size: 15))
+                .foregroundColor(Color(hex: "1A1018"))
+
+            HStack(spacing: 12) {
+                pronounButton("she/her")
+                pronounButton("he/him")
+            }
+        }
+    }
+
+    private func pronounButton(_ value: String) -> some View {
+        Button {
+            viewModel.formData.pronouns = value
+        } label: {
+            FormChoicePill(
+                title: value,
+                isSelected: viewModel.formData.pronouns == value
+            )
         }
         .buttonStyle(.plain)
     }

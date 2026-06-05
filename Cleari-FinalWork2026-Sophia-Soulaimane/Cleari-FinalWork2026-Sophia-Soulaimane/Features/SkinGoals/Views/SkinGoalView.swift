@@ -10,18 +10,15 @@ import SwiftUI
 struct SkinGoalView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State private var aboutUser = ""
-    @State private var selectedSkinGoals: Set<String> = [
-        "Hydrated skin",
-        "Reduce acne",
-        "Smooth texture",
-        "Reduce hyperpigmentation"
-    ]
+    @StateObject private var viewModel = SkinGoalViewModel()
 
     var body: some View {
         ZStack {
-            LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
-                .ignoresSafeArea()
+            LinearGradientBackground(
+                startHex: "C66F8C",
+                endHex: "F9BDB9"
+            )
+            .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 34) {
@@ -37,10 +34,14 @@ struct SkinGoalView: View {
                 .padding(.bottom, 45)
             }
         }
+        .task {
+            await viewModel.fetchSkinGoals()
+        }
     }
 }
 
 extension SkinGoalView {
+
     private var header: some View {
         ZStack {
             HStack {
@@ -67,7 +68,7 @@ extension SkinGoalView {
                 .font(AppFont.gillSwiftUI(.bold, size: 28))
                 .foregroundColor(Color(hex: "1A1018"))
 
-            FormTextBox(text: $aboutUser)
+            FormTextBox(text: $viewModel.aboutUser)
                 .frame(height: 170)
         }
     }
@@ -134,30 +135,42 @@ extension SkinGoalView {
     }
 
     private var saveButton: some View {
-        PrimaryButton(title: "Save skin goals") {
-            print("About user:", aboutUser)
-            print("Selected skin goals:", selectedSkinGoals)
+        VStack(spacing: 10) {
+
+            PrimaryButton(
+                title: viewModel.isLoading
+                    ? "Saving..."
+                    : "Save skin goals"
+            ) {
+                Task {
+                    await viewModel.saveSkinGoals()
+                }
+            }
+            .padding(.top, 45)
+
+            if let successMessage = viewModel.successMessage {
+                Text(successMessage)
+                    .font(AppFont.gillSwiftUI(.regular, size: 13))
+                    .foregroundColor(.green)
+            }
+
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .font(AppFont.gillSwiftUI(.regular, size: 13))
+                    .foregroundColor(.red)
+            }
         }
-        .padding(.top, 45)
     }
 
     private func goalButton(_ title: String) -> some View {
         Button {
-            if selectedSkinGoals.contains(title) {
-                selectedSkinGoals.remove(title)
-            } else {
-                selectedSkinGoals.insert(title)
-            }
+            viewModel.toggleGoal(title)
         } label: {
             FormChoicePill(
                 title: title,
-                isSelected: selectedSkinGoals.contains(title)
+                isSelected: viewModel.selectedSkinGoals.contains(title)
             )
         }
         .buttonStyle(.plain)
     }
-}
-
-#Preview {
-    SkinGoalView()
 }
