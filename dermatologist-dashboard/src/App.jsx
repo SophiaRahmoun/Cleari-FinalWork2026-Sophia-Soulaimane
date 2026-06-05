@@ -13,7 +13,7 @@ import Earnings from "./pages/Earnings";
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/Cleari-FinalWork2026-Sophia-Soulaimane">
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
