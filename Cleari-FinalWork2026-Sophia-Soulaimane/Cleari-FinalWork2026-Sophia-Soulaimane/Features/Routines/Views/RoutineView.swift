@@ -23,86 +23,52 @@ struct RoutineView: View {
 
     var body: some View {
         ZStack {
-            Color("BackgroundBeige")
+            RadialGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
                 .ignoresSafeArea()
 
-            VStack {
+            VStack(spacing: 0) {
                 RoutineHeader(
-                    onAddTapped: {
-                        showAddOptions = true
-                    },
-                    onBackTapped: {
-                        dismiss()
-                    }
+                    onAddTapped: { showAddOptions = true },
+                    onBackTapped: { dismiss() }
                 )
+                .padding(.bottom, 8)
 
                 if viewModel.products.isEmpty {
                     EmptyRoutineMessage()
                 } else {
-                    ScrollView {
-                        LazyVGrid(columns: columns, spacing: 22) {
+                    ScrollView(showsIndicators: false) {
+                        LazyVGrid(columns: columns, spacing: 16) {
                             ForEach(viewModel.products) { product in
                                 RoutineProductCard(
                                     product: product,
-                                    onDelete: {
-                                        viewModel.deleteProduct(product)
-                                    },
-                                    onNameChange: { newName in
-                                        viewModel.updateProductName(
-                                            for: product,
-                                            name: newName
-                                        )
-                                    },
-                                    onImageChange: { imageData in
-                                        viewModel.updateProductImage(
-                                            for: product,
-                                            imageData: imageData
-                                        )
-                                    }
+                                    onDelete: { viewModel.deleteProduct(product) },
+                                    onNameChange: { viewModel.updateProductName(for: product, name: $0) },
+                                    onImageChange: { viewModel.updateProductImage(for: product, imageData: $0) }
                                 )
                             }
                         }
-                        .padding(.horizontal, 28)
-                        .padding(.top, 120)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 24)
+                        .padding(.bottom, 40)
                     }
                 }
-
-                Spacer()
             }
         }
-        .confirmationDialog(
-            "Add product photo",
-            isPresented: $showAddOptions,
-            titleVisibility: .visible
-        ) {
-            Button("Take photo") {
-                showCameraPicker = true
-            }
-
-            Button("Choose from library") {
-                showLibraryPicker = true
-            }
-
+        .confirmationDialog("Add product photo", isPresented: $showAddOptions, titleVisibility: .visible) {
+            Button("Take photo") { showCameraPicker = true }
+            Button("Choose from library") { showLibraryPicker = true }
             Button("Cancel", role: .cancel) {}
         }
         .sheet(isPresented: $showCameraPicker) {
             CameraPicker(
-                onImagePicked: { imageData in
-                    viewModel.addProduct(imageData: imageData)
-                },
-                onDismiss: {
-                    showCameraPicker = false
-                }
+                onImagePicked: { viewModel.addProduct(imageData: $0) },
+                onDismiss: { showCameraPicker = false }
             )
         }
         .sheet(isPresented: $showLibraryPicker) {
             PhotoLibraryPicker(
-                onImagePicked: { imageData in
-                    viewModel.addProduct(imageData: imageData)
-                },
-                onDismiss: {
-                    showLibraryPicker = false
-                }
+                onImagePicked: { viewModel.addProduct(imageData: $0) },
+                onDismiss: { showLibraryPicker = false }
             )
         }
         .alert("Sync Error", isPresented: $viewModel.showError) {

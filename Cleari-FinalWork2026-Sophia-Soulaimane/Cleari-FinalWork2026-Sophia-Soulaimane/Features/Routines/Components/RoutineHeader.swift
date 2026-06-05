@@ -17,15 +17,15 @@ struct RoutineHeader: View {
                 onBackTapped()
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 34, weight: .medium))
-                    .foregroundColor(.black)
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundColor(Color(hex: "1A1018"))
             }
 
             Spacer()
 
             Text("Routines")
-                .font(.system(size: 34, weight: .bold))
-                .foregroundColor(.black)
+                .font(AppFont.gillSwiftUI(.regular, size: 34))
+                .foregroundColor(Color(hex: "1A1018"))
 
             Spacer()
 
@@ -33,10 +33,9 @@ struct RoutineHeader: View {
                 onAddTapped()
             } label: {
                 Text("Add")
-                    .font(.system(size: 20, weight: .semibold))
-                    .italic()
+                    .font(AppFont.gillSwiftUI(.bold, size: 18))
+                    .foregroundColor(Color(hex: "1A1018"))
                     .underline()
-                    .foregroundColor(.black)
             }
         }
         .padding(.horizontal, 28)
