@@ -25,8 +25,9 @@ struct FindDermatologistView: View {
     // Liste filtrée selon genre + ville
     private var filteredDermatologists: [Dermatologist] {
         viewModel.dermatologists.filter { derm in
-            let cityMatch = selectedCity == nil || derm.city == selectedCity
-            return cityMatch
+            let genderMatch = selectedGender == "Any" || derm.gender == selectedGender
+            let cityMatch   = selectedCity == nil || derm.city == selectedCity
+            return genderMatch && cityMatch
         }
     }
 

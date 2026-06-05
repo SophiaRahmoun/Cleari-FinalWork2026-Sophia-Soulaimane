@@ -45,7 +45,8 @@ final class AuthAPIService {
         password: String,
         specialization: String?,
         conventionStatus: String?,
-        inamiNumber: String?
+        inamiNumber: String?,
+        pronouns: String?
     ) async throws -> AuthResponse {
         try await post(
             endpoint: "/auth/register-dermatologist",
@@ -57,7 +58,8 @@ final class AuthAPIService {
                 password: password,
                 specialization: specialization,
                 convention_status: conventionStatus,
-                inami_number: inamiNumber
+                inami_number: inamiNumber,
+                pronouns: pronouns
             )
         )
     }

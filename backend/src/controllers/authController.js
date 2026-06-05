@@ -111,6 +111,7 @@ exports.registerDermatologist = async (req, res) => {
 			bio,
 			certificate_url,
 			language,
+			pronouns,
 		} = req.body;
 
 		if (!username || !email || !password) {
@@ -139,6 +140,7 @@ exports.registerDermatologist = async (req, res) => {
 			password: hashedPassword,
 			role: "dermatologist",
 			language: language || "en",
+			pronouns: pronouns || null,
 		});
 
 		await DermatologistProfile.create({

@@ -23,12 +23,20 @@ struct Dermatologist: Codable, Identifiable {
     let specialization: String?
     let user: DermatologistUser?
 
-    // Convenience helpers used in the UI
     var displayName: String {
         user?.username ?? firstName ?? "Dermatologist"
     }
     var profileImageUrl: String? {
         user?.profilePictureUrl
+    }
+
+    /// Pronouns vient du User imbriqué (stocké sur la table users)
+    var gender: String? {
+        switch user?.pronouns?.lowercased() {
+        case "she/her": return "Female"
+        case "he/him":  return "Male"
+        default:        return nil
+        }
     }
 
     enum CodingKeys: String, CodingKey {
@@ -47,11 +55,13 @@ struct DermatologistUser: Codable {
     let username: String
     let email: String
     let profilePictureUrl: String?
+    let pronouns: String?       // "she/her" | "he/him" — stocké sur la table users
 
     enum CodingKeys: String, CodingKey {
         case id
         case username
         case email
         case profilePictureUrl = "profile_picture_url"
+        case pronouns
     }
 }

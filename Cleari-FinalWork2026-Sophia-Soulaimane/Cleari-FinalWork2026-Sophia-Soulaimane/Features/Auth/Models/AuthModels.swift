@@ -68,4 +68,5 @@ struct RegisterDermatologistRequest: Codable {
     let specialization: String?
     let convention_status: String?
     let inami_number: String?
+    let pronouns: String?
 }

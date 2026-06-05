@@ -32,6 +32,7 @@ struct DermatologistRegisterView: View {
     @State private var selectedProfession = professionOptions[0]
     @State private var selectedConvention = conventionOptions[0].value
     @State private var inamiNumber = ""
+    @State private var selectedPronouns = "she/her"
 
     private var generatedUsername: String {
         let base = "\(firstName.lowercased()).\(lastName.lowercased())"
@@ -142,6 +143,32 @@ struct DermatologistRegisterView: View {
 
                     AuthRegisterInput(label: "INAMI number", text: $inamiNumber, maxLength: 20)
 
+                    // Pronouns selector
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Pronouns")
+                            .font(AppFont.gillSwiftUI(.regular, size: 13))
+                            .foregroundColor(.black.opacity(0.55))
+                            .padding(.leading, 20)
+                        HStack(spacing: 12) {
+                            ForEach(["she/her", "he/him"], id: \.self) { option in
+                                Button {
+                                    selectedPronouns = option
+                                } label: {
+                                    Text(option)
+                                        .font(AppFont.gillSwiftUI(.regular, size: 16))
+                                        .foregroundColor(selectedPronouns == option ? .white : Color(hex: "1A1018"))
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 12)
+                                        .background(
+                                            Capsule()
+                                                .fill(selectedPronouns == option ? Color(hex: "1A1018") : Color(hex: "E6DED6").opacity(0.6))
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+
                     if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
                             .font(AppFont.gillSwiftUI(.regular, size: 14))
@@ -158,7 +185,8 @@ struct DermatologistRegisterView: View {
                                 password: password,
                                 specialization: selectedProfession,
                                 conventionStatus: selectedConvention,
-                                inamiNumber: inamiNumber.isEmpty ? nil : inamiNumber
+                                inamiNumber: inamiNumber.isEmpty ? nil : inamiNumber,
+                                pronouns: selectedPronouns
                             )
                             if viewModel.isLoggedIn {
                                 onSuccess()
