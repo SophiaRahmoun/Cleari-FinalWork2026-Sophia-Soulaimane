@@ -125,16 +125,16 @@ CLOUDINARY_API_SECRET=
 
 ## Features
 
-* **Community** — posts, questions, comments and discussions between users
-* **AI Skin Analysis** — photo-based skin scan via YouCam API (acne, pores, texture, moisture, etc.)
-* **Skin Type Quiz** — onboarding form to determine the user's skin type, combined with the AI scan
-* **Skincare Routine** — users can build and save their personal skincare routine
-* **Verified Dermatologists** — dermatologist accounts manually verified by us before going live
-* **Appointments** — users can book appointments directly with verified dermatologists
-* **Chat** — real-time messaging between users and dermatologists
-* **Fake Trend Debunker** — dermatologists can link TikTok trends and share their professional opinion on them
-* **Subscription (Stripe)** — dermatologists are compensated based on their activity through a Stripe-powered subscription model
-* **Role-based Auth** — separate flows and permissions for users and dermatologists
+* **Community** posts, questions, comments and discussions between users
+* **AI Skin Analysis** photo-based skin scan via YouCam API (acne, pores, texture, moisture, etc.)
+* **Skin Type Quiz** onboarding form to determine the user's skin type, combined with the AI scan
+* **Skincare Routine** users can build and save their personal skincare routine
+* **Verified Dermatologists** dermatologist accounts manually verified by us before going live
+* **Appointments** users can book appointments directly with verified dermatologists
+* **Chat** real-time messaging between users and dermatologists
+* **Fake Trend Debunker** dermatologists can link TikTok trends and share their professional opinion on them
+* **Subscription (Stripe)** dermatologists are compensated based on their activity through a Stripe-powered subscription model
+* **Role-based Auth** separate flows and permissions for users and dermatologists
 
 ---
 
@@ -144,17 +144,18 @@ All Claude and ChatGPT prompts used during development are saved in the `docs/` 
 
 ```
 docs/
-├── sophia-session-logs/       # All sessions and prompts from Sophia
-└── soulaimane-session-logs/   # All sessions and prompts from Soulaimane
+├── sophia-session-logs/       # All sessions & prompts from Sophia
+└── soulaimane-session-logs/   # All sessions & prompts from Soulaimane
 ```
 
 Each `.md` file in those folders documents a working session — what was built, discussed, or fixed with AI assistance.
 
 ### AI Session References
 
-* **ChatGPT project (Sophia)** — [chatgpt.com/g/g-p-69908e48...](https://chatgpt.com/g/g-p-69908e4852a481919a37686b243c3239)
-* **Claude session 1** — [claude.ai/share/c96f9c5c...](https://claude.ai/share/c96f9c5c-f166-4a2a-b7f6-74a7a5d7cefb)
-* **Claude session 2** — [claude.ai/share/5acd3da1...](https://claude.ai/share/5acd3da1-3eeb-4359-aeb1-f1cb3c3799d0)
+* **ChatGPT project (Sophia)** [chatgpt.com/g/g-p-69908e48...](https://chatgpt.com/g/g-p-69908e4852a481919a37686b243c3239)
+* **ChatGPT project (Soulaimane)** https://chatgpt.com/g/g-p-6a22305485d48191b3570bd94d6f5f51-finalwork/project
+* **Claude** — [claude.ai/share/c96f9c5c...](https://claude.ai/share/c96f9c5c-f166-4a2a-b7f6-74a7a5d7cefb)
+* **Claude** — [claude.ai/share/5acd3da1...](https://claude.ai/share/5acd3da1-3eeb-4359-aeb1-f1cb3c3799d0)
 
 ---
 
@@ -198,9 +199,6 @@ Each `.md` file in those folders documents a working session — what was built,
 * https://stackoverflow.com/questions/5601931/how-do-i-safely-merge-a-git-branch-into-master
 * https://superuser.com/questions/1072422/how-to-display-git-ls-file-result-in-a-tree-like-format
 
-### Project Management
-
-* https://chatgpt.com/g/g-p-6a22305485d48191b3570bd94d6f5f51-finalwork/project
 
 ### Other
 
