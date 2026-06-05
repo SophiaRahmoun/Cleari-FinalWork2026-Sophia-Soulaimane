@@ -1,16 +1,10 @@
 .appt-page { max-width: 1100px; }
 
-.page-header-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
 .loading, .empty-state { color: var(--rose); font-family: "gill-sans-nova", sans-serif; }
 
 .appt-layout { display: flex; gap: 1.5rem; align-items: flex-start; }
 
+/* ── Request list ── */
 .calendar-view { flex: 1; display: flex; flex-direction: column; gap: 0.85rem; }
 
 .cal-day {
@@ -37,7 +31,7 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  padding: 0.65rem 0.9rem;
+  padding: 0.6rem 0.9rem;
   background: rgba(244,245,231,0.5);
   border: none;
   border-left: 3px solid #9e9e9e;
@@ -50,11 +44,25 @@
 
 .cal-slot:hover { background: rgba(198,111,140,0.07); }
 
-.slot-dot {
-  width: 7px;
-  height: 7px;
+/* Patient avatar in slot */
+.slot-avatar {
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
+  object-fit: cover;
   flex-shrink: 0;
+  border: 1.5px solid rgba(198,111,140,0.2);
+}
+
+.slot-avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: "gill-sans-nova", sans-serif;
 }
 
 .slot-time {
@@ -97,12 +105,67 @@
   top: 2rem;
 }
 
-.detail-title {
+.close-btn {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--rose);
+  line-height: 1;
+  padding: 0;
+}
+
+/* Patient header in detail panel */
+.detail-patient-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(198,111,140,0.12);
+}
+
+.detail-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(198,111,140,0.25);
+}
+
+.detail-avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--grad-primary);
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: "gill-sans-nova", sans-serif;
+}
+
+.detail-patient-name {
   font-family: "corporate-a-condensed", serif;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--dark);
-  margin: 0 0 1.25rem;
+}
+
+.detail-patient-email {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  color: var(--rose);
+  margin-top: 0.15rem;
+}
+
+.detail-title {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0 0 1rem;
 }
 
 .detail-grid { display: flex; flex-direction: column; gap: 0.7rem; }
@@ -175,16 +238,6 @@
 .btn-accept:disabled,
 .btn-decline:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.detail-patient-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0.75rem auto 0;
-  display: block;
-  border: 2px solid rgba(198,111,140,0.2);
-}
-
 .detail-status-note {
   margin-top: 1.1rem;
   font-family: "gill-sans-nova", sans-serif;
@@ -193,4 +246,132 @@
   padding: 0.6rem;
   border-radius: 10px;
   background: rgba(198,111,140,0.04);
+}
+
+/* ── Monthly calendar ── */
+.month-cal {
+  margin-top: 2rem;
+  background: rgba(255,255,255,0.88);
+  border-radius: var(--radius-card);
+  padding: 1.4rem 1.5rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(198,111,140,0.08);
+}
+
+.month-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-bottom: 1.1rem;
+}
+
+.month-label {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--dark);
+  text-transform: capitalize;
+  min-width: 160px;
+  text-align: center;
+}
+
+.month-nav {
+  background: none;
+  border: 1px solid rgba(198,111,140,0.25);
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--rose);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.month-nav:hover { background: rgba(198,111,140,0.08); }
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+
+.month-day-name {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--rose);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding-bottom: 0.5rem;
+}
+
+.month-cell {
+  min-height: 52px;
+  border-radius: 8px;
+  padding: 0.35rem 0.3rem 0.3rem;
+  background: rgba(244,245,231,0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  position: relative;
+}
+
+.month-cell--empty { background: transparent; }
+
+.month-cell--today { background: rgba(198,111,140,0.1); outline: 1.5px solid rgba(198,111,140,0.35); }
+
+.month-day-num {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.month-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  justify-content: center;
+}
+
+.month-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.12s;
+  flex-shrink: 0;
+}
+
+.month-dot:hover { transform: scale(1.4); }
+
+/* Legend */
+.month-legend {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  color: var(--dark);
+}
+
+.legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
