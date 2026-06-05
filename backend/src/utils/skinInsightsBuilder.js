@@ -1,92 +1,101 @@
-function getLevel(score) {
+// Moisture: higher score = better skin hydration
+function getMoistureLevel(score) {
 	if (score === null || score === undefined) return "Unknown";
-	if (score < 40) return "Low";
-	if (score < 70) return "Medium";
-	return "High";
+	if (score < 35) return "Low";
+	if (score < 65) return "Moderate";
+	return "Good";
+}
+
+// Redness / acne / oiliness / texture: lower score = better
+function getConcernLevel(score) {
+	if (score === null || score === undefined) return "Unknown";
+	if (score < 35) return "Low";
+	if (score < 65) return "Moderate";
+	return "Elevated";
 }
 
 function buildSkinInsights(scores) {
-	const acne = scores.acne?.uiScore ?? null;
-	const redness = scores.redness?.uiScore ?? null;
+	const acne     = scores.acne?.uiScore     ?? null;
+	const redness  = scores.redness?.uiScore  ?? null;
 	const oiliness = scores.oiliness?.uiScore ?? null;
-	const texture = scores.texture?.uiScore ?? null;
+	const texture  = scores.texture?.uiScore  ?? null;
 	const moisture = scores.moisture?.uiScore ?? null;
 
 	return [
 		{
-			key: "moisture",
-			title: "Hydration Level",
-			level: getLevel(moisture),
+			key:   "moisture",
+			title: "Hydration",
+			score: moisture,
+			level: getMoistureLevel(moisture),
 			shortText:
-				moisture < 40
-					? "Your skin may need more hydration today."
-					: moisture < 70
-						? "Your hydration level looks balanced, but could still be supported."
-						: "Your skin looks well hydrated.",
+				moisture === null ? "No data available." :
+				moisture < 35     ? "Hydration reads on the lower side today." :
+				moisture < 65     ? "Hydration is in a moderate range." :
+				                    "Hydration looks good in this scan.",
 			tip:
-				moisture < 40
-					? "Use a gentle moisturizer and avoid harsh cleansing."
-					: "Keep using a simple hydrating routine.",
+				moisture !== null && moisture < 35
+					? "A light, fragrance-free moisturizer may help."
+					: "Keep your current routine going.",
 		},
 		{
-			key: "redness",
+			key:   "redness",
 			title: "Redness",
-			level: getLevel(redness),
+			score: redness,
+			level: getConcernLevel(redness),
 			shortText:
-				redness >= 70
-					? "Some visible redness was detected."
-					: redness >= 40
-						? "A small amount of redness was detected."
-						: "Your skin looks quite calm today.",
+				redness === null ? "No data available." :
+				redness < 35     ? "Skin tone appears even and calm." :
+				redness < 65     ? "A mild variation in tone was noted." :
+				                   "Some unevenness in tone was picked up.",
 			tip:
-				redness >= 70
-					? "Try to avoid strong exfoliants and keep your routine gentle."
-					: "Keep monitoring your skin and use soothing products if needed.",
+				redness !== null && redness >= 65
+					? "Fragrance-free, gentle products tend to work well here."
+					: "No specific action needed.",
 		},
 		{
-			key: "oiliness",
-			title: "Oil Production",
-			level: getLevel(oiliness),
+			key:   "oiliness",
+			title: "Oil Level",
+			score: oiliness,
+			level: getConcernLevel(oiliness),
 			shortText:
-				oiliness >= 70
-					? "Your skin seems to produce more oil today."
-					: oiliness >= 40
-						? "Your oil level looks moderate."
-						: "Your skin does not look very oily today.",
+				oiliness === null ? "No data available." :
+				oiliness < 35     ? "Oil production looks low today." :
+				oiliness < 65     ? "Oil production is within a normal range." :
+				                    "Oil level reads slightly higher in this scan.",
 			tip:
-				oiliness >= 70
-					? "Use lightweight, non-comedogenic products and avoid over-cleansing."
-					: "A simple routine should be enough for now.",
+				oiliness !== null && oiliness >= 65
+					? "Lightweight, water-based products suit this profile well."
+					: "Your current routine looks suitable.",
 		},
 		{
-			key: "acne",
+			key:   "acne",
 			title: "Blemishes",
-			level: getLevel(acne),
+			score: acne,
+			level: getConcernLevel(acne),
 			shortText:
-				acne >= 70
-					? "Some blemish-prone areas were detected."
-					: acne >= 40
-						? "A few possible blemish-prone areas were detected."
-						: "Few visible blemishes were detected.",
+				acne === null ? "No data available." :
+				acne < 35     ? "Skin surface looks clear in this scan." :
+				acne < 65     ? "A few areas with minor texture variation were noted." :
+				                "Some surface irregularity was picked up.",
 			tip:
-				acne >= 70
-					? "Avoid picking your skin and consider asking a dermatologist if it persists."
-					: "Keep your routine consistent and avoid too many active ingredients at once.",
+				acne !== null && acne >= 65
+					? "A simple, consistent routine is usually the best approach."
+					: "Keep your routine stable.",
 		},
 		{
-			key: "texture",
-			title: "Skin Texture",
-			level: getLevel(texture),
+			key:   "texture",
+			title: "Texture",
+			score: texture,
+			level: getConcernLevel(texture),
 			shortText:
-				texture >= 70
-					? "Your skin texture appears a bit uneven."
-					: texture >= 40
-						? "Your skin texture looks mostly balanced."
-						: "Your skin texture looks smooth today.",
+				texture === null ? "No data available." :
+				texture < 35     ? "Skin surface appears smooth in this scan." :
+				texture < 65     ? "Texture is within a normal range." :
+				                   "Some surface variation was noted.",
 			tip:
-				texture >= 70
-					? "Focus on hydration first before using strong exfoliating products."
-					: "Keep following a gentle and regular routine.",
+				texture !== null && texture >= 65
+					? "Hydration often helps with texture over time."
+					: "Texture looks stable.",
 		},
 	];
 }

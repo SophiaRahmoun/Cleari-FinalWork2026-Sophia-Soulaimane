@@ -12,57 +12,68 @@ struct ScanResultView: View {
     let scanImage: UIImage
     @Environment(\.dismiss) private var dismiss
 
+    private let dark = Color(hex: "1E141D")
+    private let pink = Color(hex: "C66F8C")
+
     var body: some View {
         ZStack {
             BeigeBackground()
 
             VStack(spacing: 0) {
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 28) {
+                    VStack(alignment: .leading, spacing: 24) {
+
                         header
 
                         Text("Scanned just now")
-                            .font(AppFont.gillSwiftUI(.regular, size: 14))
-                            .foregroundColor(.black)
+                            .font(AppFont.gillSwiftUI(.regular, size: 13))
+                            .foregroundColor(dark.opacity(0.45))
 
                         ScanResultImage(image: scanImage)
 
+                        // ── Loading ──
                         if viewModel.isLoading {
-                            VStack(spacing: 12) {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle())
-                                        .scaleEffect(1.5)
-                                    Text("Analyzing your skin...")
-                                        .font(AppFont.gillSwiftUI(.regular, size: 18))
-                                        .foregroundColor(.black)
-                                }
+                            VStack(spacing: 14) {
+                                ProgressView()
+                                    .progressViewStyle(CircularProgressViewStyle(tint: pink))
+                                    .scaleEffect(1.3)
+                                Text("Analyzing your skin…")
+                                    .font(AppFont.gillSwiftUI(.regular, size: 16))
+                                    .foregroundColor(dark.opacity(0.6))
                             }
-                        
-                        if let error = viewModel.errorMessage {
-                                           Text(error)
-                                               .font(.caption)
-                                               .foregroundColor(.red)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 20)
                         }
 
-                       if let result = viewModel.scanResult {
-                           resultChips(result)
-                              resultInsights(result)
-                              Text("Scan completed successfully")
-                                  .foregroundColor(.green)
-                                  .font(.caption)
-                                  .padding(.top, 8)
-                          }
-                                            
-                                               
+                        // ── Error ──
+                        if let error = viewModel.errorMessage {
+                            Text(error)
+                                .font(AppFont.gillSwiftUI(.regular, size: 14))
+                                .foregroundColor(.red.opacity(0.8))
+                        }
 
-                        PrimaryButton(title: "confirm") {
+                        // ── Results ──
+                        if let result = viewModel.scanResult {
+                            chipsSection(result)
+                            insightsSection(result)
+                        }
+
+                        PrimaryButton(title: "Done") {
                             dismiss()
                         }
-                        .padding(.horizontal, 80)
-                        .padding(.top, 20)
+                        .padding(.horizontal, 60)
+                        .padding(.top, 8)
+
+                        // Disclaimer
+                        Text("This scan provides general skin metrics and is not a medical diagnosis.")
+                            .font(AppFont.gillSwiftUI(.regular, size: 12))
+                            .foregroundColor(dark.opacity(0.38))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                            .padding(.bottom, 8)
                     }
-                    .padding(.horizontal, 32)
-                    .padding(.top, 45)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 40)
                     .padding(.bottom, 30)
                 }
 
@@ -75,70 +86,84 @@ struct ScanResultView: View {
         }
     }
 
+    // MARK: - Header
+
     private var header: some View {
         HStack {
-            BackButton {
-                dismiss()
-            }
-
+            BackButton { dismiss() }
             Spacer()
-
-            Text("Skin Analysis Result")
-                .font(AppFont.gillSwiftUI(.bold, size: 28))
-                .foregroundColor(.black)
-
+            Text("Skin Analysis")
+                .font(AppFont.gillSwiftUI(.bold, size: 26))
+                .foregroundColor(dark)
             Spacer()
-
-            Color.clear
-                .frame(width: 24, height: 24)
+            Color.clear.frame(width: 24, height: 24)
         }
     }
 
-    private func resultChips(_ result: SkinScan) -> some View {
-        VStack(spacing: 10) {
-            HStack(spacing: 8) {
-                ScanResultChip(title: "Hydration", value: result.insights?.first(where: { $0.key == "moisture" })?.level ?? "-")
-                ScanResultChip(title: "Redness", value: result.insights?.first(where: { $0.key == "redness" })?.level ?? "-")
-                ScanResultChip(title: "Oil Level", value: result.insights?.first(where: { $0.key == "oiliness" })?.level ?? "-")
-            }
+    // MARK: - Chips (summary row)
 
-            ScanResultChip(title: "Skin Type", value: result.recommendation.skinTypeEstimate ?? "-")
-        }
-        .frame(maxWidth: .infinity)
-    }
+    private func chipsSection(_ result: SkinScan) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Overview")
+                .font(AppFont.gillSwiftUI(.italic, size: 20))
+                .foregroundColor(dark)
 
-    private func resultInsights(_ result: SkinScan)-> some View {
-        VStack(alignment: .leading, spacing: 28) {
-            Text("Detailed insights")
-                .font(AppFont.gillSwiftUI(.italic, size: 26))
-                .foregroundColor(.black)
+            // Short advice line from backend (neutral now)
             if let advice = result.recommendation.shortAdvice {
-                           Text(advice)
-                               .font(AppFont.gillSwiftUI(.regular, size: 16))
-                               .foregroundColor(.black)
-                       }
-                       ForEach(result.insights ?? []) { insight in
-                           ScanInsightRow(
-                               icon: iconForInsight(insight.key),
-                               title: insight.title,
-                               description: "\(insight.level): \(insight.shortText)\n\(insight.tip)"
-                           )
-                       }
+                Text(advice)
+                    .font(AppFont.gillSwiftUI(.regular, size: 15))
+                    .foregroundColor(dark.opacity(0.65))
+            }
 
-                       Text("This scan is only guidance and not a medical diagnosis.")
-                           .font(.caption)
-                           .foregroundColor(.black.opacity(0.6))
-                   }
-               }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ScanResultChip(
+                        title: "Skin Type",
+                        value: (result.recommendation.skinTypeEstimate ?? "—").capitalized
+                    )
+                    if let insights = result.insights {
+                        ForEach(insights) { insight in
+                            ScanResultChip(title: insight.title, value: insight.level)
+                        }
+                    }
+                }
+                .padding(.horizontal, 2)
+            }
+        }
+    }
 
-               private func iconForInsight(_ key: String) -> String {
-                   switch key {
-                   case "moisture": return "drop"
-                   case "redness": return "flame.fill"
-                   case "oiliness": return "sparkles"
-                   case "acne": return "face.smiling"
-                   case "texture": return "circle.grid.2x2"
-                   default: return "info.circle"
-                   }
-               }
-           }
+    // MARK: - Insights list
+
+    private func insightsSection(_ result: SkinScan) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Detailed insights")
+                .font(AppFont.gillSwiftUI(.italic, size: 20))
+                .foregroundColor(dark)
+
+            if let insights = result.insights {
+                ForEach(insights) { insight in
+                    ScanInsightRow(
+                        icon: iconForInsight(insight.key),
+                        title: insight.title,
+                        description: insight.shortText,
+                        score: insight.score,
+                        tip: insight.tip
+                    )
+                }
+            }
+        }
+    }
+
+    // MARK: - Icon map (SF Symbols fitting each metric)
+
+    private func iconForInsight(_ key: String) -> String {
+        switch key {
+        case "moisture":  return "drop.fill"
+        case "redness":   return "waveform.path.ecg"
+        case "oiliness":  return "sparkle"
+        case "acne":      return "circle.dotted"
+        case "texture":   return "squareshape.split.2x2"
+        default:          return "info.circle"
+        }
+    }
+}
