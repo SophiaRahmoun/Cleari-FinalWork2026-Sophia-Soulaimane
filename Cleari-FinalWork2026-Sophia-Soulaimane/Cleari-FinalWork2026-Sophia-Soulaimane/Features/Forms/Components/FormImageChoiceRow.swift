@@ -13,18 +13,18 @@ struct FormImageChoiceRow: View {
     var isSelected: Bool = false
 
     var body: some View {
-        VStack(spacing: 10) {
-            Image(imageName)
+        VStack(spacing: 8) {
+            Image(systemName: imageName)
                 .resizable()
                 .scaledToFit()
-                .frame(width: 46, height: 46)
-                .foregroundColor(Color("AccentColor"))
+                .frame(width: 32, height: 32)
+                .foregroundColor(isSelected ? Color("AccentColor") : Color(hex: "1A1018"))
 
             Text(title)
-                .font(AppFont.gillSwiftUI(.regular, size: 13))
+                .font(AppFont.gillSwiftUI(.regular, size: 12))
                 .foregroundColor(Color(hex: "1A1018"))
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .frame(maxWidth: .infinity)
     }
