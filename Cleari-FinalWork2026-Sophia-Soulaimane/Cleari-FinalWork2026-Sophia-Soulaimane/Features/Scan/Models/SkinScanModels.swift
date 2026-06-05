@@ -61,6 +61,7 @@ struct SkinInsight: Codable, Identifiable {
 
     let key: String
     let title: String
+    let score: Int?       // 0–100 raw score from YouCam
     let level: String
     let shortText: String
     let tip: String

@@ -30,18 +30,18 @@ function simplifySkinAnalysisResults(resultData) {
     const oiliness = scores.oiliness?.uiScore ?? 0;
     const moisture = scores.moisture?.uiScore ?? 0;
   
-    let recommendationLevel = "low";
+    let recommendationLevel = "stable";
     let shortAdvice =
-      "Your skin scan looks generally stable. Keep monitoring changes over time.";
-  
+      "Your scan looks balanced overall. Scan regularly to track changes over time.";
+
     if (redness > 75 || acne > 80) {
-      recommendationLevel = "high";
-      shortAdvice =
-        "Visible skin concerns were detected. Consider seeking professional advice if this persists or worsens.";
-    } else if (wrinkle > 70 || oiliness > 75 || moisture < 40) {
       recommendationLevel = "monitor";
       shortAdvice =
-        "Moderate concerns were detected. A simple routine and a follow-up scan may be helpful.";
+        "A few areas caught our attention. Keeping your routine consistent is a good first step.";
+    } else if (wrinkle > 70 || oiliness > 75 || moisture < 40) {
+      recommendationLevel = "light-action";
+      shortAdvice =
+        "Some metrics are slightly outside the typical range. A simple routine adjustment may help.";
     }
   
     return {
