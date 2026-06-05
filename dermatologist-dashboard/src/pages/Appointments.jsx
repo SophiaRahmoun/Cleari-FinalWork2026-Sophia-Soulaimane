@@ -108,7 +108,7 @@ export default function Appointments() {
   }, [appointments]);
 
   const sortedDates = Object.keys(byDate).sort();
-  const canAct = selected?.status === "pending";
+  const canAct = selected?.status === "pending" || selected?.status === "approved";
 
   /* Calendar grid data */
   const totalDays   = daysInMonth(calYear, calMonth);
@@ -244,7 +244,7 @@ export default function Appointments() {
                   <button
                     className="btn-accept"
                     disabled={updating === selected.id}
-                    onClick={() => handleStatus(selected.id, "approved")}
+                    onClick={() => handleStatus(selected.id, "confirmed")}
                   >
                     {updating === selected.id ? "…" : "Approve"}
                   </button>

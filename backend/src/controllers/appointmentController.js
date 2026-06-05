@@ -158,7 +158,7 @@ exports.updateAppointmentStatus = async (req, res) => {
 	try {
 		const { status } = req.body;
 
-		if (!["approved", "declined", "cancelled", "completed"].includes(status)) {
+		if (!["approved", "confirmed", "declined", "cancelled", "completed"].includes(status)) {
 			return res.status(400).json({
 				message: "Invalid appointment status.",
 			});
