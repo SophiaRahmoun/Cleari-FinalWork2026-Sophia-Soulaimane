@@ -10,20 +10,23 @@ import SwiftUI
 struct AuthBottomLink: View {
     let text: String
     let linkText: String
+    var action: () -> Void = {}
 
     var body: some View {
-        HStack(spacing: 3) {
-            TypographyLabel(
-                text: text,
-                style: .button,
-                color: .black
-            )
+        Button(action: action) {
+            HStack(spacing: 3) {
+                TypographyLabel(
+                    text: text,
+                    style: .body,
+                    color: .black
+                )
 
-            TypographyLabel(
-                text: linkText,
-                style: .button,
-                color: .black
-            )
+                TypographyLabel(
+                    text: linkText,
+                    style: .button,
+                    color: .black
+                )
+            }
         }
     }
 }

@@ -39,16 +39,6 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		847B5DC02F42077B00224093 /* Exceptions for "Cleari-FinalWork2026-Sophia-Soulaimane" folder in "Copy Bundle Resources" phase from "Cleari-FinalWork2026-Sophia-Soulaimane" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 847B5D0F2F40C40A00224093 /* Resources */;
-			membershipExceptions = (
-				Features/Debunk/Views/DebunkDetailView.swift,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		847B5D132F40C40A00224093 /* Cleari-FinalWork2026-Sophia-Soulaimane */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -306,6 +296,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Cleari-FinalWork2026-Sophia-Soulaimane/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Cleari;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to scan your skin.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -337,10 +329,11 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Cleari-FinalWork2026-Sophia-Soulaimane/Preview Content\"";
 				DEVELOPMENT_TEAM = S3K4S43NMK;
-				DEVELOPMENT_TEAM = S3K4S43NMK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Cleari-FinalWork2026-Sophia-Soulaimane/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Cleari;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to scan your skin.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

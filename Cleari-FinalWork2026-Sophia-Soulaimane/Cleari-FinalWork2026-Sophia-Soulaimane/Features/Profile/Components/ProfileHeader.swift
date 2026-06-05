@@ -29,17 +29,6 @@ struct ProfileHeader: View {
                 .font(AppFont.gillSwiftUI(.regular, size: 14))
                 .foregroundColor(.white.opacity(0.7))
 
-            HStack {
-                ProfileStat(number: "24", label: "Appointments")
-                Spacer()
-                ProfileStat(number: "3", label: "Appointments")
-                Spacer()
-                ProfileStat(number: "1", label: "Dermatologist")
-            }
-            .padding(.top, 10)
-            .padding(.horizontal, 40)
-            .padding(.top, 8)
-            .padding(.horizontal, 28)
         }
     }
 }

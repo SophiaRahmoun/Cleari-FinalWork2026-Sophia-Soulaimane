@@ -1,0 +1,103 @@
+.login-bg {
+  min-height: 100vh;
+  background: var(--grad-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem 2.75rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 64px rgba(24, 17, 33, 0.12), 0 4px 16px rgba(198, 111, 140, 0.1);
+  border: 1px solid rgba(198, 111, 140, 0.1);
+}
+
+.login-header { text-align: center; margin-bottom: 2.25rem; }
+
+.login-brand {
+  font-family: "corporate-a-condensed", serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: var(--grad-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.login-subtitle {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  color: var(--rose);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+}
+
+.login-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+
+.form-group label {
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--brown);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+.form-group input {
+  padding: 0.85rem 1rem;
+  border: 1.5px solid rgba(198, 111, 140, 0.2);
+  border-radius: 12px;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.95rem;
+  color: var(--dark);
+  background: rgba(244, 245, 231, 0.4);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(198, 111, 140, 0.1);
+  background: #fff;
+}
+
+.login-error {
+  background: rgba(200, 50, 50, 0.07);
+  border: 1px solid rgba(200, 50, 50, 0.2);
+  color: #b03030;
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.85rem;
+}
+
+.login-btn {
+  padding: 0.95rem;
+  background: var(--grad-primary);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-family: "gill-sans-nova", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 6px 20px rgba(198, 111, 140, 0.35);
+}
+
+.login-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+.login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }

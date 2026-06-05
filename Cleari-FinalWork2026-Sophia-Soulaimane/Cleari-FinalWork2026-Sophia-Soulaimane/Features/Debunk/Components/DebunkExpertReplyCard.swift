@@ -12,6 +12,11 @@ struct DebunkExpertReplyCard: View {
     let name: String
     let role: String
     let message: String
+    var likesCount: Int = 0
+    var isLiked: Bool = false
+    var commentsCount: Int = 0
+    var onLikeTapped: () -> Void = {}
+    var onCommentTapped: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -37,9 +42,18 @@ struct DebunkExpertReplyCard: View {
                 .lineSpacing(3)
 
             HStack(spacing: 28) {
-                Label("30", systemImage: "heart")
-                Label("14", systemImage: "bubble.right")
-                Label("1", systemImage: "square.and.arrow.up")
+                Button(action: onLikeTapped) {
+                    Label("\(likesCount)", systemImage: isLiked ? "heart.fill" : "heart")
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onCommentTapped) {
+                    Label("\(commentsCount)", systemImage: "bubble.right")
+                }
+                .buttonStyle(.plain)
+
+                // share — not a current feature
+                // Label("0", systemImage: "square.and.arrow.up")
             }
             .font(AppFont.gillSwiftUI(.bold, size: 14))
             .foregroundColor(Color(hex: "1A1018"))

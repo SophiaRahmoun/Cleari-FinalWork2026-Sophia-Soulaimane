@@ -73,11 +73,13 @@ struct LoginView: View {
                         color: .black
                     )
 
-                    TypographyLabel(
-                        text: "Sign up",
-                        style: .button,
-                        color: .black
-                    )
+                    Button(action: { onRegister() }) {
+                        TypographyLabel(
+                            text: "Sign up",
+                            style: .button,
+                            color: .black
+                        )
+                    }
                 }
 
                 Spacer()

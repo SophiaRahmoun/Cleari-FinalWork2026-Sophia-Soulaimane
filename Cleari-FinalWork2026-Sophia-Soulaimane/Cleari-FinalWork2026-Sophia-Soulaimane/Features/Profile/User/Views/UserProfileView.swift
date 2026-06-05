@@ -7,16 +7,19 @@
 
 import SwiftUI
 
+private enum ProfileDestination: Identifiable {
+    case payment, earnings, editProfile, privacy, skinGoals, appointments, scanHistory, routine
+    var id: Int { hashValue }
+}
+
 struct UserProfileView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var showPayementView = false
-    @State private var showEditProfileView = false
+    @State private var destination: ProfileDestination? = nil
     @State private var showLogoutSheet = false
-    @State private var showPrivacyView = false
-    @State private var showSkinGoalsView = false
-    @State private var showAppointmentsView = false
-    @State private var showScanHistoryView = false
-    @State private var showRoutineView = false
+
+    private var isDermatologist: Bool {
+        TokenStorage.shared.userRole == "dermatologist"
+    }
 
     @StateObject private var viewModel = UserProfileViewModel()
 
@@ -59,58 +62,54 @@ struct UserProfileView: View {
                             ProfileMenuSection(title: "Account")
 
                             Button {
-                                showEditProfileView = true
+                                destination = .editProfile
                             } label: {
                                 ProfileMenuRow(title: "Edit profile")
                             }
                             .buttonStyle(.plain)
 
                             Button {
-
-                                if TokenStorage.shared.userRole != "dermatologist" {
-                                    showPayementView = true
-                                }
-
+                                destination = isDermatologist ? .earnings : .payment
                             } label: {
                                 ProfileMenuRow(title: "Subscription")
                             }
                             .buttonStyle(.plain)
 
-                            ProfileMenuSection(title: "My skin")
+                            if !isDermatologist {
+                                ProfileMenuSection(title: "My skin")
+
+                                Button {
+                                    destination = .skinGoals
+                                } label: {
+                                    ProfileMenuRow(title: "Skin goals")
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    destination = .routine
+                                } label: {
+                                    ProfileMenuRow(title: "My routines")
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    destination = .scanHistory
+                                } label: {
+                                    ProfileMenuRow(title: "My skin scans")
+                                }
+                                .buttonStyle(.plain)
+                            }
 
                             Button {
-                                showSkinGoalsView = true
-                            } label: {
-                                ProfileMenuRow(title: "Skin goals")
-                            }
-                            .buttonStyle(.plain)
-                            
-                            Button {
-                                showRoutineView = true
-                            } label: {
-                                ProfileMenuRow(title: "My routines")
-                            }
-                            .buttonStyle(.plain)
-                            
-                            Button {
-                                showScanHistoryView = true
-                            } label: {
-                                ProfileMenuRow(title: "My skin scans")
-                            }
-                            .buttonStyle(.plain)
-
-                            Button {
-                                showAppointmentsView = true
+                                destination = .appointments
                             } label: {
                                 ProfileMenuRow(title: "Appointments")
                             }
                             .buttonStyle(.plain)
+
                             Button {
-
-                                showPrivacyView = true
-
+                                destination = .privacy
                             } label: {
-
                                 ProfileMenuRow(title: "Privacy  & security")
                             }
                             .buttonStyle(.plain)
@@ -132,8 +131,7 @@ struct UserProfileView: View {
                     .padding(.top, 25)
                     .padding(.bottom, 35)
                 }
-
-                ScanBottomBar()
+                // Profile is a standalone full-screen page — no bottom navigation bar here.
             }
 
             if showLogoutSheet {
@@ -162,32 +160,32 @@ struct UserProfileView: View {
         .task {
             await viewModel.fetchCurrentUser()
         }
-        .fullScreenCover(isPresented: $showPayementView) {
-
-            PayementView()
-        }
-        .fullScreenCover(isPresented: $showEditProfileView, onDismiss: {
-
-            Task {
-                await viewModel.fetchCurrentUser()
+        .fullScreenCover(item: $destination) { dest in
+            switch dest {
+            case .payment:
+                PayementView()
+            case .earnings:
+                DermatologistEarningsView()
+            case .editProfile:
+                EditProfileView()
+                    .onDisappear {
+                        Task { await viewModel.fetchCurrentUser() }
+                    }
+            case .privacy:
+                PrivacyView()
+            case .skinGoals:
+                SkinGoalView()
+            case .appointments:
+                if isDermatologist {
+                    DermatologistAppointmentRequestsView()
+                } else {
+                    MyAppointmentsView()
+                }
+            case .scanHistory:
+                ScanHistoryView()
+            case .routine:
+                RoutineView()
             }
-
-        }) {
-
-            EditProfileView()
-        }
-        .fullScreenCover(isPresented: $showPrivacyView) {
-
-            PrivacyView()
-        }
-        .fullScreenCover(isPresented: $showSkinGoalsView) {
-            SkinGoalView()
-        }
-        .fullScreenCover(isPresented: $showAppointmentsView) {
-            MyAppointmentsView()
-        }
-        .fullScreenCover(isPresented: $showScanHistoryView) {
-            ScanHistoryView()
         }
     }
 }

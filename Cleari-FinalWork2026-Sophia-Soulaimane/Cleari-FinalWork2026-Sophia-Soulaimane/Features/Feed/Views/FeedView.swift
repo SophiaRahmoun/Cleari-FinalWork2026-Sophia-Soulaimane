@@ -51,22 +51,8 @@ struct FeedView: View {
                 .padding(.bottom, 220)
             }
 
-            VStack(spacing: 0) {
-                Rectangle()
-                    .fill(Color(hex: "1A1018").opacity(0.35))
-                    .frame(height: 1)
-
-                ReplyBar(onTap: { showCreatePost = true })
-                    .padding(.top, 12)
-
-                Spacer()
-                    .frame(height: 100)
-            }
-            .frame(maxWidth: .infinity)
-            .background(
-                LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
-                    .ignoresSafeArea(edges: .bottom)
-            )
+            ReplyBar(onTap: { showCreatePost = true })
+                .padding(.bottom, 16)
         }
         .task {
             await viewModel.fetchPosts()
@@ -82,7 +68,7 @@ struct FeedView: View {
             PostDetailView(post: post)
         }
         .fullScreenCover(isPresented: $showDebunkFeed) {
-            DebunkFeedView(isDermatologist: false)
+            DebunkFeedView(isDermatologist: TokenStorage.shared.userRole == "dermatologist")
         }
         .fullScreenCover(isPresented: $showProfile, onDismiss: {
             Task { await viewModel.fetchPosts() }

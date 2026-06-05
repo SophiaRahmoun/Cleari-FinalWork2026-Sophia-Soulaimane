@@ -23,11 +23,6 @@ const Routine = sequelize.define("Routine", {
 		allowNull: true,
 	},
 
-	product_image_public_id: {
-		type: DataTypes.STRING(255),
-		allowNull: true,
-	},
-
 	usage_time: {
 		type: DataTypes.STRING(50),
 		allowNull: true,

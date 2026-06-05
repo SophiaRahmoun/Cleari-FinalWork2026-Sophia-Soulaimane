@@ -13,7 +13,7 @@ struct DermatologistCard: View {
     var body: some View {
         HStack(spacing: 18) {
 
-            AvatarView(imageUrl: dermatologist.profileImageUrl, size: 76)
+            AvatarView(imageUrl: dermatologist.profileImageUrl, size: 52)
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(dermatologist.displayName)

@@ -43,9 +43,10 @@ struct AppFlowView: View {
             LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
                 .ignoresSafeArea()
             VStack(spacing: 16) {
-                Text("cleari")
-                    .font(AppFont.gillSwiftUI(.regular, size: 48))
-                    .foregroundColor(Color(hex: "1A1018"))
+                Image("Cleari_Header")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 160)
                 ProgressView()
                     .tint(Color(hex: "1A1018"))
             }

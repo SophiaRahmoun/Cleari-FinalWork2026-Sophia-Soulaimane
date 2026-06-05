@@ -15,18 +15,19 @@ final class ScanViewModel: NSObject, ObservableObject {
     let photoOutput = AVCapturePhotoOutput()
 
     @Published var scanImage: UIImage?
+    @Published var currentPosition: AVCaptureDevice.Position = .back
 
     func checkCameraPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
 
         case .authorized:
-            setupCamera()
+            setupCamera(position: currentPosition)
 
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 if granted {
                     DispatchQueue.main.async {
-                        self.setupCamera()
+                        self.setupCamera(position: self.currentPosition)
                     }
                 }
             }
@@ -36,24 +37,43 @@ final class ScanViewModel: NSObject, ObservableObject {
         }
     }
 
-    private func setupCamera() {
+    private func setupCamera(position: AVCaptureDevice.Position) {
         cameraSession.beginConfiguration()
         cameraSession.sessionPreset = .photo
 
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+        // Remove existing inputs
+        cameraSession.inputs.forEach { cameraSession.removeInput($0) }
+
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: position),
               let cameraInput = try? AVCaptureDeviceInput(device: camera),
-              cameraSession.canAddInput(cameraInput),
-              cameraSession.canAddOutput(photoOutput) else {
+              cameraSession.canAddInput(cameraInput) else {
+            cameraSession.commitConfiguration()
             return
         }
 
         cameraSession.addInput(cameraInput)
-        cameraSession.addOutput(photoOutput)
+
+        if cameraSession.outputs.isEmpty {
+            guard cameraSession.canAddOutput(photoOutput) else {
+                cameraSession.commitConfiguration()
+                return
+            }
+            cameraSession.addOutput(photoOutput)
+        }
 
         cameraSession.commitConfiguration()
 
+        if !cameraSession.isRunning {
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.cameraSession.startRunning()
+            }
+        }
+    }
+
+    func flipCamera() {
+        currentPosition = currentPosition == .back ? .front : .back
         DispatchQueue.global(qos: .userInitiated).async {
-            self.cameraSession.startRunning()
+            self.setupCamera(position: self.currentPosition)
         }
     }
 

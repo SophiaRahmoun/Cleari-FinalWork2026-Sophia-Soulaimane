@@ -15,6 +15,8 @@ struct DebunkPostCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
 
+            verdictBadge
+
             Text(post.title)
                 .font(AppFont.gillSwiftUI(.bold, size: 20))
                 .foregroundColor(Color(hex: "1A1018"))
@@ -57,38 +59,51 @@ struct DebunkPostCard: View {
                 imageName: "ProfileSample",
                 name: post.dermatologist?.username ?? "Dermatologist",
                 role: "Dermatologist",
-                message: post.debunkExplanation
+                message: post.debunkExplanation,
+                likesCount: post.likesCount ?? 0,
+                isLiked: post.isLikedByCurrentUser ?? false,
+                commentsCount: post.commentsCount ?? 0,
+                onLikeTapped: onLikeTapped,
+                onCommentTapped: onCommentTapped
             )
-
-            HStack(spacing: 18) {
-
-                Button {
-                    onLikeTapped()
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: (post.isLikedByCurrentUser ?? false) ? "heart.fill" : "heart")
-                        Text("\(post.likesCount ?? 0)")
-                    }
-                }
-                .buttonStyle(.plain)
-
-                Button {
-                    onCommentTapped()
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "bubble.right")
-                        Text("\(post.commentsCount ?? 0)")
-                    }
-                }
-                .buttonStyle(.plain)
-
-                Spacer()
-            }
-            .font(.subheadline)
-            .foregroundColor(Color(hex: "1A1018"))
         }
         .padding(22)
         .background(Color("AccentColor").opacity(0.35))
         .clipShape(RoundedRectangle(cornerRadius: 18))
+    }
+
+    @ViewBuilder
+    private var verdictBadge: some View {
+        switch post.status.lowercased() {
+        case "true":
+            Label("True", systemImage: "checkmark.seal.fill")
+                .font(AppFont.gillSwiftUI(.bold, size: 13))
+                .foregroundColor(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.green)
+                .clipShape(Capsule())
+
+        case "use_with_caution", "use with caution":
+            Label("Use with caution", systemImage: "exclamationmark.triangle.fill")
+                .font(AppFont.gillSwiftUI(.bold, size: 13))
+                .foregroundColor(.black)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.yellow)
+                .clipShape(Capsule())
+
+        case "not_recommended", "not recommended":
+            Label("Not recommended", systemImage: "xmark.seal.fill")
+                .font(AppFont.gillSwiftUI(.bold, size: 13))
+                .foregroundColor(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.red)
+                .clipShape(Capsule())
+
+        default:
+            EmptyView()
+        }
     }
 }
