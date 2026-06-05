@@ -38,6 +38,7 @@ A mobile iOS app that combines AI skin analysis, verified dermatologists, and co
 | ------------- | ------------------------------------------ | -------- |
 | User          | rayan@gmail.com                            | testtest |
 | Dermatologist | HaliouiSaid@cleari.com *(case-sensitive)*  | 123456   |
+| Admin         | drsmith@test.com                           | 123456   |
 
 ---
 
@@ -69,6 +70,25 @@ npm run dev
 ```
 
 > The dermatologist dashboard is also deployed via GitHub Pages.
+
+### Admin Panel
+
+The admin panel is a standalone HTML/JS app — no build step needed.
+
+**Option A — open directly in browser (recommended):**
+```
+admin/index.html → double-click to open
+```
+It connects directly to the production backend on Render.
+
+**Option B — run with a local server:**
+```bash
+cd admin
+npx serve .
+# then open http://localhost:3000
+```
+
+Login with the admin credentials above (`drsmith@test.com` / `123456`).
 
 ### iOS Frontend
 
