@@ -7,102 +7,70 @@
 
 import SwiftUI
 
-private enum ShellDestination: Identifiable {
-    case debunkFeed, profile, findDermatologist, scan, calendar
-    case dermChat, dermRequests
-    case postDetail(CommunityPost)
-
-    var id: String {
-        switch self {
-        case .debunkFeed: return "debunkFeed"
-        case .profile: return "profile"
-        case .findDermatologist: return "findDermatologist"
-        case .scan: return "scan"
-        case .calendar: return "calendar"
-        case .dermChat: return "dermChat"
-        case .dermRequests: return "dermRequests"
-        case .postDetail(let p): return "post-\(p.id)"
-        }
-    }
-}
-
 struct UserHomeShellView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var destination: ShellDestination? = nil
+    @State private var showFindDermatologist = false
+    @State private var showScan = false
+    @State private var showCalendar = false
+    @State private var showChat = false
+    @State private var showRequests = false
 
     private var isDermatologist: Bool {
         TokenStorage.shared.userRole == "dermatologist"
     }
 
     var body: some View {
-        content
-            .navigationBarBackButtonHidden(true)
-            .fullScreenCover(item: $destination) { dest in
-                switch dest {
-                case .debunkFeed:
-                    DebunkFeedView(isDermatologist: isDermatologist)
-                case .profile:
-                    UserProfileView()
-                case .findDermatologist:
-                    FindDermatologistView()
-                        .environmentObject(authViewModel)
-                case .scan:
-                    CameraCaptureView()
-                case .calendar:
-                    MyAppointmentsView()
-                case .dermChat:
-                    DermatologistConversationsView()
-                case .dermRequests:
-                    DermatologistAppointmentRequestsView()
-                case .postDetail(let post):
-                    PostDetailView(post: post)
-                }
+        Group {
+            if isDermatologist {
+                dermatologistShell
+            } else {
+                userShell
             }
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        if isDermatologist {
-            dermatologistShell
-        } else {
-            userShell
         }
+        .navigationBarBackButtonHidden(true)
     }
 
     private var userShell: some View {
-        FeedView(
-            onFakeTrendsTapped: { destination = .debunkFeed },
-            onProfileTapped: { destination = .profile },
-            onPostSelected: { post in destination = .postDetail(post) }
-        )
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            ScanBottomBar(
-                onHomeTapped: nil,
-                onFindDermatologistTapped: { destination = .findDermatologist },
-                onScanTapped: { destination = .scan },
-                onCalendarTapped: { destination = .calendar }
-            )
-            .padding(.bottom, 8)
-        }
+        FeedView()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                ScanBottomBar(
+                    onHomeTapped: nil,
+                    onFindDermatologistTapped: { showFindDermatologist = true },
+                    onScanTapped: { showScan = true },
+                    onCalendarTapped: { showCalendar = true }
+                )
+                .padding(.bottom, 8)
+            }
+            .fullScreenCover(isPresented: $showFindDermatologist) {
+                FindDermatologistView().environmentObject(authViewModel)
+            }
+            .fullScreenCover(isPresented: $showScan) {
+                CameraCaptureView()
+            }
+            .fullScreenCover(isPresented: $showCalendar) {
+                MyAppointmentsView()
+            }
     }
 
     private var dermatologistShell: some View {
-        FeedView(
-            onFakeTrendsTapped: { destination = .debunkFeed },
-            onProfileTapped: { destination = .profile },
-            onPostSelected: { post in destination = .postDetail(post) }
-        )
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        FeedView()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
                 dermBottomBar
                     .padding(.bottom, 8)
+            }
+            .fullScreenCover(isPresented: $showChat) {
+                DermatologistConversationsView()
+            }
+            .fullScreenCover(isPresented: $showRequests) {
+                DermatologistAppointmentRequestsView()
             }
     }
 
     private var dermBottomBar: some View {
         HStack(spacing: 0) {
-            dermTab(icon: "bubble.left.and.bubble.right", isActive: { if case .dermChat = destination { return true }; return false }()) { destination = .dermChat }
+            dermTab(icon: "bubble.left.and.bubble.right", isActive: showChat) { showChat = true }
             Spacer()
-            dermTab(icon: "calendar", isActive: { if case .dermRequests = destination { return true }; return false }()) { destination = .dermRequests }
+            dermTab(icon: "calendar", isActive: showRequests) { showRequests = true }
         }
         .padding(.horizontal, 52)
         .padding(.vertical, 12)

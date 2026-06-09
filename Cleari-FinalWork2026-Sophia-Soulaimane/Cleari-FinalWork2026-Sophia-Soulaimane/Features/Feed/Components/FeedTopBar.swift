@@ -19,48 +19,56 @@ struct FeedTopBar: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            // ── Top row: logo perfectly centered + profile icon overlaid right ──
-            ZStack {
+            HStack {
+                Spacer()
+
                 Image("Cleari_Header")
                     .resizable()
                     .scaledToFit()
                     .frame(height: 32)
-                    .frame(maxWidth: .infinity)
 
-                HStack {
-                    Spacer()
-                    Button {
-                        onProfileTapped?()
-                    } label: {
-                        Image(systemName: "person")
-                            .font(.system(size: 22, weight: .regular))
-                            .foregroundColor(dark)
-                    }
-                    .buttonStyle(.plain)
+                Spacer()
+
+                Button {
+                   // print("PROFILE TAPPED")
+                    onProfileTapped?()
+                } label: {
+                    Image(systemName: "person")
+                        .font(.system(size: 22, weight: .regular))
+                        .foregroundColor(dark)
+                        .frame(width: 50, height: 50)
+                        .contentShape(Rectangle())
                 }
-                .padding(.horizontal, 24)
+                .buttonStyle(.plain)
+                .zIndex(10)
+                .buttonStyle(.plain)
             }
+            .padding(.horizontal, 24)
             .padding(.top, 16)
 
-            // ── Tab row: explore | fake trends ──
             HStack(spacing: 100) {
                 Button {
+                   // print("EXPLORE TAPPED")
                     onExploreTapped?()
                 } label: {
                     TypographyLabel(text: "explore", style: .button, color: .white)
                         .underline(activeTab == .explore)
+                        .frame(height: 44)
                 }
                 .buttonStyle(.plain)
-
                 Button {
+                  //  print("FAKE TRENDS TAPPED")
                     onFakeTrendsTapped?()
                 } label: {
                     TypographyLabel(text: "fake trends", style: .button, color: .white)
-                        .underline(activeTab == .fakeTrends)
+                        .frame(width: 150, height: 50)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .zIndex(10)
             }
         }
+        .zIndex(10)
         .padding(.top, 20)
         .padding(.bottom, 10)
     }

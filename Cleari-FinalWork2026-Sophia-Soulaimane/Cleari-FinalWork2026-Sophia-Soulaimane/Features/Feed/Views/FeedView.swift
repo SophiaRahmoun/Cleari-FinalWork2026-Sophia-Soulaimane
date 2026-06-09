@@ -8,12 +8,15 @@
 import SwiftUI
 
 struct FeedView: View {
-    var onFakeTrendsTapped: (() -> Void)? = nil
-    var onProfileTapped: (() -> Void)? = nil
-    var onPostSelected: ((CommunityPost) -> Void)? = nil
-
     @StateObject private var viewModel = FeedViewModel()
     @State private var showCreatePost = false
+    @State private var showFakeTrends = false
+    @State private var showProfile = false
+    @State private var selectedPost: CommunityPost? = nil
+
+    private var isDermatologist: Bool {
+        TokenStorage.shared.userRole == "dermatologist"
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -26,9 +29,10 @@ struct FeedView: View {
 
                     FeedTopBar(
                         onExploreTapped: nil,
-                        onFakeTrendsTapped: onFakeTrendsTapped,
-                        onProfileTapped: onProfileTapped
+                        onFakeTrendsTapped: { showFakeTrends = true },
+                        onProfileTapped: { showProfile = true }
                     )
+                    .zIndex(10)
 
                     if viewModel.isLoading {
                         ProgressView()
@@ -42,7 +46,7 @@ struct FeedView: View {
                                     Task { await viewModel.toggleLike(for: post) }
                                 },
                                 onCommentTapped: {
-                                    onPostSelected?(post)
+                                    selectedPost = post
                                 }
                             )
                         }
@@ -62,6 +66,15 @@ struct FeedView: View {
             CreatePostView {
                 await viewModel.fetchPosts()
             }
+        }
+        .fullScreenCover(isPresented: $showFakeTrends) {
+            DebunkFeedView(isDermatologist: isDermatologist)
+        }
+        .fullScreenCover(isPresented: $showProfile) {
+            UserProfileView()
+        }
+        .fullScreenCover(item: $selectedPost) { post in
+            PostDetailView(post: post)
         }
     }
 
