@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct FeedView: View {
-    @StateObject private var viewModel = FeedViewModel()
+    var onFakeTrendsTapped: (() -> Void)? = nil
+    var onProfileTapped: (() -> Void)? = nil
+    var onPostSelected: ((CommunityPost) -> Void)? = nil
 
-    @State private var showCreatePost  = false
-    @State private var selectedPost: CommunityPost? = nil
-    @State private var showDebunkFeed  = false
-    @State private var showProfile     = false
+    @StateObject private var viewModel = FeedViewModel()
+    @State private var showCreatePost = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -25,8 +25,8 @@ struct FeedView: View {
 
                     FeedTopBar(
                         onExploreTapped: nil,
-                        onFakeTrendsTapped: { showDebunkFeed = true },
-                        onProfileTapped:    { showProfile = true }
+                        onFakeTrendsTapped: onFakeTrendsTapped,
+                        onProfileTapped: onProfileTapped
                     )
 
                     if viewModel.isLoading {
@@ -41,7 +41,7 @@ struct FeedView: View {
                                     Task { await viewModel.toggleLike(for: post) }
                                 },
                                 onCommentTapped: {
-                                    selectedPost = post
+                                    onPostSelected?(post)
                                 }
                             )
                         }
@@ -62,19 +62,10 @@ struct FeedView: View {
                 await viewModel.fetchPosts()
             }
         }
-        .fullScreenCover(item: $selectedPost, onDismiss: {
-            Task { await viewModel.fetchPosts() }
-        }) { post in
-            PostDetailView(post: post)
-        }
-        .fullScreenCover(isPresented: $showDebunkFeed) {
-            DebunkFeedView(isDermatologist: TokenStorage.shared.userRole == "dermatologist")
-        }
-        .fullScreenCover(isPresented: $showProfile, onDismiss: {
-            Task { await viewModel.fetchPosts() }
-        }) {
-            UserProfileView()
-        }
+    }
+
+    func refresh() async {
+        await viewModel.fetchPosts()
     }
 }
 
