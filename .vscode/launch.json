@@ -4,8 +4,8 @@
     {
       "name": "admin-panel",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "-l", "5173", "admin"],
-      "port": 5173
+      "runtimeArgs": ["serve", "-l", "4000", "admin"],
+      "port": 4000
     }
   ]
 }

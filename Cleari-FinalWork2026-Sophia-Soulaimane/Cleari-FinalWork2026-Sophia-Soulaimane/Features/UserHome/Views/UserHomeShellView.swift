@@ -40,7 +40,7 @@ struct UserHomeShellView: View {
             .fullScreenCover(item: $destination) { dest in
                 switch dest {
                 case .debunkFeed:
-                    DebunkFeedView(isDermatologist: false)
+                    DebunkFeedView(isDermatologist: isDermatologist)
                 case .profile:
                     UserProfileView()
                 case .findDermatologist:
@@ -87,8 +87,12 @@ struct UserHomeShellView: View {
     }
 
     private var dermatologistShell: some View {
-        FeedView()
-            .safeAreaInset(edge: .bottom, spacing: 0) {
+        FeedView(
+            onFakeTrendsTapped: { destination = .debunkFeed },
+            onProfileTapped: { destination = .profile },
+            onPostSelected: { post in destination = .postDetail(post) }
+        )
+        .safeAreaInset(edge: .bottom, spacing: 0) {
                 dermBottomBar
                     .padding(.bottom, 8)
             }
