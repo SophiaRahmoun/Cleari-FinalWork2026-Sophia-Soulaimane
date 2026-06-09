@@ -26,11 +26,12 @@ A mobile iOS app that combines AI skin analysis, verified dermatologists, and co
 
 ## Live Deployments
 
-| Service               | URL                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Admin Dashboard       | [sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane](https://sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane/)         |
-| Dermatologist Panel   | [cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com](https://cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com)                      |
-| Backend API           | [cleari-finalwork2026-sophia-soulaimane.onrender.com](https://cleari-finalwork2026-sophia-soulaimane.onrender.com)                                |
+| Service                  | URL                                                                                                                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Dermatologist Dashboard  | [sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane](https://sophiarahmoun.github.io/Cleari-FinalWork2026-Sophia-Soulaimane/)         |
+| Dermatologist Dashboard  | [cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com](https://cleari-finalwork2026-sophia-soulaimane-wa9x.onrender.com) *(Render mirror)*    |
+| Backend API              | [cleari-finalwork2026-sophia-soulaimane.onrender.com](https://cleari-finalwork2026-sophia-soulaimane.onrender.com)                                |
+| Admin Dashboard          | `localhost:3000` — run locally (see Getting Started below)                                                                                       |
 
 ### Test Credentials
 
@@ -38,6 +39,7 @@ A mobile iOS app that combines AI skin analysis, verified dermatologists, and co
 | ------------- | ------------------------------------------ | -------- |
 | User          | rayan@gmail.com                            | testtest |
 | Dermatologist | HaliouiSaid@cleari.com *(case-sensitive)*  | 123456   |
+| Admin         | drsmith@test.com                           | 123456   |
 
 ---
 
@@ -69,6 +71,19 @@ npm run dev
 ```
 
 > The dermatologist dashboard is also deployed via GitHub Pages.
+
+### Admin Dashboard
+
+The admin dashboard is a standalone HTML/JS app — no build step, no deployment. It runs locally only.
+
+```bash
+cd admin
+npx serve .
+```
+
+Then open **http://localhost:3000** in your browser.
+
+> The admin dashboard connects directly to the production backend on Render — make sure you have internet access.
 
 ### iOS Frontend
 
