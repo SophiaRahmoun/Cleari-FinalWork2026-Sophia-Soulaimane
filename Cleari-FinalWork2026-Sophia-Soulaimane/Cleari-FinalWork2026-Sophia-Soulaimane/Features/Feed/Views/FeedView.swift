@@ -19,6 +19,7 @@ struct FeedView: View {
         ZStack(alignment: .bottom) {
             LinearGradientBackground(startHex: "C66F8C", endHex: "F9BDB9")
                 .ignoresSafeArea()
+                .allowsHitTesting(false)
 
             ScrollView(showsIndicators: false) {
                 LazyVStack(alignment: .leading, spacing: 16) {
