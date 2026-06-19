@@ -29,4 +29,11 @@ final class CameraView: UIView {
     var previewLayer: AVCaptureVideoPreviewLayer {
         layer as! AVCaptureVideoPreviewLayer
     }
+
+    // Required: update the preview layer frame every time bounds change.
+    // Without this the layer stays at CGRect.zero → black screen.
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        previewLayer.frame = bounds
+    }
 }
